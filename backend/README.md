@@ -14,7 +14,7 @@ python3 -m venv ./venv
 ```
 You should now see a `(venv)` in your terminal. To install dependencies, run
 ```
-pip install -r requirements
+pip install -r requirements.txt
 ```
 2. Run the project
 
