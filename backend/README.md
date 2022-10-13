@@ -16,11 +16,7 @@ You should now see a `(venv)` in your terminal. To install dependencies, run
 ```
 pip install -r requirements
 ```
-2. Create `.env` file
-
-Create a `.env` file to store passwords, private keys, etc. (todo)
-
-3. Run the project
+2. Run the project
 
 To run the project run
 ```
