@@ -1,4 +1,10 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
+
+
+# load enviornment variables
+load_dotenv()
+
 
 app = FastAPI()
 
