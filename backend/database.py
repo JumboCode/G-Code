@@ -1,13 +1,12 @@
 from model import Student
-import motor.motor_asyncio
+from pymongo import MongoClient
 import os
 
-# get database uri
-uri = os.environ["MONGO_DB_URI"]
-
-# connect to database
-client = motor.motor_asyncio.AsyncIOMotorClient(uri)
-database = client.gcode
+# Connect to database
+uri = "mongodb+srv://admin:<password>@gcodedb.4dveheh.mongodb.net/?retryWrites=true&w=majority"
+client = MongoClient(uri, 8000)
+database = client.gcodedb
+database = client.gcodedb
 collection = database.students
 
 async def fetch_one_student(title):
