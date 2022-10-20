@@ -1,14 +1,10 @@
-from model import Student
 from pymongo import MongoClient
-import os
+from settings import mongo_settings as settings
 
 # Connect to database
-uri = "mongodb+srv://admin:<password>@gcodedb.4dveheh.mongodb.net/?retryWrites=true&w=majority"
+uri = "mongodb+srv://admin:Jumbo2022@cluster0.byfiocg.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(uri, 8000)
-database = client.gcodedb
-database = client.gcodedb
+database = client.db
 collection = database.students
 
-async def fetch_one_student(title):
-    document = collection.find_one({"title":title})
-    return document
+__all__ = ("client", "database", "collection")
