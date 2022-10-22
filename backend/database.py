@@ -1,10 +1,22 @@
 from pymongo import MongoClient
-from settings import mongo_settings as settings
+from dotenv import load_dotenv
+from model import Student
+import os
+
+# load enviornment variables
+load_dotenv()
 
 # Connect to database
-uri = "mongodb+srv://admin:Jumbo2022@cluster0.byfiocg.mongodb.net/?retryWrites=true&w=majority"
+uri = os.environ["MONGO_DB_URI"]
 client = MongoClient(uri, 8000)
 database = client.db
 collection = database.students
+
+def fetch_all_students():
+    students = []
+    cursor = collection.find({})
+    for document in cursor:
+        students.append(Student(**document))
+    return students
 
 __all__ = ("client", "database", "collection")
