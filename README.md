@@ -1,6 +1,6 @@
 # Frontend
 
-This is the frontend for the G-Code project
+This is the setup for the frontend for the G-Code project
 
 ## Setup
 
@@ -23,7 +23,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 # Backend
 
-This is the backend for the G-Code project
+This is the setup for the backend for the G-Code project
 
 ## Setup
 
