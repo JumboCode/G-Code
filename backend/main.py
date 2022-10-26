@@ -6,6 +6,7 @@ Authors: G-Code Jumbocode Team
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from backend.model import Student
 
 # Create app
 app = FastAPI()
@@ -41,6 +42,8 @@ async def get_students():
 
     Todo:    1) Don't send student passwords back in response. This can either
                 be done here or in database.py.
+             2) Add error checking (return some sort of HTTP error instead of
+                erroring out)
     '''
     response = fetch_all_students()
     return response
@@ -53,17 +56,33 @@ async def get_admins():
 
     Todo:    1) Don't send student passwords back in response. This can either
                 be done here or in database.py.
+             2) Add error checking (return some sort of HTTP error instead of
+                erroring out)
     '''
     response = fetch_all_admins()
     return response
 
 
-# @app.get("/getall")
-# async def fetch_all_students():
-#     result: model.Student = database.collection.find({})
-#     return result
+@app.put("/api/request_student")
+async def put_student_request(email: str):
+    '''
+    Purpose: Generates an access code for a student and stores the code as well
+             as the student's information and the datetime they were added
+             in the student requests document of the database.
 
-# @app.get("/{firstname}")
-# async def fetch_one_student(firstname):
-#     result = database.collection.find_one({"firstname":firstname})
-#     return result
+    Input:   For now just the students email address. We will also require
+             an authentication token of some sort once that is set up.
+    '''
+    pass
+
+
+@app.put("/api/student_join")
+async def put_student_join(access_token: str, student_data: Student):
+    '''
+    Purpose: Verifies that access token that was added is valid and then
+             adds the student with all of their data into the database.
+
+    Input:   An access token, which is a string. Also the student's data,
+             as specified by the model.
+    '''
+    pass

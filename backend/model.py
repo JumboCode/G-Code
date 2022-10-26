@@ -1,6 +1,5 @@
 from datetime import datetime
-from optparse import Option
-from typing import List, Optional
+from typing import List
 from pydantic import BaseModel, Field, EmailStr
 from bson import ObjectId
 from pyobjectid import PydanticObjectId
