@@ -6,7 +6,7 @@ Authors: G-Code Jumbocode Team
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.model import Student
+from model import Student
 
 # Create app
 app = FastAPI()
