@@ -4,7 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 from database import (
-    fetch_all_students
+    fetch_all_students,
+    fetch_all_admins
 )
 
 origins = ['http://localhost:3000']
@@ -26,6 +27,13 @@ async def read_root():
 async def get_students():
     response = fetch_all_students()
     return response
+
+
+@app.get("/api/admins")
+async def get_admins():
+    response = fetch_all_admins()
+    return response
+
 
 # @app.get("/getall")
 # async def fetch_all_students():
