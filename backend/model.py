@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import List
 from pydantic import BaseModel, Field, EmailStr
 from bson import ObjectId
-from pyobjectid import PydanticObjectId
-
+from bson.objectid import ObjectId as BsonObjectId
+from pyobjectid import PyObjectId
 
 class TimeSlot(BaseModel):
     starttime: datetime = Field(...)
@@ -16,7 +16,7 @@ class Language(BaseModel):
 
 
 class Admin(BaseModel):  
-    id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     firstname: str = Field(...)
     lastname: str = Field(...)
     email: EmailStr = Field(...)
@@ -38,7 +38,7 @@ class Admin(BaseModel):
 
 
 class Student(BaseModel):
-    id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     firstname: str = Field(...)
     lastname: str = Field(...)
     bio: str = Field(...)
@@ -62,12 +62,12 @@ class Student(BaseModel):
 
 
 class StudentInvite(BaseModel):
-    id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     email: EmailStr = Field(...)
     requestdate: datetime = Field(...)
     accesscode: str = Field(...)
 
 
 class Class(BaseModel):
-    id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str = Field(...)
