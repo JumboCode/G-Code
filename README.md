@@ -1,6 +1,6 @@
-# Setup
+# GCODE
 
-## Frontend
+## Frontend Setup
 
 1. Install npm
 2. "npm install" in frontend directory
@@ -8,7 +8,7 @@
 To run, "npm run dev"
 Open <http://localhost:3000>
 
-## Backend
+## Backend Setup
 
 ### Virtual Environment
 
@@ -28,6 +28,9 @@ Documentation at <http://localhost:8000/docs>
 ## Credits
 
 Project Manager: Theseus Lim
+
 Technical Lead: Jimmy Maslen
+
 Designer: Ariya Zheng
+
 Developers: Aidan Banerjee, Jyoti Bhardwaj, Elizabeth Foster, Sarah Grand, Ruby Mora, Emma Paterson, Sean Reilly, Kimaya Wijeratna, Megan Yi
