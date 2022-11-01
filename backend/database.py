@@ -2,7 +2,6 @@
 database.py
 Purpose: Connects to the database and provides all functionality for accessing
          data from the database.
-Authors: G-Code Jumbocode Team
 '''
 
 from pymongo import MongoClient

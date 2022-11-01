@@ -1,52 +1,33 @@
-# Frontend
+# Setup
 
-This is the setup for the frontend for the G-Code project
+## Frontend
 
-## Setup
+1. Install npm
+2. "npm install" in frontend directory
+3. "npm install next" in frontend directory
+To run, "npm run dev"
+Open <http://localhost:3000>
 
-### Installing dependencies
+## Backend
 
-Start by installing npm and running 
-```
-npm install
-```
+### Virtual Environment
 
-### Running the frontend
+In the backend directory:
+    1. mkdir env
+    2. python3 -m venv env
+    3. To run on Mac: ". ./env/bin/activate"
+       To run on Windows: "env/Scripts/activate"
+       You should now see a `(venv)` in your terminal
+    4. pip install -r requirements.txt
+    5. Download the `.env` file from the slack channel and place it in the `backend` folder
 
-First, run the development server:
+To run, uvicorn main:app --reload
+Open <http://localhost:8000>
+Documentation at <http://localhost:8000/docs>
 
-```
-npm run dev
-```
+## Credits
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-# Backend
-
-This is the setup for the backend for the G-Code project
-
-## Setup
-
-### Installing dependencies
-
-The easiest way to install dependencies for this project is by using a virtual environment. To set this up, while in the backend folder, run
-```
-mkdir venv
-python3 -m venv ./venv
-. ./venv/bin/activate
-```
-You should now see a `(venv)` in your terminal. To install dependencies, run
-```
-pip install -r requirements.txt
-```
-
-### Adding .env file
-Download the `.env` file from the slack channel and place it in the `backend` folder
-
-### Run the project
-
-To run the project run
-```
-uvicorn main:app --reload
-```
-The api should now be accessable at http://localhost:8000 and documentation at http://localhost:8000/docs.
+Project Manager: Theseus Lim
+Technical Lead: Jimmy Maslen
+Designer: Ariya Zheng
+Developers: Aidan Banerjee, Jyoti Bhardwaj, Elizabeth Foster, Sarah Grand, Ruby Mora, Emma Paterson, Sean Reilly, Kimaya Wijeratna, Megan Yi
