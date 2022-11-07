@@ -5,9 +5,10 @@ Purpose: Connects to the database and provides all functionality for accessing
 Authors: G-Code Jumbocode Team
 '''
 
+from backend.model import StudentInvite
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin
+from model import Student, Admin, StudentInvite
 import os
 
 # load enviornment variables
@@ -19,6 +20,7 @@ client = MongoClient(uri, 8000)
 database = client.db
 students = database.students
 admins = database.admins
+si = database.student_invites
 
 
 def fetch_all_students():
@@ -50,4 +52,25 @@ def fetch_all_admins():
         admin_list.append(Admin(**document))
     return admin_list 
 
+def fetch_all_student_invites():
+    '''
+    Purpose: Fetches all student requests from the student_requests collection and returns
+             them as a list of Admin objects
+    '''
+    student_invites = []
+    cursor = si.find({})
+    for document in cursor:
+        student_invites.append(StudentInvite(**document))
+    return student_invites
 
+
+async def create_student(Student):
+    studToAdd = Student
+    result = await students.insert_one(studToAdd)
+    return studToAdd
+
+
+async def create_student_invite(accessKey, email, date):
+    inviteToAdd = StudentInvite()
+    result = await si.insert_one(inviteToAdd)
+    return inviteToAdd
