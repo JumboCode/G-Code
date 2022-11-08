@@ -8,11 +8,9 @@ import random
 import string
 
 from http.client import HTTPException
-from backend.database import create_student
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from model import Student
-from model import StudentInvite
 
 
 # Create app
@@ -22,7 +20,7 @@ app = FastAPI()
 from database import (
     fetch_all_students,
     fetch_all_admins,
-    fetch_all_student_invites,
+    fetch_one_student_invites,
     create_student_invite,
     create_student
 )
@@ -84,7 +82,9 @@ async def put_student_request(email: str):
              an authentication token of some sort once that is set up.
     '''
     accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
-    create_student_invite(accessKey, email, new Date())
+    #need to include current date
+    date = ""
+    create_student_invite(accessKey, email, date)
     
 
 
@@ -97,7 +97,7 @@ async def put_student_join(access_token: str, student_data: Student):
     Input:   An access token, which is a string. Also the student's data,
              as specified by the model.
     '''
-    studentFromKey = await fetch_all_students()
+    studentFromKey = await fetch_one_student_invites(access_token)
     if studentFromKey:
-        await create_student(studentFromKey)
+        await create_student(student_data)
     raise HTTPException(404, f"there are no students with this key")
