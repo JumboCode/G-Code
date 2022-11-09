@@ -25,6 +25,43 @@ To run, uvicorn main:app --reload
 Open <http://localhost:8000>
 Documentation at <http://localhost:8000/docs>
 
+## Tips for Git
+
+When you are starting a sprint, always pull to get the most updated version
+of the main branch and then create a new branch for your team. You can do so 
+with the following commands:
+
+```
+git checkout main
+git pull
+git checkout -b [branch_name]
+```
+
+In order for your teammate(s) to access this branch, push to GitHub:
+
+```
+git push
+```
+
+Your teammate(s) may now switch to your branch using
+
+```
+git checkout [branch_name]
+```
+
+Always try to commit regulary, at least once per day that your are working
+on the project, and leave helpful commit messages. You can do so with the 
+following commands:
+
+```
+git add .
+git commit -m "helpful message"
+```
+
+Once you are finished with your task, push your code to GitHub and then
+open the repository in a browser. You should see a green button that says
+'create pull request'. Click this button and then write up your pull request.
+
 ## Credits
 
 Project Manager: Theseus Lim
