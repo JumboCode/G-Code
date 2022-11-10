@@ -20,23 +20,22 @@ export default function Home() {
             <div className={dashboardStyles.dueDate}>
               Wed, October 7, 9:59 PM
             </div>
-            <div className={dashboardStyles.arrowIcon}> > </div>
+            <div className={dashboardStyles.arrowIcon}> </div>
           </div>
           <div className={dashboardStyles.assignment}>
             Week 6 Module of Codecademy
             <div className={dashboardStyles.dueDate}>
               Wed, October 7, 9:59 PM
             </div>
-            <div className={dashboardStyles.arrowIcon}> > </div>
+            <div className={dashboardStyles.arrowIcon}> </div>
           </div>
           <div className={dashboardStyles.assignment}>
             Week 6 Slides and Recording
-            <div className={dashboardStyles.arrowIcon}> > </div>
-
+            <div className={dashboardStyles.arrowIcon}> </div>
           </div>
-          <div className={dashboardStyles.assignment}>All About Github
-            <div className={dashboardStyles.arrowIcon}> > </div>
-
+          <div className={dashboardStyles.assignment}>
+            All About Github
+            <div className={dashboardStyles.arrowIcon}> </div>
           </div>
         </div>
         <div className={dashboardStyles.upcomingMeetingCard}>
@@ -44,7 +43,10 @@ export default function Home() {
           <div className={dashboardStyles.upperRightCornerText}>+ Add More</div>
           <div className={dashboardStyles.buttonContainer}>
             <button className={dashboardStyles.joinButton}> Join </button>{" "}
-            <button className={dashboardStyles.rescheduleButton}> Reschedule </button>
+            <button className={dashboardStyles.rescheduleButton}>
+              {" "}
+              Reschedule{" "}
+            </button>
           </div>
         </div>
         <div className={dashboardStyles.commonQuestionsCard}>

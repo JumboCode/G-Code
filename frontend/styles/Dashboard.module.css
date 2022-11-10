@@ -18,7 +18,7 @@
 }
 
 .grid {
-  display: grid;
+  display: flex;
   justify-content: left;
   flex-wrap: wrap;
   max-width: 100pc;
@@ -37,11 +37,13 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
 
-  position: static;
+  width: 55pc;
+
+  /* position: static;
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 1;
-  grid-row-end: 3;
+  grid-row-end: 3; */
 
   font-family: "IBM Plex Sans", sans-serif;
   font-weight: 600;
@@ -72,11 +74,13 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
 
-  position: static;
+  width: 30pc;
+
+  /* position: static;
   grid-column-start: 3;
   grid-column-end: 4;
   grid-row-start: 1;
-  grid-row-end: 2;
+  grid-row-end: 2; */
 }
 
 .eventsCard {
@@ -202,7 +206,6 @@
   gap: 7.97px;
   font-family: "IBM Plex Sans", sans-serif;
 
-  position: relative;
   width: 144px;
   height: 45px;
   left: calc(50% - 144px / 2 + 15.14px);
