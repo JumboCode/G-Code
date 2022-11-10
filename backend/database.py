@@ -6,7 +6,7 @@ Purpose: Connects to the database and provides all functionality for accessing
 
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin
+from model import Student, Admin, Appointment
 import os
 
 # load enviornment variables
@@ -18,6 +18,7 @@ client = MongoClient(uri, 8000)
 database = client.db
 students = database.students
 admins = database.admins
+appointments = database.appointments #change based on the actual collection
 
 
 def fetch_all_students():
@@ -50,3 +51,14 @@ def fetch_all_admins():
     return admin_list 
 
 
+def fetch_filtered_appointments(filters):
+    filter_dict = {"reserved" : False}
+
+    for fil in filters:
+        filter_dict.update({fil[0]:fil[1]})
+    
+    appt_list = []
+    cursor = appointments.find(filter_dict)
+    for document in cursor:
+        appt_list.append(Appointment(**document))
+    return appt_list
