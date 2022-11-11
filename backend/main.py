@@ -4,17 +4,32 @@ Purpose: Creates server and all routes for G-Code backend.
 Authors: G-Code Jumbocode Team
 '''
 
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from model import Student
+from datetime import datetime, timezone, timedelta
+from dotenv import load_dotenv
+import jwt
+import bcrypt
 
 # Create app
 app = FastAPI()
+load_dotenv()
+
+# Used for encrypting session tokens
+session_secret = os.environ["SECRET_SESSION_KEY"]
 
 # Import functions from database.py
 from database import (
     fetch_all_students,
-    fetch_all_admins
+    fetch_all_admins,
+    fetch_student_by_username,
+    fetch_admin_by_username,
+    fetch_session_by_username,
+    add_session,
+    remove_session
 )
 
 # Allow access from frontend
@@ -27,12 +42,103 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/login")
+def login_page():
+    return HTMLResponse(
+        """
+        <form action="/login" method="post">
+        Username: <input type="text" name="username" required>
+        <br>
+        Password: <input type="password" name="password" required>
+        <input type="submit" value="Login">
+        </form>
+        """
+)
+
+def validate_session(request: Request):
+    '''
+    Purpose: Checks that a user's session token is valid
+    '''
+    decoded_token = jwt.decode(request.cookies["gcode-session"], 
+                               session_secret, 
+                               algorithms="HS256")
+    username = decoded_token["sub"]
+    session = fetch_session_by_username(username)
+    if session == None:
+        raise HTTPException ( 
+            status_code=403, detail="Invalid session, please log-in"
+        )
+    return session["permission_level"]
+
+def validate_admin_session(request: Request, permission_level: str = Depends(validate_session)):
+    '''
+    Purpose: Checks that a user's session token corresponds to admin privileges
+    '''
+    if permission_level != "Admin":
+        raise HTTPException ( 
+            status_code=403, detail="Invalid permissions"
+        )
+
 @app.get("/")
 async def read_root():
     '''
     Purpose: Demo route to test if database is running.
     '''
     return {"message" : "Hello, World!"}
+
+@app.post("/login")
+def login(response: Response, username: str = Form(...), password: str = Form(...)):    
+    student = fetch_student_by_username(username)
+    admin = fetch_admin_by_username(username)    
+    
+    if student != None:
+        user = student
+        user_type = "Student"
+    elif admin != None:
+        user = admin
+        user_type = "Admin"
+    else:
+        raise HTTPException(
+            status_code=403, detail="Invalid Username"
+        )
+    
+    stored_password = user["password"]
+    stored_password = stored_password.encode('utf-8')
+    encoded_password = password.encode('utf-8')
+    if not bcrypt.checkpw(encoded_password, stored_password):
+        raise HTTPException(
+            status_code=403, detail="Invalid Password"
+        )
+
+    # If the user trying to log-in already has an active session, it's removed
+    # so that duplicate session data will not be created
+    if fetch_session_by_username(username) != None:
+        remove_session(username)
+        response.delete_cookie("gcode-session")
+
+    # Passing timezone.utc to the datetime.now() call that's used in add_session
+    # is necessary for the time-to-live index in the MongoDB database to work,
+    # which automatically removes sessions from the database after 4 hours
+    add_session(username, user_type, datetime.now(timezone.utc))
+
+    payload = {
+                'sub': username,
+                'exp': datetime.now(timezone.utc) + timedelta(hours=4),
+                'iat': datetime.now(timezone.utc),
+            }
+    token = jwt.encode(payload, session_secret, algorithm='HS256')
+    response.set_cookie("gcode-session", token)
+    return {"ok": True}
+
+@app.get("/logout")
+async def logout(request: Request, response: Response):
+    decoded_token = jwt.decode(request.cookies["gcode-session"], 
+                               session_secret, 
+                               algorithms="HS256")
+    username = decoded_token["sub"]
+    remove_session(username)
+    response.delete_cookie("gcode-session")
+    return {"status":"success"}
 
 
 @app.get("/api/students")
