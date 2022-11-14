@@ -90,7 +90,7 @@ let styles = ({
         background: 'white',
         display: 'flex',
         flexDirection: 'column',
-        width: '19%',
+        width: 'fit-content',
         height: '100vh',
         gap: '3vh',
         alignItems: 'center',
@@ -123,7 +123,8 @@ let styles = ({
     },
     SideBarText:
     {
-        fontSize: '14px'
+        fontSize: '14px',
+        color: 'black'
     },
     GCodeHeadingText:
     {
