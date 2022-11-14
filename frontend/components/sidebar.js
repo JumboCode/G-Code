@@ -7,11 +7,10 @@ import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepart
 // import '../styles/globals.css';
 import "@fontsource/poppins";
 import { useRouter } from 'next/router';
-import GCodeLogo from '../public/GCodeLogo.png';
 
 function GCodeHeading() {
-    return <div style={styles.LogoSidebar}>
-        <img src={GCodeLogo} />
+    return <div style={styles.GCodeHeading}>
+        <img style={styles.GCodeHeadingImage} src='/GCodeLogo.png' />
         <h1 style={styles.GCodeHeadingText}>{"Intro to G{Code}"}</h1>
     </div>;
 }
@@ -97,6 +96,7 @@ let styles = ({
         alignItems: 'center',
         borderRight: '1px solid #DFDFDF',
         fontFamily: "Poppins",
+        fontColor: "black"
     },
     SidebarElement:
     {
@@ -129,5 +129,14 @@ let styles = ({
     {
         fontFamily: "Poppins",
         fontSize: '16px'
-    }
+    },
+    GCodeHeading:
+    {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignContent: 'center',
+        gap: '5%'
+    },
 })
