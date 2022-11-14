@@ -19,6 +19,7 @@ client = MongoClient(uri, 8000)
 database = client.db
 students = database.students
 admins = database.admins
+sessions = database.sessions
 si = database.student_invites
 
 
@@ -70,6 +71,43 @@ async def create_student(Student):
     studToAdd = Student
     result = await students.insert_one(studToAdd)
     return studToAdd
+
+def fetch_student_by_username(username):
+    '''
+    Purpose: Fetch the student with the given username
+    '''
+    return students.find_one({"username": username})
+
+def fetch_admin_by_username(username):
+    '''
+    Purpose: Fetch the student with the given username
+    '''
+    return admins.find_one({"username": username})
+
+def fetch_session_by_username(username):
+    '''
+    Purpose: Fetchs a session from the database with the given unique username
+    '''
+    return sessions.find_one({"username": username})
+
+
+def add_session(username, permission_level, curr_time):
+    '''
+    Purpose: Adds a session to the database. 
+    A Time-To-Live Index on the database automatically deletes sessions 
+    four hours after their creation
+    '''
+    new_session = {"username": username, 
+                   "permission_level": permission_level, 
+                   "created_at": curr_time}
+                   
+    sessions.insert_one(new_session)
+
+def remove_session(username):
+    '''
+    Purpose: Removes a session from the database
+    '''
+    sessions.delete_one({"username": username})
 
 
 async def create_student_invite(ak, em, d):
