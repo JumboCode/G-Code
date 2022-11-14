@@ -4,18 +4,17 @@ Purpose: Creates server and all routes for G-Code backend.
 Authors: G-Code Jumbocode Team
 '''
 
+import random
+import string
+
+from http.client import HTTPException
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from model import Student
+from database import *
 
 # Create app
 app = FastAPI()
-
-# Import functions from database.py
-from database import (
-    fetch_all_students,
-    fetch_all_admins
-)
 
 # Allow access from frontend
 origins = ['http://localhost:3000']
@@ -73,7 +72,11 @@ async def put_student_request(email: str):
     Input:   For now just the students email address. We will also require
              an authentication token of some sort once that is set up.
     '''
-    pass
+    accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
+    #need to include current date
+    date = ""
+    create_student_invite(accessKey, email, date)
+    
 
 
 @app.put("/api/student_join")
@@ -85,4 +88,7 @@ async def put_student_join(access_token: str, student_data: Student):
     Input:   An access token, which is a string. Also the student's data,
              as specified by the model.
     '''
-    pass
+    studentFromKey = await fetch_one_invite(access_token)
+    if studentFromKey:
+        await create_student(student_data)
+    raise HTTPException(404, f"there are no students with this key")
