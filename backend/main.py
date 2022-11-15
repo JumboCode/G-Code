@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 import jwt
 import bcrypt
 from database import *
+from datetime import datetime
 
 # Create app
 app = FastAPI()
@@ -181,8 +182,7 @@ async def put_student_request(email: str):
              an authentication token of some sort once that is set up.
     '''
     accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
-    #need to include current date
-    date = ""
+    date = datetime.now()
     create_student_invite(accessKey, email, date)
     
 

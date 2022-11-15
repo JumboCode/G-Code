@@ -110,7 +110,11 @@ def remove_session(username):
     sessions.delete_one({"username": username})
 
 
-async def create_student_invite(ak, em, d):
-    inviteToAdd = StudentInvite(email = em, accesscode = ak, date = d)
-    result = await si.insert_one(inviteToAdd)
+def create_student_invite(ak, em, d):
+    inviteToAdd = {
+        "accesscode": ak,
+        "requestdate": d,
+        "email": em
+    }
+    si.insert_one(inviteToAdd) 
     return inviteToAdd

@@ -62,7 +62,6 @@ class Student(BaseModel):
 
 
 class StudentInvite(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     email: EmailStr = Field(...)
     requestdate: datetime = Field(...)
     accesscode: str = Field(...)
