@@ -63,17 +63,22 @@ def fetch_all_student_invites():
         student_invites.append(StudentInvite(**document))
     return student_invites
 
-async def fetch_one_invite(ak):
-    document = await si.find_one({"accesscode": ak})
+def fetch_one_invite(ak):
+    document = si.find_one({"accesscode": ak})
     return document
 
-async def create_student(Student):
+def create_student(Student):
     studToAdd = Student
-    result = await students.insert_one(studToAdd)
+    result = students.insert_one(studToAdd)
     return studToAdd
 
 
-async def create_student_invite(ak, em, d):
-    inviteToAdd = StudentInvite(email = em, accesscode = ak, date = d)
-    result = await si.insert_one(inviteToAdd)
+def create_student_invite(ak, em, d):
+    inviteToAdd = {"email" : em, "accesscode" : ak, "requestdate" : d}
+    result = si.insert_one(inviteToAdd)
     return inviteToAdd
+
+def remove_student_invite(ak):
+    si.delete_one({"accesscode": ak})
+    return True
+

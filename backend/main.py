@@ -6,12 +6,12 @@ Authors: G-Code Jumbocode Team
 
 import random
 import string
+from datetime import datetime
 
 from http.client import HTTPException
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from model import Student
-
 
 # Create app
 app = FastAPI()
@@ -22,7 +22,8 @@ from database import (
     fetch_all_admins,
     fetch_one_invite,
     create_student_invite,
-    create_student
+    create_student,
+    remove_student_invite
 )
 
 # Allow access from frontend
@@ -83,7 +84,7 @@ async def put_student_request(email: str):
     '''
     accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
     #need to include current date
-    date = ""
+    date = datetime.now()
     create_student_invite(accessKey, email, date)
     
 
@@ -97,7 +98,10 @@ async def put_student_join(access_token: str, student_data: Student):
     Input:   An access token, which is a string. Also the student's data,
              as specified by the model.
     '''
-    studentFromKey = await fetch_one_invite(access_token)
+    studentFromKey = fetch_one_invite(access_token)
     if studentFromKey:
-        await create_student(student_data)
-    raise HTTPException(404, f"there are no students with this key")
+        s = create_student(student_data.dict())
+        remove_student_invite(access_token)
+        return s
+    else:
+        return HTTPException("Student was not created")
