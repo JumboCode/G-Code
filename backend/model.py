@@ -3,7 +3,6 @@ from typing import List
 from pydantic import BaseModel, Field, EmailStr
 from bson import ObjectId
 
-
 class TimeSlot(BaseModel):
     starttime: datetime = Field(...)
     endtime: datetime = Field(...)
@@ -66,3 +65,15 @@ class StudentInvite(BaseModel):
 
 class Class(BaseModel):
     name: str = Field(...)
+
+class Appointment(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    reserved: bool = Field(...)
+    tutorName: str = Field(...)
+    topics: List[str] = Field(...)
+    startTime: datetime = Field(...)
+    endTime: datetime = Field(...)
+    date: datetime = Field(...)
+    dayOfWeek: str = Field(...)
+    studentName: str = Field(...)
+    
