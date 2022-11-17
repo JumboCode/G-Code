@@ -5,6 +5,7 @@ Purpose: Connects to the database and provides all functionality for accessing
 '''
 
 from model import StudentInvite
+from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from model import Student, Admin, StudentInvite
@@ -20,6 +21,7 @@ database = client.db
 students = database.students
 admins = database.admins
 sessions = database.sessions
+appointments = database.appointments
 si = database.student_invites
 
 
@@ -114,3 +116,13 @@ async def create_student_invite(ak, em, d):
     inviteToAdd = StudentInvite(email = em, accesscode = ak, date = d)
     result = await si.insert_one(inviteToAdd)
     return inviteToAdd
+
+# async def create_appointment(mentor, topics, start, end, date, dow):
+#     appointmentToAdd = Appointment(tutorName = mentor, topics = topics, startTime = start,
+#                                     endTime = end, date = date, dayOfWeek = dow)
+#     return appointmentToAdd
+
+# async def create_appointment(Appointment):
+#     appointmentToAdd = Appointment
+#     await appointments.insert_one(appointmentToAdd)
+#     return appointmentToAdd

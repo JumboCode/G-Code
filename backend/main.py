@@ -14,6 +14,7 @@ from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from model import Student
+from model import Appointment
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import jwt
@@ -200,3 +201,17 @@ async def put_student_join(access_token: str, student_data: Student):
     if studentFromKey:
         await create_student(student_data)
     raise HTTPException(404, f"there are no students with this key")
+
+
+@app.put("/api/appointments")
+async def put_appointment(appointment_data: Appointment):
+    '''
+    Purpose: Generates an access code for a student and stores the code as well
+             as the student's information and the datetime they were added
+             in the student requests document of the database.
+
+    Input:   For now just the students email address. We will also require
+             an authentication token of some sort once that is set up.
+    '''
+
+    create_appointment(appointment_data)
