@@ -20,7 +20,7 @@ app = FastAPI()
 from database import (
     fetch_all_students,
     fetch_all_admins,
-    fetch_one_student_invites,
+    fetch_one_invite,
     create_student_invite,
     create_student
 )
@@ -97,7 +97,7 @@ async def put_student_join(access_token: str, student_data: Student):
     Input:   An access token, which is a string. Also the student's data,
              as specified by the model.
     '''
-    studentFromKey = await fetch_one_student_invites(access_token)
+    studentFromKey = await fetch_one_invite(access_token)
     if studentFromKey:
         await create_student(student_data)
     raise HTTPException(404, f"there are no students with this key")

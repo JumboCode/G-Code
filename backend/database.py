@@ -5,7 +5,7 @@ Purpose: Connects to the database and provides all functionality for accessing
 Authors: G-Code Jumbocode Team
 '''
 
-from backend.model import StudentInvite
+from model import StudentInvite
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from model import Student, Admin, StudentInvite

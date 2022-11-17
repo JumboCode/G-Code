@@ -16,7 +16,7 @@ class Language(BaseModel):
 
 
 class Admin(BaseModel):  
-    id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
+    # id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
     firstname: str = Field(...)
     lastname: str = Field(...)
     email: EmailStr = Field(...)
