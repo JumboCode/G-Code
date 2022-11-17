@@ -36,10 +36,12 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
+  
+  /* flex: 3;
+  width: 50pc;
+  flex-basis: 50pc; */
 
-  width: 55pc;
-
-  /* position: static;
+  position: static;
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 1;
@@ -74,9 +76,10 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
 
-  width: 30pc;
-
-  /* position: static;
+  /* flex: 1;
+  width: 35pc;
+  flex-basis: 35pc; */
+  position: static;
   grid-column-start: 3;
   grid-column-end: 4;
   grid-row-start: 1;
@@ -114,7 +117,8 @@
 
   position: static;
   /* width: 50pc;
-  height: 20pc; */
+  flex: 3; */
+  height: 20pc;
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 3;
@@ -187,11 +191,16 @@
   color: white;
   font-family: "IBM Plex Sans", sans-serif;
 
-  position: relative;
-  width: 123px;
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-size: 17px;
+  line-height: 22px;
+
+  position: absolute;
+  width: 33.3%;
   height: 45px;
   left: calc(50% - 123px / 2 - 139px);
-  top: calc(50% - 45px / 2 + 77.31px);
+  /*top: calc(50% - 45px / 2 + 77.31px);*/
 
   background: #131736;
   border-radius: 25px;
@@ -204,20 +213,52 @@
   align-items: center;
   padding: 7.96509px;
   gap: 7.97px;
-  font-family: "IBM Plex Sans", sans-serif;
+  font-family: "IBM Plex Sans";
 
-  width: 144px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 22px;
+
+  position: absolute;
+  width: 33.3%;
   height: 45px;
   left: calc(50% - 144px / 2 + 15.14px);
-  top: calc(50% - 45px / 2 + 77.31px);
-
+  /*top: calc(50% - 45px / 2 + 77.31px);*/
   border-radius: 30px;
+  background-color: white;
 }
 
-/* .buttonContainer {
+.cancelButton{
   position: absolute;
-  width: 401px;
-  height: 45px;
+  width: relative;
+  height: 16.03px;
+  left: calc(50% - 92.72px/2 + 159.44px);
+  /*top: calc(50% - 16.03px/2 + 79.1px);*/
+
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 22px;
+
+  color: #B90064;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.buttonContainer {
+  display:flex;
+  position: relative;
+  width: 10px;
+  margin: 10px;
+  height: 0px;
   left: 15.5px;
-  top: 192.81px;
+  border:#B90064;
+} 
+
+/* .break {
+  flex-basis: 100%;
+  height: 0;
 } */
