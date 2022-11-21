@@ -32,7 +32,8 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 # Import functions from database.py
 from database import (
     fetch_all_students,
-    fetch_all_admins
+    fetch_all_admins,
+    fetch_filtered_appointments
 )
 
 # Import functions from database.py
@@ -181,6 +182,16 @@ async def get_admins():
     response = fetch_all_admins()
     return response
 
+@app.put("/api/appointments")
+async def get_filtered_appointments(filter: list[tuple]):
+    '''
+    Purpose: Filters all available appointments based on the filters the student
+            wants
+
+    Input:  List of tuples which contains the category and the preference
+    '''
+    response = fetch_filtered_appointments(filter)
+    return response
 
 @app.put("/api/request_student")
 async def put_student_request(email: str):

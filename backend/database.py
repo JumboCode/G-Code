@@ -7,7 +7,8 @@ Purpose: Connects to the database and provides all functionality for accessing
 from model import StudentInvite
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite
+from model import Student, Admin, Appointment
+from datetime import datetime
 import os
 
 # load enviornment variables
@@ -19,6 +20,7 @@ client = MongoClient(uri, 8000)
 database = client.db
 students = database.students
 admins = database.admins
+appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
 si = database.student_invites
 
@@ -123,3 +125,17 @@ def remove_student_invite(ak):
     si.delete_one({"accesscode": ak})
     return True
 
+def fetch_filtered_appointments(filters):
+    filter_dict = {"reserved" : False}
+
+    for fil in filters:
+        filter_dict.update({fil[0]:fil[1]})
+    
+    appt_list = []
+    cursor = appointments.find(filter_dict)
+    print (cursor)
+    for document in cursor:
+        print(document)
+        appt_list.append(Appointment(**document))
+    return appt_list
+ 
