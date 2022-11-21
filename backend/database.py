@@ -62,3 +62,4 @@ def fetch_filtered_appointments(filters):
     for document in cursor:
         appt_list.append(Appointment(**document))
     return appt_list
+ 
