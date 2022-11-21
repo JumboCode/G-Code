@@ -73,7 +73,6 @@ class Class(BaseModel):
     name: str = Field(...)
 
 class Appointment(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     reserved: bool = Field(...)
     tutorName: str = Field(...)
     topics: List[str] = Field(...)

@@ -7,6 +7,7 @@ Purpose: Connects to the database and provides all functionality for accessing
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from model import Student, Admin, Appointment
+from datetime import datetime
 import os
 
 # load enviornment variables
@@ -59,7 +60,9 @@ def fetch_filtered_appointments(filters):
     
     appt_list = []
     cursor = appointments.find(filter_dict)
+    print (cursor)
     for document in cursor:
+        print(document)
         appt_list.append(Appointment(**document))
     return appt_list
  
