@@ -13,3 +13,6 @@ starlette==0.20.4
 typing_extensions==4.4.0
 uvicorn==0.18.3
 email-validator==1.3.0
+python-multipart
+pyjwt==2.6.0
+bcrypt==4.0.1

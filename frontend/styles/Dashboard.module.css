@@ -1,0 +1,264 @@
+.header1 {
+  position: static;
+  width: 490.85px;
+  height: 47.58px;
+  left: 110.63px;
+  top: 84.94px;
+  margin: 1rem;
+
+  /* H1 */
+
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 38.508px;
+  line-height: 50px;
+
+  color: #192c2e;
+}
+
+.grid {
+  display: flex;
+  justify-content: left;
+  flex-wrap: wrap;
+  max-width: 100pc;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 200px;
+}
+
+.assignmentCard {
+  font-family: "IBM Plex Sans", sans-serif;
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  
+  /* flex: 3;
+  width: 50pc;
+  flex-basis: 50pc; */
+
+  position: static;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 3; */
+
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 26px;
+}
+
+.assignment {
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  font-family: IBM Plex Sans;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 23px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.upcomingMeetingCard {
+  font-family: "IBM Plex Sans", sans-serif;
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  /* flex: 1;
+  width: 35pc;
+  flex-basis: 35pc; */
+  position: static;
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 1;
+  grid-row-end: 2; */
+}
+
+.eventsCard {
+  font-family: "IBM Plex Sans", sans-serif;
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  position: static;
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+.commonQuestionsCard {
+  font-family: "IBM Plex Sans", sans-serif;
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  position: static;
+  /* width: 50pc;
+  flex: 3; */
+  height: 20pc;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 3;
+  grid-row-end: 5;
+}
+
+.yourGoalsCard {
+  font-family: "IBM Plex Sans", sans-serif;
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  position: static;
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 3;
+  grid-row-end: 4;
+}
+
+.cardTitle {
+  margin-bottom: 5px;
+
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 26px;
+
+  color: #252525;
+}
+
+.dueDate {
+  font-family: IBM Plex Sans;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  color: #007f77;
+}
+
+.arrowIcon {
+  float: right;
+}
+
+.upperRightCornerText {
+  float: right;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 21px;
+
+  color: #007f77;
+}
+
+.joinButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 7.96509px;
+  gap: 7.97px;
+  color: white;
+  font-family: "IBM Plex Sans", sans-serif;
+
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-size: 17px;
+  line-height: 22px;
+
+  position: absolute;
+  width: 33.3%;
+  height: 45px;
+  left: calc(50% - 123px / 2 - 139px);
+  /*top: calc(50% - 45px / 2 + 77.31px);*/
+
+  background: #131736;
+  border-radius: 25px;
+}
+
+.rescheduleButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 7.96509px;
+  gap: 7.97px;
+  font-family: "IBM Plex Sans";
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 22px;
+
+  position: absolute;
+  width: 33.3%;
+  height: 45px;
+  left: calc(50% - 144px / 2 + 15.14px);
+  /*top: calc(50% - 45px / 2 + 77.31px);*/
+  border-radius: 30px;
+  background-color: white;
+}
+
+.cancelButton{
+  position: absolute;
+  width: relative;
+  height: 16.03px;
+  left: calc(50% - 92.72px/2 + 159.44px);
+  /*top: calc(50% - 16.03px/2 + 79.1px);*/
+
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 22px;
+
+  color: #B90064;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.buttonContainer {
+  display:flex;
+  position: relative;
+  width: 10px;
+  margin: 10px;
+  height: 0px;
+  left: 15.5px;
+  border:#B90064;
+} 
+
+/* .break {
+  flex-basis: 100%;
+  height: 0;
+} */
