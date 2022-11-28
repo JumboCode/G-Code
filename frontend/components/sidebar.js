@@ -4,7 +4,6 @@ import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
 import EventRoundedIcon from '@mui/icons-material/EventRounded';
 import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
-// import '../styles/globals.css';
 import "@fontsource/poppins";
 import { useRouter } from 'next/router';
 
@@ -25,7 +24,7 @@ function SideBarElement({ text, active, setActive }) {
                 text === "Dashboard" ? ''
                 : text.replace(/\s/g, ''));
         }}
-        onMouseEnter={() => setIsHover(true)}
+        onMouseOver={() => setIsHover(true)}
         onMouseOut={() => setIsHover(false)}
         style={{
             ...styles.SidebarElement,

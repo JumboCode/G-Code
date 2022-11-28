@@ -24,45 +24,46 @@ export default function Home() {
             <div className={dashboardStyles.dueDate}>
               Wed, October 7, 9:59 PM
             </div>
-            <div className={dashboardStyles.arrowIcon}> </div>
+            {/* <div className={dashboardStyles.arrowIcon}>  </div> */}
           </div>
           <div className={dashboardStyles.assignment}>
             Week 6 Module of Codecademy
             <div className={dashboardStyles.dueDate}>
               Wed, October 7, 9:59 PM
             </div>
-            <div className={dashboardStyles.arrowIcon}> </div>
+            {/* <div className={dashboardStyles.arrowIcon}>  </div> */}
           </div>
           <div className={dashboardStyles.assignment}>
             Week 6 Slides and Recording
-            <div className={dashboardStyles.arrowIcon}> </div>
+            {/* <div className={dashboardStyles.arrowIcon}>  </div> */}
+
           </div>
-          <div className={dashboardStyles.assignment}>
-            All About Github
-            <div className={dashboardStyles.arrowIcon}> </div>
+          <div className={dashboardStyles.assignment}>All About Github
+            {/* <div className={dashboardStyles.arrowIcon}>  </div> */}
+
           </div>
         </div>
         <div className={dashboardStyles.upcomingMeetingCard}>
           Upcoming Meeting
           <div className={dashboardStyles.upperRightCornerText}>+ Add More</div>
           <div className={dashboardStyles.buttonContainer}>
-            <button className={dashboardStyles.joinButton}> Join </button>{" "}
-            <button className={dashboardStyles.rescheduleButton}>
-              {" "}
-              Reschedule{" "}
-            </button>
+            {/* <button className={dashboardStyles.joinButton}> Join </button>{" "}
+            <button className={dashboardStyles.rescheduleButton}> Reschedule </button>
+            <button className={dashboardStyles.cancelButton}> Cancel </button>  */}
           </div>
         </div>
+        <div className={dashboardStyles.break}> </div>
         <div className={dashboardStyles.commonQuestionsCard}>
           Common Questions
         </div>
         <div className={dashboardStyles.eventsCard}>
-          Eventsx
+          Events
           <div className={dashboardStyles.upperRightCornerText}> SEE ALL</div>
         </div>
         <div className={dashboardStyles.yourGoalsCard}>
           Your Goals
           <div className={dashboardStyles.upperRightCornerText}> EDIT </div>
+          <div className={dashboardStyles.goal}>Finish the G Code Course </div>
         </div>
       </div>
     </div>

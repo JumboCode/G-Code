@@ -8,10 +8,9 @@ from model import StudentInvite
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite
+from model import Student, Admin, StudentInvite, Appointment
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId 
-import os
 
 # load enviornment variables
 load_dotenv()
@@ -22,6 +21,7 @@ client = MongoClient(uri, 8000)
 database = client.db
 students = database.students
 admins = database.admins
+appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
 appointments = database.appointments
 si = database.student_invites
@@ -67,13 +67,13 @@ def fetch_all_student_invites():
         student_invites.append(StudentInvite(**document))
     return student_invites
 
-async def fetch_one_invite(ak):
-    document = await si.find_one({"accesscode": ak})
+def fetch_one_invite(ak):
+    document = si.find_one({"accesscode": ak})
     return document
 
-async def create_student(Student):
+def create_student(Student):
     studToAdd = Student
-    result = await students.insert_one(studToAdd)
+    result = students.insert_one(studToAdd)
     return studToAdd
 
 def fetch_student_by_username(username):
@@ -114,11 +114,14 @@ def remove_session(username):
     sessions.delete_one({"username": username})
 
 
-async def create_student_invite(ak, em, d):
-    inviteToAdd = StudentInvite(email = em, accesscode = ak, date = d)
-    result = await si.insert_one(inviteToAdd)
+def create_student_invite(ak, em, d):
+    inviteToAdd = {
+        "accesscode": ak,
+        "requestdate": d,
+        "email": em
+    }
+    si.insert_one(inviteToAdd) 
     return inviteToAdd
-
 
 def create_appointment(appointment):
     result =  appointments.insert_one(appointment)
@@ -134,4 +137,20 @@ def cancel_appointment(appointmentID):
         appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": "", "reserved": False } })
     return appointmentID
 
+def remove_student_invite(ak):
+    si.delete_one({"accesscode": ak})
+    return True
 
+def fetch_filtered_appointments(filters):
+    filter_dict = {"reserved" : False}
+
+    for fil in filters:
+        filter_dict.update({fil[0]:fil[1]})
+    
+    appt_list = []
+    cursor = appointments.find(filter_dict)
+    print (cursor)
+    for document in cursor:
+        print(document)
+        appt_list.append(Appointment(**document))
+    return appt_list
