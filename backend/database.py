@@ -9,6 +9,8 @@ from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from model import Student, Admin, StudentInvite
+from datetime import datetime, timedelta
+from bson.objectid import ObjectId 
 import os
 
 # load enviornment variables
@@ -117,12 +119,19 @@ async def create_student_invite(ak, em, d):
     result = await si.insert_one(inviteToAdd)
     return inviteToAdd
 
-# async def create_appointment(mentor, topics, start, end, date, dow):
-#     appointmentToAdd = Appointment(tutorName = mentor, topics = topics, startTime = start,
-#                                     endTime = end, date = date, dayOfWeek = dow)
-#     return appointmentToAdd
 
-# async def create_appointment(Appointment):
-#     appointmentToAdd = Appointment
-#     await appointments.insert_one(appointmentToAdd)
-#     return appointmentToAdd
+def create_appointment(appointment):
+    result =  appointments.insert_one(appointment)
+    return appointment
+
+def reserve_appointment(appointmentID, studentID):
+    appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": studentID, "reserved": True } })
+    return appointmentID
+
+def cancel_appointment(appointmentID):
+    appointmentDoc = appointments.find_one({"_id": ObjectId(appointmentID)})
+    if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
+        appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": "", "reserved": False } })
+    return appointmentID
+
+

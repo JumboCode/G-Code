@@ -203,15 +203,17 @@ async def put_student_join(access_token: str, student_data: Student):
     raise HTTPException(404, f"there are no students with this key")
 
 
-@app.put("/api/appointments")
+@app.put("/api/put_appointment/")
 async def put_appointment(appointment_data: Appointment):
-    '''
-    Purpose: Generates an access code for a student and stores the code as well
-             as the student's information and the datetime they were added
-             in the student requests document of the database.
 
-    Input:   For now just the students email address. We will also require
-             an authentication token of some sort once that is set up.
-    '''
+    create_appointment(appointment_data.dict())
 
-    create_appointment(appointment_data)
+@app.put("/api/assign_student_to_appoint/")
+async def assign_student_to_appointment(appointmentID: str , studentID : str):
+
+    reserve_appointment(appointmentID, studentID)
+
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str):
+
+    cancel_appointment(appointmentID)

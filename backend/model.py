@@ -30,6 +30,7 @@ class Admin(BaseModel):
     linkedin: str = Field(...)
     tutortopics: List[str] = Field(...)
     availability: List[TimeSlot] = Field(...)
+    maxSlots : int = Field(...)
 
     class Config:
         allow_population_by_field_name = True
@@ -73,7 +74,6 @@ class Class(BaseModel):
     name: str = Field(...)
 
 class Appointment(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     reserved: bool = Field(...)
     tutorName: str = Field(...)
     topics: List[str] = Field(...)
@@ -82,4 +82,5 @@ class Appointment(BaseModel):
     date: datetime = Field(...)
     dayOfWeek: str = Field(...)
     studentName: str = Field(...)
+    tutorId: str = Field(...)
     
