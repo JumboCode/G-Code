@@ -9,7 +9,7 @@ class Day_Selection extends Component {
     readonly today = new Date()
    
     /* Returns array containing string representation of next 7 days */
-    get_days():string[] {
+    get_days():Date[] {
         let days:Date[] = new Array()  
         let curr_day = new Date()
         curr_day.setDate(this.today.getDate())
