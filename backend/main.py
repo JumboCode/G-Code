@@ -6,6 +6,7 @@ Authors: G-Code Jumbocode Team
 
 import random
 import string
+from datetime import datetime
 
 from http.client import HTTPException
 from fastapi import FastAPI
@@ -20,6 +21,7 @@ from dotenv import load_dotenv
 import jwt
 import bcrypt
 from database import *
+from datetime import datetime
 
 # Create app
 app = FastAPI()
@@ -31,7 +33,18 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 # Import functions from database.py
 from database import (
     fetch_all_students,
-    fetch_all_admins
+    fetch_all_admins,
+    fetch_filtered_appointments
+)
+
+# Import functions from database.py
+from database import (
+    fetch_all_students,
+    fetch_all_admins,
+    fetch_one_invite,
+    create_student_invite,
+    create_student,
+    remove_student_invite
 )
 
 # Allow access from frontend
@@ -170,6 +183,16 @@ async def get_admins():
     response = fetch_all_admins()
     return response
 
+@app.put("/api/appointments")
+async def get_filtered_appointments(filter: list[tuple]):
+    '''
+    Purpose: Filters all available appointments based on the filters the student
+            wants
+
+    Input:  List of tuples which contains the category and the preference
+    '''
+    response = fetch_filtered_appointments(filter)
+    return response
 
 @app.put("/api/request_student")
 async def put_student_request(email: str):
@@ -182,8 +205,7 @@ async def put_student_request(email: str):
              an authentication token of some sort once that is set up.
     '''
     accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
-    #need to include current date
-    date = ""
+    date = datetime.now()
     create_student_invite(accessKey, email, date)
     
 
@@ -197,11 +219,15 @@ async def put_student_join(access_token: str, student_data: Student):
     Input:   An access token, which is a string. Also the student's data,
              as specified by the model.
     '''
-    studentFromKey = await fetch_one_invite(access_token)
+    studentFromKey = fetch_one_invite(access_token)
     if studentFromKey:
         await create_student(student_data)
     raise HTTPException(404, f"there are no students with this key")
-
+        s = create_student(student_data.dict())
+        remove_student_invite(access_token)
+        return s
+    else:
+        return HTTPException("Student was not created")
 
 @app.put("/api/put_appointment/")
 async def put_appointment(appointment_data: Appointment):
