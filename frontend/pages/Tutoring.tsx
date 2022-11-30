@@ -4,11 +4,12 @@ import styles from '../styles/Home.module.css'
 import Heading from '../components/heading'
 import Help from '../components/help'
 import Filter from '../components/filter'
+import Booking from '../components/booking'
 
 export default function Scheduling() {
     return (
         <div className={styles.container}>
-            <Sidebar currentPageTitle="Tutoring" />
+            <Sidebar currentPageTitle="Tutoring"/>
             <Heading />
             <Filter />
             <Help />

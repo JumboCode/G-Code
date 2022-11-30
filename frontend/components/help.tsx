@@ -1,10 +1,11 @@
 import React from 'react'
-import Image from 'next/image'
 // import { Link } from 'react-router';
+import Header from '../components/header'
 import "@fontsource/poppins";
 
 export default function Help() {
     return <div>
+        <Header />
         <picture>
             <img src="./holding-pencil.svg" alt="" />
         </picture>

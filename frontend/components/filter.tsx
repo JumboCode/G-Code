@@ -1,5 +1,6 @@
 import React, { Component, useState } from 'react'
 import "@fontsource/poppins";
+// import Grid from '@material-ui/core/Grid'
 
 class Day_Selection extends Component {
     
@@ -53,7 +54,9 @@ function Mentor({ mentor_name }) {
     // TODO: get all the timeslots for this mentor that also match the other filters
 
     return <div>
-        {/* <img src="" alt="Profile Picture" /> */}
+        <picture>
+            <img src="./NyraRobinson.png" alt="Mentor Picture" />
+        </picture>
         <h4 style={{
             fontFamily: 'Poppins',
             fontSize: '2.8',
@@ -79,18 +82,17 @@ function SessionView({ day, date }) {
     
     return (
         <div style={styles.SessionViewBox}>
-        <div style={{
-            backgroundColor: '#F6F6F6',
-            fontFamily: 'Poppins',
-        }}>
-            <h3>Available Sessions on {day}, {date}</h3>
-            <h3>Duration - 30 Minutes</h3>
+            <div style={{
+                backgroundColor: '#F6F6F6',
+                fontFamily: 'Poppins',
+            }}>
+                <h3>Available Sessions on {day}, {date}</h3>
+            </div>
+            <Mentor 
+                mentor_name={"Nyra Robinson"}
+            />
+            <button style={styles.BookButton}>Book a Session for {date}</button>
         </div>
-        <Mentor 
-            mentor_name={"Nyra Robinson"}
-        />
-        <button style={styles.BookButton}>Book a Session for {date}</button>
-    </div>
     )
 }
 
@@ -140,6 +142,7 @@ let styles = ({
         borderRadius: '30px',
         fontFamily: 'Poppins',
         fontSize: '2vh',
+        cursor: 'pointer',
     },
     TimeSlotButton: {
         fontFamily: 'Poppins',
@@ -149,6 +152,7 @@ let styles = ({
         border: '0.6px solid #C0C0C0',
         backgroundColor: 'white',
         padding: '2vh 1.8vw',
+        cursor: 'pointer',
     },
     BookButton: {
         fontFamily: 'Poppins',
@@ -159,10 +163,12 @@ let styles = ({
         width: '80%',
         color: 'white',
         padding: '2vh',
+        cursor: 'pointer',
     },
     SessionViewBox: {
         border: '0.7px solid #C0C0C0',
         borderRadius: '10px',
+        // width: '50vw',
+        // height: '60vh',
     },
-    
 })
