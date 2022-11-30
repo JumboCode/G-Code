@@ -10,12 +10,8 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from model import Student, Admin, StudentInvite, Appointment
 from datetime import datetime, timedelta
-<<<<<<< HEAD
 from bson.objectid import ObjectId
 import os
-=======
-from bson.objectid import ObjectId 
->>>>>>> 01bb62d95454643c2e8d6ba763caf25ab857de80
 
 # load enviornment variables
 load_dotenv()
