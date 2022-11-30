@@ -205,15 +205,32 @@ async def put_student_join(access_token: str, student_data: Student):
 
 @app.put("/api/put_appointment/")
 async def put_appointment(appointment_data: Appointment):
+    '''
+    Purpose: add an appointment linked to the current admin to the data base 
 
-    create_appointment(appointment_data.dict())
+    Input: An appointment object 
+    '''
+    response = create_appointment(appointment_data.dict())
+    return response 
 
 @app.put("/api/assign_student_to_appoint/")
 async def assign_student_to_appointment(appointmentID: str , studentID : str):
-
-    reserve_appointment(appointmentID, studentID)
+    '''
+    Purpose: updates an appointment by linking it to the student reserving the appointment, 
+             and marks as reserved 
+    
+    Input: The appointment ID, and the ID of the student registering 
+    '''
+    response = reserve_appointment(appointmentID, studentID)   
+    return response 
 
 @app.put("/api/remove_student_from_appoint/")
 async def remove_student_from_appointment(appointmentID: str):
+    '''
+    Purpose: If there are more than 24 before the appointment, update the apppointment 
+            by removing the student cancel and unmark as reserved
 
-    cancel_appointment(appointmentID)
+    Input: the appointment ID to mark as unreserved 
+    '''
+    response = cancel_appointment(appointmentID)
+    return response 

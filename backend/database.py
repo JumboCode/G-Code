@@ -8,9 +8,9 @@ from model import StudentInvite
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite
+from model import Student, Admin, StudentInvite, Appointment
 from datetime import datetime, timedelta
-from bson.objectid import ObjectId 
+from bson.objectid import ObjectId
 import os
 
 # load enviornment variables
@@ -121,14 +121,24 @@ async def create_student_invite(ak, em, d):
 
 
 def create_appointment(appointment):
+    '''
+    Purpose: Creates an appointment and associates with the admin creating it 
+    '''
     result =  appointments.insert_one(appointment)
     return appointment
 
 def reserve_appointment(appointmentID, studentID):
+    '''
+    Purpose: Links an appointment to a student when that students reserves the appointment, 
+             and marks as reserved 
+    '''
     appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": studentID, "reserved": True } })
     return appointmentID
 
 def cancel_appointment(appointmentID):
+    '''
+    Purpose: If there are more than 24 before the appointment, cancel and unmark as reserved
+    '''
     appointmentDoc = appointments.find_one({"_id": ObjectId(appointmentID)})
     if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
         appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": "", "reserved": False } })
