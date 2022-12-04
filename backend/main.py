@@ -221,8 +221,8 @@ async def put_student_join(access_token: str, student_data: Student):
     '''
     studentFromKey = fetch_one_invite(access_token)
     if studentFromKey:
-        await create_student(student_data)
-    raise HTTPException(404, f"there are no students with this key")
+        # await create_student(student_data)
+        # raise HTTPException(404, f"there are no students with this key")
         s = create_student(student_data.dict())
         remove_student_invite(access_token)
         return s
