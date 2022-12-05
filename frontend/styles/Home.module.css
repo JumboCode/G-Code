@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&family=Red+Hat+Display:wght@700&display=swap');
+
 .container {
   /* padding: 0 2rem; */
   padding: 0;
-  display:inline-flex
+  display: inline-flex
 }
 
 .main {
