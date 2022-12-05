@@ -7,62 +7,56 @@ import React from "react";
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import Footer from "../components/footer";
+import TutoringCard from "../components/tutoringCard";
 
 export default function Home() {
   return (
     <div className={styles.container}>
-      <Sidebar currentPageTitle={"HOME"}/>
-      <div className={dashboardStyles.header1}>
-        <p> Welcome, Ariya </p>
-      </div>
+      <Sidebar currentPageTitle={"HOME"} />
       <div className={dashboardStyles.grid}>
-        <div className={dashboardStyles.assignmentCard}>
-          <div className={dashboardStyles.cardTitle}> Assignments</div>
-          <div className={dashboardStyles.upperRightCornerText}> SEE ALL</div>
-          <div className={dashboardStyles.assignment}>
-            Paired Programming Project Pt. 2
-            <div className={dashboardStyles.dueDate}>
-              Wed, October 7, 9:59 PM
+        <div className={dashboardStyles.header1}>
+          <p> Welcome, Ariya </p>
+        </div>
+        <div className={dashboardStyles.leftColumn}>
+          <div className={dashboardStyles.header2}>Coming Up Soon</div>
+          <div className={dashboardStyles.leftCard}>
+            <div className={dashboardStyles.cardTitle}>
+              Tutoring Session
+              <TutoringCard sessions={2} />
             </div>
-            <div className={dashboardStyles.arrowIcon}> </div>
           </div>
-          <div className={dashboardStyles.assignment}>
-            Week 6 Module of Codecademy
-            <div className={dashboardStyles.dueDate}>
-              Wed, October 7, 9:59 PM
-            </div>
-            <div className={dashboardStyles.arrowIcon}> </div>
+          <div className={dashboardStyles.leftCard}>
+            <div className={dashboardStyles.cardTitle}>Assignments</div>
           </div>
-          <div className={dashboardStyles.assignment}>
-            Week 6 Slides and Recording
-            <div className={dashboardStyles.arrowIcon}> </div>
+          <div className={dashboardStyles.leftCard}>
+            <div className={dashboardStyles.cardTitle}>Work Together</div>
           </div>
-          <div className={dashboardStyles.assignment}>
-            All About Github
-            <div className={dashboardStyles.arrowIcon}> </div>
+          <div className={dashboardStyles.leftCard}>
+            <div className={dashboardStyles.cardTitle}>Events</div>
           </div>
         </div>
-        <div className={dashboardStyles.upcomingMeetingCard}>
-          Upcoming Meeting
-          <div className={dashboardStyles.upperRightCornerText}>+ Add More</div>
-          <div className={dashboardStyles.buttonContainer}>
-            <button className={dashboardStyles.joinButton}> Join </button>{" "}
-            <button className={dashboardStyles.rescheduleButton}>
-              {" "}
-              Reschedule{" "}
-            </button>
+
+        <div className={dashboardStyles.rightColumn}>
+          <div className={dashboardStyles.header2}> Ask Somebody </div>
+
+          <div className={dashboardStyles.question}>Programming Help</div>
+          <div className={dashboardStyles.question}>Career Development</div>
+
+          <div className={dashboardStyles.header2}>Anonymous FAQs</div>
+          <div className={dashboardStyles.rightCard}>
+            Trending Questions Board
+            <div className={dashboardStyles.arrowIcon}>{">"}</div>
           </div>
-        </div>
-        <div className={dashboardStyles.commonQuestionsCard}>
-          Common Questions
-        </div>
-        <div className={dashboardStyles.eventsCard}>
-          Eventsx
-          <div className={dashboardStyles.upperRightCornerText}> SEE ALL</div>
-        </div>
-        <div className={dashboardStyles.yourGoalsCard}>
-          Your Goals
-          <div className={dashboardStyles.upperRightCornerText}> EDIT </div>
+
+          <div className={dashboardStyles.header2}>Community Resources</div>
+          <div className={dashboardStyles.rightCard}>
+            Commonly Asked Questions
+            <div className={dashboardStyles.arrowIcon}>{">"}</div>
+          </div>
+          <div className={dashboardStyles.rightCard}>
+            Helpful Links for HW
+            <div className={dashboardStyles.arrowIcon}>{">"}</div>
+          </div>
         </div>
       </div>
     </div>

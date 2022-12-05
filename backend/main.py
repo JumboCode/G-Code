@@ -6,6 +6,7 @@ Authors: G-Code Jumbocode Team
 
 import random
 import string
+from datetime import datetime
 
 from http.client import HTTPException
 from fastapi import FastAPI
@@ -14,6 +15,7 @@ from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from model import Student
+from model import Appointment
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import jwt
@@ -31,7 +33,18 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 # Import functions from database.py
 from database import (
     fetch_all_students,
-    fetch_all_admins
+    fetch_all_admins,
+    fetch_filtered_appointments
+)
+
+# Import functions from database.py
+from database import (
+    fetch_all_students,
+    fetch_all_admins,
+    fetch_one_invite,
+    create_student_invite,
+    create_student,
+    remove_student_invite
 )
 
 # Allow access from frontend
@@ -170,6 +183,16 @@ async def get_admins():
     response = fetch_all_admins()
     return response
 
+@app.put("/api/appointments")
+async def get_filtered_appointments(filter: list[tuple]):
+    '''
+    Purpose: Filters all available appointments based on the filters the student
+            wants
+
+    Input:  List of tuples which contains the category and the preference
+    '''
+    response = fetch_filtered_appointments(filter)
+    return response
 
 @app.put("/api/request_student")
 async def put_student_request(email: str):
@@ -196,7 +219,44 @@ async def put_student_join(access_token: str, student_data: Student):
     Input:   An access token, which is a string. Also the student's data,
              as specified by the model.
     '''
-    studentFromKey = await fetch_one_invite(access_token)
+    studentFromKey = fetch_one_invite(access_token)
     if studentFromKey:
-        await create_student(student_data)
-    raise HTTPException(404, f"there are no students with this key")
+        # await create_student(student_data)
+        # raise HTTPException(404, f"there are no students with this key")
+        s = create_student(student_data.dict())
+        remove_student_invite(access_token)
+        return s
+    else:
+        return HTTPException("Student was not created")
+
+@app.put("/api/put_appointment/")
+async def put_appointment(appointment_data: Appointment):
+    '''
+    Purpose: add an appointment linked to the current admin to the data base 
+
+    Input: An appointment object 
+    '''
+    response = create_appointment(appointment_data.dict())
+    return response 
+
+@app.put("/api/assign_student_to_appoint/")
+async def assign_student_to_appointment(appointmentID: str , studentID : str):
+    '''
+    Purpose: updates an appointment by linking it to the student reserving the appointment, 
+             and marks as reserved 
+    
+    Input: The appointment ID, and the ID of the student registering 
+    '''
+    response = reserve_appointment(appointmentID, studentID)   
+    return response 
+
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str):
+    '''
+    Purpose: If there are more than 24 before the appointment, update the apppointment 
+            by removing the student cancel and unmark as reserved
+
+    Input: the appointment ID to mark as unreserved 
+    '''
+    response = cancel_appointment(appointmentID)
+    return response 
