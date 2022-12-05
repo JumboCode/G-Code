@@ -8,30 +8,49 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
+import Heading from '../components/heading'
+import Help from '../components/help'
+import Filter from '../components/filter'
+import Booking from '../components/booking'
 
 const button_style = { color: '#3D495C' };
 
-export default function Resources() {
-  return (
-    <div className={styles.container}>
-      <Sidebar currentPageTitle="Tutoring" />
-      <div style={tutoring_styles.ScheduleContainer}>
-        <PageHeading />
-        <AvailableSessionsSection />
-        <h2 style={{ ...tutoring_styles.SubHeading, marginLeft: '3vw' }}>
-          Available Times for Signup
-        </h2>
-        <div style={tutoring_styles.WeekContainer}>
-          <DayRow dayName="Sunday" />
-          <DayRow dayName="Monday" />
-          <DayRow dayName="Tuesday" />
-          <DayRow dayName="Wednesday" />
-          <DayRow dayName="Thursday" />
-          <DayRow dayName="Friday" />
-          <DayRow dayName="Saturday" />
-        </div>
-      </div>
-    </div>
+export default function Scheduling() {
+    const is_student = true
+    return (
+        <>
+            {
+                is_student &&
+                <div className={styles.container}>
+                    <Sidebar currentPageTitle="Tutoring"/>
+                    <Heading />
+                    <Filter />
+                    <Help />
+                </div>
+            }
+            {
+                !is_student &&
+                    <div className={styles.container}>
+                       <Sidebar currentPageTitle="Tutoring" />
+                       <div style={tutoring_styles.ScheduleContainer}>
+                         <PageHeading />
+                         <AvailableSessionsSection />
+                         <h2 style={{ ...tutoring_styles.SubHeading, marginLeft: '3vw' }}>
+                           Available Times for Signup
+                         </h2>
+                         <div style={tutoring_styles.WeekContainer}>
+                           <DayRow dayName="Sunday" />
+                           <DayRow dayName="Monday" />
+                           <DayRow dayName="Tuesday" />
+                           <DayRow dayName="Wednesday" />
+                           <DayRow dayName="Thursday" />
+                           <DayRow dayName="Friday" />
+                           <DayRow dayName="Saturday" />
+                            }
+                            </div>
+                            </div>
+                            </div>
+        </>
   )
 }
 
