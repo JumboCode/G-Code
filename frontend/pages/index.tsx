@@ -7,7 +7,7 @@ import React from "react";
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 import Footer from "../components/footer";
-import TutoringCard from "../components/tutoringCard";
+import TutoringCardDisplay from "../components/tutoringCard";
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ export default function Home() {
           <div className={dashboardStyles.leftCard}>
             <div className={dashboardStyles.cardTitle}>
               Tutoring Session
-              <TutoringCard sessions={2} />
+              <TutoringCardDisplay sessions={2} />
             </div>
           </div>
           <div className={dashboardStyles.leftCard}>

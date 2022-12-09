@@ -15,6 +15,7 @@ from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from model import Student
+from model import Appointment
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import jwt
@@ -220,8 +221,42 @@ async def put_student_join(access_token: str, student_data: Student):
     '''
     studentFromKey = fetch_one_invite(access_token)
     if studentFromKey:
+        # await create_student(student_data)
+        # raise HTTPException(404, f"there are no students with this key")
         s = create_student(student_data.dict())
         remove_student_invite(access_token)
         return s
     else:
         return HTTPException("Student was not created")
+
+@app.put("/api/put_appointment/")
+async def put_appointment(appointment_data: Appointment):
+    '''
+    Purpose: add an appointment linked to the current admin to the data base 
+
+    Input: An appointment object 
+    '''
+    response = create_appointment(appointment_data.dict())
+    return response 
+
+@app.put("/api/assign_student_to_appoint/")
+async def assign_student_to_appointment(appointmentID: str , studentID : str):
+    '''
+    Purpose: updates an appointment by linking it to the student reserving the appointment, 
+             and marks as reserved 
+    
+    Input: The appointment ID, and the ID of the student registering 
+    '''
+    response = reserve_appointment(appointmentID, studentID)   
+    return response 
+
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str):
+    '''
+    Purpose: If there are more than 24 before the appointment, update the apppointment 
+            by removing the student cancel and unmark as reserved
+
+    Input: the appointment ID to mark as unreserved 
+    '''
+    response = cancel_appointment(appointmentID)
+    return response 
