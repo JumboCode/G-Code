@@ -16,81 +16,86 @@ import Booking from '../components/booking'
 const button_style = { color: '#3D495C' };
 
 export default function Scheduling() {
-    const is_student = true
-    return (
-        <>
-            {
-                is_student &&
-                <div className={styles.container}>
-                    <Sidebar currentPageTitle="Tutoring"/>
-                    <Heading />
-                    <Filter />
-                    <Help />
-                </div>
-            }
-            {
-                !is_student &&
-                    <div className={styles.container}>
-                       <Sidebar currentPageTitle="Tutoring" />
-                       <div style={tutoring_styles.ScheduleContainer}>
-                         <PageHeading />
-                         <AvailableSessionsSection />
-                         <h2 style={{ ...tutoring_styles.SubHeading, marginLeft: '3vw' }}>
-                           Available Times for Signup
-                         </h2>
-                         <div style={tutoring_styles.WeekContainer}>
-                           <DayRow dayName="Sunday" />
-                           <DayRow dayName="Monday" />
-                           <DayRow dayName="Tuesday" />
-                           <DayRow dayName="Wednesday" />
-                           <DayRow dayName="Thursday" />
-                           <DayRow dayName="Friday" />
-                           <DayRow dayName="Saturday" />
-                            }
-                            </div>
-                            </div>
-                            </div>
-        </>
+  const is_student = false;
+  return (
+    <>
+      {
+        is_student &&
+        <div className={styles.container}>
+          <Sidebar currentPageTitle="Tutoring" />
+          <Heading />
+          <Filter />
+          <Help />
+        </div>
+      }
+      {
+        !is_student &&
+        <div className={styles.container}>
+          <Sidebar currentPageTitle="Tutoring" />
+          <div style={tutoring_styles.ScheduleContainer}>
+            <PageHeading />
+            <AvailableSessionsSection />
+            <h2 style={{ ...tutoring_styles.SubHeading, marginLeft: '3vw' }}>
+              Available Times for Signup
+            </h2>
+            <div style={tutoring_styles.WeekContainer}>
+              <DayRow dayName="Sunday" />
+              <DayRow dayName="Monday" />
+              <DayRow dayName="Tuesday" />
+              <DayRow dayName="Wednesday" />
+              <DayRow dayName="Thursday" />
+              <DayRow dayName="Friday" />
+              <DayRow dayName="Saturday" />
+
+            </div>
+          </div>
+        </div>
+      }
+    </>
   )
 }
 
 function PageHeading() {
-  return <div style={tutoring_styles.PageHeadingContainer}>
-    <h1>Office Hours Schedule</h1>
-    <h3 style={tutoring_styles.TimeZone}> Time Zone </h3>
-    <DropDownMenu
-      width={'auto'}
-      options={[
-        'Eastern Time',
-        'Pacific Time',
-      ]} />
-    <div style={tutoring_styles.CheckBox}>
-      <Checkbox disableRipple />
-      <p>Make this the default schedule</p>
+  return (
+    <div style={tutoring_styles.PageHeadingContainer}>
+      <h1>Office Hours Schedule</h1>
+      <h3 style={tutoring_styles.TimeZone}> Time Zone </h3>
+      <DropDownMenu
+        width={'auto'}
+        options={[
+          'Eastern Time',
+          'Pacific Time',
+        ]} />
+      <div style={tutoring_styles.CheckBox}>
+        <Checkbox disableRipple />
+        <p>Make this the default schedule</p>
+      </div>
     </div>
-  </div>
+  )
 }
 
 function AvailableSessionsSection() {
-  return <div style={tutoring_styles.AvailableSessionsContainer}>
-    <h2 style={tutoring_styles.SubHeading}>
-      Available Sessions
-    </h2>
-    <DropDownMenu
-      width="110px"
-      options={[
-        '1 slot',
-        '2 slots',
-        '3 slots',
-        '4 slots',
-        '5 slots',
-        '6 slots',
-        '7 slots',
-        '8 slots',
-        '9 slots',
-        '10 slots',
-      ]} />
-  </div>
+  return (
+    <div style={tutoring_styles.AvailableSessionsContainer}>
+      <h2 style={tutoring_styles.SubHeading}>
+        Available Sessions
+      </h2>
+      <DropDownMenu
+        width="110px"
+        options={[
+          '1 slot',
+          '2 slots',
+          '3 slots',
+          '4 slots',
+          '5 slots',
+          '6 slots',
+          '7 slots',
+          '8 slots',
+          '9 slots',
+          '10 slots',
+        ]} />
+    </div>
+  )
 }
 
 // function MeetingDuration() {
@@ -148,8 +153,7 @@ function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
   </div>
 }
 
-
-let tutoring_styles = ({
+const tutoring_styles = ({
   PageHeadingContainer:
   {
     marginLeft: '3vw',

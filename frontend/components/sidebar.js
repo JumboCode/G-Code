@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 
 function GCodeHeading() {
     return <div style={styles.GCodeHeading}>
-        <img style={styles.GCodeHeadingImage} src='/GCodeLogo.png' />
+        <img style={styles.GCodeHeadingImage} src='/GCodeLogo.svg' />
         <h1 style={styles.GCodeHeadingText}>{"Intro to G{Code}"}</h1>
     </div>;
 }
@@ -28,20 +28,21 @@ function SideBarElement({ text, active, setActive }) {
         onMouseOut={() => setIsHover(false)}
         style={{
             ...styles.SidebarElement,
-            backgroundColor: active ? 'rgba(226, 255, 248, 0.84)'
-                : isHover ? 'rgba(226, 255, 248, 0.84)'
+            backgroundColor: (active || isHover) ? '#F3F4F6'
                     : 'white',
+            color: (active || isHover) ? '#6A5DF9'
+                    : '#949494',
         }}>
         {text === "Dashboard" && <GridViewRoundedIcon />}
         {text === "Tutoring" && <EventRoundedIcon />}
         {text === "Course Calendar" && <BookmarksOutlinedIcon />}
         {text === "Resources" && <LocalFireDepartmentOutlinedIcon />}
-        <TextLabel text={text} />
+        <TextLabel text={text} active={active} />
     </div >;
 }
 
 function TextLabel({ text, active }) {
-    return <h2 style={styles.SideBarText}>
+    return <h2 style={active ? styles.SideBarTextActive : styles.SideBarText}>
         {text}
     </h2>;
 }
@@ -123,7 +124,11 @@ let styles = ({
     SideBarText:
     {
         fontSize: '14px',
-        color: 'black'
+    },
+    SideBarTextActive:
+    {
+        fontSize: '14px',
+        fontWeight: "900",
     },
     GCodeHeadingText:
     {
