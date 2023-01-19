@@ -139,7 +139,7 @@ def fetch_filtered_appointments(filters):
         appt_list.append(Appointment(**document))
     return appt_list
 
-def get_assignments_by_assignemnt_id(assignmentid):
+def get_assignments_by_assignment_id(assignmentid):
     cursor = assignments.find({"assignmentid": assignmentid})
     assignment_list = []
     for document in cursor:
