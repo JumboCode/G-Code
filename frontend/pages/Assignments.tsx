@@ -92,7 +92,7 @@ let AssignmentStyle = ({
   },
   QuestionActionBox: {
     backgroundColor: '#715CFA',
-    height: '12vh',
+    //height: '12vh',
     width: '12vw',
     borderRadius: '27.17',
   },
