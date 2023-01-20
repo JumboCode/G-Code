@@ -22,7 +22,7 @@ export default function Home() {
           <div className={dashboardStyles.leftCard}>
             <div className={dashboardStyles.cardTitle}>
               Tutoring Session
-              <TutoringCardDisplay sessions={2} />
+              <TutoringCardDisplay sessions={0} />
             </div>
           </div>
           <div className={dashboardStyles.leftCard}>
