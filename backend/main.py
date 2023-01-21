@@ -22,6 +22,8 @@ import jwt
 import bcrypt
 from database import *
 from datetime import datetime
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 # Create app
 app = FastAPI()
@@ -260,3 +262,22 @@ async def remove_student_from_appointment(appointmentID: str):
     '''
     response = cancel_appointment(appointmentID)
     return response 
+
+
+def sent_invite_email(to_contact: Student):
+    student_id = fetch_student_by_username(to_contact.username)['_id']
+    message = Mail(
+        from_email = 'jumbo.g.code@gmail.com',
+        to_emails = to_contact.email,
+        subject = 'G-Code Invitation',
+        # TODO: Switch URL in html_content from localhost to actual url
+        html_content = '<div> <p>You\'ve been invited to join G-Code\'s course' 
+                        'page! Please click the following link: </p>'
+                        '<a href=\'http://localhost:3000/' + str(student_id) + 
+                        '\'> Sign-Up </a> </div>'
+   )
+    try:
+        sg = SendGridAPIClient(os.environ["SENDGRID_API_KEY"])
+        response = sg.send(message)
+    except Exception as e:
+        print(e.message)
