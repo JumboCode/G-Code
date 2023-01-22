@@ -6,13 +6,8 @@ import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
 import "@fontsource/poppins";
 import { useRouter } from 'next/router';
+import { Toolbar } from '@mui/material'
 
-function GCodeHeading() {
-    return <div style={styles.GCodeHeading}>
-        <img style={styles.GCodeHeadingImage} src='/GCodeLogo.svg' />
-        <h1 style={styles.GCodeHeadingText}>{"Intro to G{Code}"}</h1>
-    </div>;
-}
 
 function SideBarElement({ text, active, setActive }) {
     const [isHover, setIsHover] = useState(false);
@@ -47,19 +42,11 @@ function TextLabel({ text, active }) {
     </h2>;
 }
 
-// function NotificationNumber({ number }) {
-//     return <div style={{
-//         backgroundColor: 'blue',
-//         borderRadius: '50%',
-//         width: '10%',
-//     }} />;
-// }
-
 export default function Sidebar({ currentPageTitle }) {
     const [activePage, setActivePage] = useState(currentPageTitle);
     return (
         <div style={styles.Sidebar}>
-            <GCodeHeading />
+            <Toolbar />
             <SideBarElement
                 text="Dashboard"
                 active={activePage === "Dashboard"}
@@ -90,11 +77,8 @@ let styles = ({
         background: 'white',
         display: 'flex',
         flexDirection: 'column',
-        width: 'fit-content',
-        height: '100vh',
         gap: '3vh',
         alignItems: 'center',
-        borderRight: '1px solid #DFDFDF',
         fontFamily: "Poppins",
         fontColor: "black"
     },
@@ -110,17 +94,6 @@ let styles = ({
         paddingLeft: '5%',
         cursor: 'pointer',
     },
-    LogoSidebar:
-    {
-        height: '8%',
-        width: '100%',
-        // background: 'teal',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignContent: 'center',
-        gap: '5%'
-    },
     SideBarText:
     {
         fontSize: '14px',
@@ -129,19 +102,5 @@ let styles = ({
     {
         fontSize: '14px',
         fontWeight: "900",
-    },
-    GCodeHeadingText:
-    {
-        fontFamily: "Poppins",
-        fontSize: '16px'
-    },
-    GCodeHeading:
-    {
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignContent: 'center',
-        gap: '5%'
     },
 })

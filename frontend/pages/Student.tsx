@@ -13,20 +13,24 @@ import Help from '../components/help'
 import Filter from '../components/filter'
 import Booking from '../components/booking'
 
+import { Box, CssBaseline } from "@mui/material";
+import HeaderNav from '../components/headernav.tsx';
+
 const button_style = { color: '#3D495C' };
+const is_student = true
 
 export default function Scheduling() {
-  const is_student = false;
   return (
     <>
+
+
       {
         is_student &&
-        <div className={styles.container}>
-          <Sidebar currentPageTitle="Tutoring" />
-          <Heading />
+        <div>
           <Filter />
           <Help />
         </div>
+
       }
       {
         !is_student &&
