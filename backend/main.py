@@ -260,3 +260,17 @@ async def remove_student_from_appointment(appointmentID: str):
     '''
     response = cancel_appointment(appointmentID)
     return response 
+
+@app.post("/api/create_user/")
+async def remove_student_from_appointment(new_users: dict):
+    print("In create_user method")
+
+    print(str(new_users))
+
+    for user in new_users:
+        # put in admin/student table
+        # create invitation
+        # create temporary code
+        pass
+
+    return
