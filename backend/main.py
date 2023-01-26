@@ -28,7 +28,7 @@ app = FastAPI()
 load_dotenv()
 
 # Used for encrypting session tokens
-session_secret = os.environ["SECRET_SESSION_KEY"]
+session_secret = "SECRET_SESSION_KEY"
 
 # Import functions from database.py
 from database import (
@@ -44,7 +44,10 @@ from database import (
     fetch_one_invite,
     create_student_invite,
     create_student,
-    remove_student_invite
+    remove_student_invite,
+    fetch_admin_by_username,
+    fetch_student_by_username,
+    fetch_session_by_username
 )
 
 # Allow access from frontend
@@ -260,3 +263,16 @@ async def remove_student_from_appointment(appointmentID: str):
     '''
     response = cancel_appointment(appointmentID)
     return response 
+
+@app.get("/api/student")
+async def find_student():
+    '''
+    decoded_token = jwt.decode(request.cookies["gcode-session"],
+                           session_secret, 
+                           algorithms="HS256")
+    username = decoded_token["sub"]
+    session = fetch_session_by_username(username)
+    response = fetch_student_by_username(username)
+    '''
+    response = fetch_student_by_username("string")
+    return response

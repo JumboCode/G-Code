@@ -17,7 +17,7 @@ import os
 load_dotenv()
 
 # Connect to database
-uri = os.environ["MONGO_DB_URI"]
+uri = os.environ['MONGO_DB_URI']
 client = MongoClient(uri, 8000)
 database = client.db
 students = database.students
