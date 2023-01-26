@@ -34,7 +34,7 @@ export default function Resources() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post('localhost:3000/api/create_user/', formVals)
+    axios.post('http://localhost:8000/api/create_user/', formVals)
   }
 
   return (
@@ -60,7 +60,7 @@ export default function Resources() {
           <form onSubmit={handleSubmit}>
             <TextField
               name="name"
-              label="Name"
+              label="First + Last Names"
               type="text"
               value={formVals.name}
               onChange={handleInput}
@@ -72,6 +72,7 @@ export default function Resources() {
               value={formVals.email}
               onChange={handleInput}
             />
+            
             <FormControl>
               <Select
                 name="accType"

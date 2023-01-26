@@ -6,7 +6,7 @@ Authors: G-Code Jumbocode Team
 
 import random
 import string
-from datetime import datetime
+from datetime import datetime, date
 
 from http.client import HTTPException
 from fastapi import FastAPI
@@ -29,6 +29,7 @@ load_dotenv()
 
 # Used for encrypting session tokens
 session_secret = os.environ["SECRET_SESSION_KEY"]
+registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Import functions from database.py
 from database import (
@@ -263,14 +264,21 @@ async def remove_student_from_appointment(appointmentID: str):
 
 @app.post("/api/create_user/")
 async def remove_student_from_appointment(new_users: dict):
-    print("In create_user method")
+    access_code = str(hash((new_users["email"], registration_secret)))
+    
+    # The following assumes that names composed of a firstname and lastname 
+    # seperate by whitespace
+    names = new_users['name'].split()
+    user_first_name = names[0]
+    user_last_name = names[1]
 
-    print(str(new_users))
+    today = date.today().isoformat()
 
-    for user in new_users:
-        # put in admin/student table
-        # create invitation
-        # create temporary code
-        pass
-
-    return
+    ## TODO: Student and Admin models require a lot of temporary placeholder 
+    # values, should these be required?
+    create_new_user(user_first_name, user_last_name, new_users["email"], 
+                    new_users['accType'])
+    if new_users['accType'] == 'Student':
+        create_student_invite(access_code, new_users["email"], today)
+    elif new_users['accType'] == "Tutor":
+        create_admin_invite(access_code, new_users["email"], today)

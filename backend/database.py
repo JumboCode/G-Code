@@ -26,6 +26,7 @@ appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
 appointments = database.appointments
 si = database.student_invites
+ai = database.admin_invites
 
 
 def fetch_all_students():
@@ -71,6 +72,20 @@ def fetch_all_student_invites():
 def fetch_one_invite(ak):
     document = si.find_one({"accesscode": ak})
     return document
+
+def create_new_user(firstname, lastname, email, account_type):
+        
+    newUser = {
+        'firstname': firstname,
+        'lastname': lastname,
+        "email": email,
+        "emailverified": False,
+    }
+
+    if (account_type == "Student"):
+        students.insert_one(newUser)
+    elif (account_type == "Tutor"):
+        admins.insert_one(newUser)
 
 def create_student(Student):
     studToAdd = Student
@@ -122,6 +137,15 @@ def create_student_invite(ak, em, d):
         "email": em
     }
     si.insert_one(inviteToAdd) 
+    return inviteToAdd
+
+def create_admin_invite(ak, em, d):
+    inviteToAdd = {
+        "accesscode": ak,
+        "requestdate": d,
+        "email": em
+    }
+    ai.insert_one(inviteToAdd) 
     return inviteToAdd
 
 def create_appointment(appointment):
