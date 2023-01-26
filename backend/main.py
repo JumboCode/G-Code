@@ -29,7 +29,7 @@ load_dotenv()
 
 # Used for encrypting session tokens
 session_secret = os.environ["SECRET_SESSION_KEY"]
-registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
+# registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Import functions from database.py
 from database import (
