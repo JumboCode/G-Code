@@ -7,11 +7,12 @@ import "@fontsource/poppins";
 const drawerWidth = 240;
 
 interface Props {
-    window?: () => Window;
-  }
+  window?: () => Window;
+  currentPageTitle: string;
+}
 
 export default function HeaderNav(props: Props) {
-    const { window } = props;
+    const { window, currentPageTitle } = props;
     const container = window !== undefined ? () => window().document.body : undefined;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const handleDrawerToggle = () => {
@@ -40,7 +41,7 @@ export default function HeaderNav(props: Props) {
             }}
           >
             <Header />
-            <Sidebar currentPageTitle={"Dashboard"} />
+            <Sidebar currentPageTitle={currentPageTitle} />
           </Drawer>
           <Drawer
             variant="permanent"
@@ -51,7 +52,7 @@ export default function HeaderNav(props: Props) {
             open
           >
             <Header />
-            <Sidebar currentPageTitle={"Dashboard"} />
+            <Sidebar currentPageTitle={currentPageTitle} />
           </Drawer>
         </Box>
         </>

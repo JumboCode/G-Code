@@ -17,44 +17,50 @@ import { Box, CssBaseline } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
 
 const button_style = { color: '#3D495C' };
-const is_student = true
+const is_student = false
+const drawerWidth = 240
 
 export default function Scheduling() {
   return (
     <>
-
-
-      {
-        is_student &&
-        <div>
-          <Filter />
-          <Help />
-        </div>
-
-      }
-      {
-        !is_student &&
-        <div className={styles.container}>
-          <Sidebar currentPageTitle="Tutoring" />
-          <div style={tutoring_styles.ScheduleContainer}>
-            <PageHeading />
-            <AvailableSessionsSection />
-            <h2 style={{ ...tutoring_styles.SubHeading, marginLeft: '3vw' }}>
-              Available Times for Signup
-            </h2>
-            <div style={tutoring_styles.WeekContainer}>
-              <DayRow dayName="Sunday" />
-              <DayRow dayName="Monday" />
-              <DayRow dayName="Tuesday" />
-              <DayRow dayName="Wednesday" />
-              <DayRow dayName="Thursday" />
-              <DayRow dayName="Friday" />
-              <DayRow dayName="Saturday" />
-
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <HeaderNav />
+        <Box
+          component="main"
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        >
+          {
+            is_student &&
+            <div>
+              <Filter />
+              <Help />
             </div>
-          </div>
-        </div>
-      }
+          }
+          {
+            !is_student &&
+            <div className={styles.container}>
+              <div style={tutoring_styles.ScheduleContainer}>
+                <PageHeading />
+                <AvailableSessionsSection />
+                <h2 style={{ ...tutoring_styles.SubHeading, marginLeft: '3vw' }}>
+                  Available Times for Signup
+                </h2>
+                <div style={tutoring_styles.WeekContainer}>
+                  <DayRow dayName="Sunday" />
+                  <DayRow dayName="Monday" />
+                  <DayRow dayName="Tuesday" />
+                  <DayRow dayName="Wednesday" />
+                  <DayRow dayName="Thursday" />
+                  <DayRow dayName="Friday" />
+                  <DayRow dayName="Saturday" />
+
+                </div>
+              </div>
+            </div>
+          }
+        </Box>
+      </Box>
     </>
   )
 }
@@ -160,6 +166,7 @@ function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
 const tutoring_styles = ({
   PageHeadingContainer:
   {
+    paddingTop: '50px',
     marginLeft: '3vw',
     display: 'flex',
     flexDirection: 'row',
