@@ -7,8 +7,8 @@ import "@fontsource/poppins";
 const drawerWidth = 240;
 
 interface Props {
-    window?: () => Window;
-  }
+  window?: () => Window;
+}
 
 export default function HeaderNav(props: Props) {
     const { window } = props;
