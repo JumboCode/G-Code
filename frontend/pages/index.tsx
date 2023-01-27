@@ -1,10 +1,16 @@
 import React from "react";
+import axios from "axios";
 
-interface Props {
-  window?: () => Window;
-}
+export default function Home() {
 
-export default function Home(props: Props) {
+  React.useEffect(() => {
+    axios.get('http://localhost:8000/api/students')
+      .then(res => {
+        console.log(res)
+      })
+  }, []);
+
+
   return (
     <>
       <a href="./Dashboard"> go to dashboard </a>

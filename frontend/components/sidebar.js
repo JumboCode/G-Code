@@ -2,17 +2,21 @@ import React from 'react';
 import { useState } from 'react';
 import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
 import EventRoundedIcon from '@mui/icons-material/EventRounded';
-import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
+import PeopleIcon from '@mui/icons-material/People';
+import LiveHelpIcon from '@mui/icons-material/LiveHelp';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import "@fontsource/poppins";
 import { useRouter } from 'next/router';
 import { Toolbar } from '@mui/material'
 
+const pageTitles = ['Dashboard', 'Office Hours', 'FAQ Board', 'People', 'Assignments']
 
 function SideBarElement({ text, active, setActive }) {
     const [isHover, setIsHover] = useState(false);
     const router = useRouter();
     return <div
+        key={text}
         onClick={function () {
             setActive();
             router.push("/" +
@@ -29,9 +33,10 @@ function SideBarElement({ text, active, setActive }) {
                     : '#949494',
         }}>
         {text === "Dashboard" && <GridViewRoundedIcon />}
-        {text === "Tutoring" && <EventRoundedIcon />}
-        {text === "Course Calendar" && <BookmarksOutlinedIcon />}
-        {text === "Resources" && <LocalFireDepartmentOutlinedIcon />}
+        {text === "Office Hours" && <EventRoundedIcon />}
+        {text === "FAQ Board" && <LiveHelpIcon />}
+        {text === "People" && <PeopleIcon />}
+        {text === "Assignments" && <AssignmentIcon />}
         <TextLabel text={text} active={active} />
     </div >;
 }
@@ -44,10 +49,22 @@ function TextLabel({ text, active }) {
 
 export default function Sidebar({ currentPageTitle }) {
     const [activePage, setActivePage] = useState(currentPageTitle);
+    const sidebarElements = pageTitles.map((title) => {
+        return (
+          <SideBarElement
+            text={title}
+            active={activePage === title}
+            setActive={() => setActivePage(title)}
+            key={title}
+          />
+        );
+      });
     return (
         <div style={styles.Sidebar}>
             <Toolbar />
-            <SideBarElement
+            
+            {sidebarElements}
+            {/* <SideBarElement
                 text="Dashboard"
                 active={activePage === "Dashboard"}
                 setActive={() => setActivePage("Dashboard")}
@@ -66,7 +83,7 @@ export default function Sidebar({ currentPageTitle }) {
                 text="Resources"
                 active={activePage === "Resources"}
                 setActive={() => setActivePage("Resources")}
-            />
+            /> */}
         </div>
     );
 };

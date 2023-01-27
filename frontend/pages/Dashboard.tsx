@@ -12,7 +12,7 @@ export default function Dashboard() {
     <>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <HeaderNav />
+        <HeaderNav currentPageTitle="Dashboard" />
 
         <Box
           component="main"

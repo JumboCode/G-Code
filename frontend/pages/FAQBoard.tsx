@@ -1,18 +1,16 @@
 import React from "react";
 import { Grid, Box, CssBaseline} from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
-
 import dashboardStyles from "../styles/Dashboard.module.css";
-import TutoringCardDisplay from "../components/tutoringCard";
 
 const drawerWidth = 240;
 
-export default function Dashboard() {
+export default function People() {
   return (
     <>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <HeaderNav />
+        <HeaderNav currentPageTitle="FAQ Board"/>
 
         <Box
           component="main"
@@ -20,13 +18,7 @@ export default function Dashboard() {
         >
           <Grid container spacing={2}>
             <Grid className={dashboardStyles.header1} item xs={12}>
-              <p> Title </p>
-            </Grid>
-            <Grid item sm={12} md={7}>
-              Column 1
-            </Grid>
-            <Grid item sm={12} md={5}>
-              Column 2
+              <p> Questions! </p>
             </Grid>
           </Grid>
         </Box>

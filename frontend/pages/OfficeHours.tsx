@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from '../components/sidebar'
 import styles from '../styles/Home.module.css'
 import Select from '@mui/material/Select'
-import { DropDownMenu, TimeMenu } from './Menus'
+import { DropDownMenu, TimeMenu } from '../components/menus'
 import Switch from '@mui/material/Switch';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -25,7 +25,7 @@ export default function Scheduling() {
     <>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <HeaderNav />
+        <HeaderNav currentPageTitle="Office Hours"/>
         <Box
           component="main"
           sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
