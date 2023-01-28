@@ -36,6 +36,7 @@ function SideBarElement({ text, active, setActive }) {
         {text === "Tutoring" && <EventRoundedIcon />}
         {text === "Course Calendar" && <BookmarksOutlinedIcon />}
         {text === "Resources" && <LocalFireDepartmentOutlinedIcon />}
+        {text === "Login" && <GridViewRoundedIcon/>}
         <TextLabel text={text} />
     </div >;
 }
