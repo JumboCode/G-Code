@@ -29,7 +29,7 @@ load_dotenv()
 
 # Used for encrypting session tokens
 session_secret = os.environ["SECRET_SESSION_KEY"]
-# registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
+registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Import functions from database.py
 from database import (
@@ -42,6 +42,7 @@ from database import (
 from database import (
     fetch_all_students,
     fetch_all_admins,
+    fetch_user_by_email,
     fetch_one_invite,
     create_student_invite,
     create_student,
@@ -264,19 +265,16 @@ async def remove_student_from_appointment(appointmentID: str):
 
 @app.post("/api/create_user/")
 async def remove_student_from_appointment(new_users: dict):
-    access_code = str(hash((new_users["email"], registration_secret)))
+    if fetch_user_by_email(new_users["email"]) != None:
+        raise HTTPException(status_code=500, detail="A user with the given " 
+                                                    "email already exists")
     
-    # The following assumes that names composed of a firstname and lastname 
-    # seperate by whitespace
-    names = new_users['name'].split()
-    user_first_name = names[0]
-    user_last_name = names[1]
-
+    access_code = str(hash((new_users["email"], registration_secret)))
     today = date.today().isoformat()
 
     ## TODO: Student and Admin models require a lot of temporary placeholder 
     # values, should these be required?
-    create_new_user(user_first_name, user_last_name, new_users["email"], 
+    create_new_user(new_users["firstName"], new_users['lastName'], new_users["email"], 
                     new_users['accType'])
     if new_users['accType'] == 'Student':
         create_student_invite(access_code, new_users["email"], today)
