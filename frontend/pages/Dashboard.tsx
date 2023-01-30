@@ -1,11 +1,10 @@
 import React from "react";
 import { Grid, Box, CssBaseline} from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
-
+import { DRAWER_WIDTH } from "../constants";
 import dashboardStyles from "../styles/Dashboard.module.css";
 import TutoringCardDisplay from "../components/tutoringCard";
 
-const drawerWidth = 240;
 
 export default function Dashboard() {
   return (
@@ -16,7 +15,7 @@ export default function Dashboard() {
 
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
         >
           <Grid container spacing={2}>
             <Grid className={dashboardStyles.header1} item xs={12}>

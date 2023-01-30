@@ -15,10 +15,11 @@ import Booking from '../components/booking'
 
 import { Box, CssBaseline } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
+import { DRAWER_WIDTH } from '../constants';
 
 const button_style = { color: '#3D495C' };
 const is_student = false
-const drawerWidth = 240
+const drawerWidth = process.env.drawerWidth;
 
 export default function Scheduling() {
   return (
@@ -28,7 +29,7 @@ export default function Scheduling() {
         <HeaderNav currentPageTitle="Office Hours"/>
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
         >
           {
             is_student &&

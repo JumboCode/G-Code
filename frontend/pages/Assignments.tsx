@@ -1,8 +1,7 @@
 import React from "react";
 import { Grid, Box, CssBaseline} from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
-
-const drawerWidth = 240;
+import { DRAWER_WIDTH } from "../constants";
 
 export default function Assignments() {
   return (
@@ -12,7 +11,7 @@ export default function Assignments() {
 
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
       >
         <div style={AssignmentStyle.AssignmentPage}>
           <div style={AssignmentStyle.AssignmentList}>
