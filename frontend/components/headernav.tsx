@@ -12,49 +12,55 @@ interface Props {
 }
 
 export default function HeaderNav(props: Props) {
-    const { window, currentPageTitle } = props;
-    const container = window !== undefined ? () => window().document.body : undefined;
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-    const handleDrawerToggle = () => {
-      setMobileOpen(!mobileOpen);
-    };
-    return (
-        <>
-        <Header />
-        <Box
-          component="nav"
-          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-          aria-label="mailbox folders"
+  const { window, currentPageTitle } = props;
+  const container = window !== undefined ? () => window().document.body : undefined;
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+  return (
+    <>
+      <style jsx global>{`
+          body {
+            background-color: #F9FAFB;
+          }
+        `}
+      </style>
+      <Header />
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
         >
-          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-          <Drawer
-            container={container}
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-            sx={{
-              display: { xs: 'block', sm: 'none' },
-              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-            }}
-          >
-            <Header />
-            <Sidebar currentPageTitle={currentPageTitle} />
-          </Drawer>
-          <Drawer
-            variant="permanent"
-            sx={{
-              display: { xs: 'none', sm: 'block' },
-              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-            }}
-            open
-          >
-            <Header />
-            <Sidebar currentPageTitle={currentPageTitle} />
-          </Drawer>
-        </Box>
-        </>
-    )
+          <Header />
+          <Sidebar currentPageTitle={currentPageTitle} />
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+          open
+        >
+          <Header />
+          <Sidebar currentPageTitle={currentPageTitle} />
+        </Drawer>
+      </Box>
+    </>
+  )
 }

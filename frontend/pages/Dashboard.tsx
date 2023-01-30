@@ -4,12 +4,13 @@ import HeaderNav from '../components/headernav.tsx';
 import { DRAWER_WIDTH } from "../constants";
 import dashboardStyles from "../styles/Dashboard.module.css";
 import TutoringCardDisplay from "../components/tutoringCard";
+import styles from '../styles/Home.module.css'
 
 
 export default function Dashboard() {
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
+      <Box className={styles.content} sx={{ display: 'flex' }}>
         <CssBaseline />
         <HeaderNav currentPageTitle="Dashboard" />
 
@@ -28,12 +29,11 @@ export default function Dashboard() {
                   <TutoringCardDisplay sessions={2} />
                 </div>
               </div>
+              <div className={dashboardStyles.header2}>Assignments</div>
               <div className={dashboardStyles.leftCard}>
                 <div className={dashboardStyles.cardTitle}>Assignments</div>
               </div>
-              <div className={dashboardStyles.leftCard}>
-                <div className={dashboardStyles.cardTitle}>Work Together</div>
-              </div>
+              <div className={dashboardStyles.header2}>Events</div>
               <div className={dashboardStyles.leftCard}>
                 <div className={dashboardStyles.cardTitle}>Events</div>
               </div>

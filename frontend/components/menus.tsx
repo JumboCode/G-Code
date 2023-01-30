@@ -17,6 +17,7 @@ function DropDownMenu({ options, width }) {
       sx={{
         height: '30px',
         fontFamily: 'Poppins',
+        backgroundColor: 'white'
       }}
     >
       {options.map(option =>

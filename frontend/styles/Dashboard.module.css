@@ -1,6 +1,6 @@
 .header1 {
   position: relative;
-  margin: 2rem;
+  margin: 2rem 0 2rem 0;
 
   font-family: "IBM Plex Sans", sans-serif;
   font-style: normal;
@@ -67,11 +67,13 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
+  background-color: white;
 }
 
 .rightCard {
   font-family: "IBM Plex Sans", sans-serif;
   margin-top: 1rem;
+  background-color: white;
 
   padding: 1rem;
   text-align: left;

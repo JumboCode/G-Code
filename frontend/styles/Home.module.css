@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&family=Red+Hat+Display:wght@700&display=swap');
 
+.content {
+  background-color: #F9FAFB;
+}
+
 .container {
   /* padding: 0 2rem; */
   padding: 0;
