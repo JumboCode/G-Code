@@ -95,6 +95,26 @@
   max-width: 300px;
 }
 
+.pageElement {
+  margin-top: 1rem;
+  padding: 1rem 1.5rem 1rem 1.5rem;
+
+  font-family: "Poppins";
+  font-size: 17px;
+  font-style: medium;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  background-color: white;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+}
+
 .card:hover,
 .card:focus,
 .card:active {

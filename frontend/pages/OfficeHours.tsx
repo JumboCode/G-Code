@@ -16,11 +16,20 @@ import Booking from '../components/booking'
 import { Box, CssBaseline } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
 import { DRAWER_WIDTH } from '../constants';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 const button_style = { color: '#3D495C' };
 const is_student = false
 
 export default function Scheduling() {
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
   return (
     <>
       <Box sx={{ display: 'flex' }}>
@@ -46,7 +55,23 @@ export default function Scheduling() {
               <h2 style={{ ...tutoring_styles.SubHeading }}>
                 Available Times for Signup
               </h2>
-              <div style={tutoring_styles.WeekContainer}>
+
+              <TableContainer className={styles.pageElement} component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableBody>
+
+                    {
+                      days.map(day => (
+                        <DayRow dayName={day} />
+                      ))
+                    }
+
+
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              {/* <div className={styles.pageElement}>
                 <DayRow dayName="Sunday" />
                 <DayRow dayName="Monday" />
                 <DayRow dayName="Tuesday" />
@@ -54,7 +79,7 @@ export default function Scheduling() {
                 <DayRow dayName="Thursday" />
                 <DayRow dayName="Friday" />
                 <DayRow dayName="Saturday" />
-              </div>
+              </div> */}
             </div>
           }
         </Box>
@@ -108,27 +133,33 @@ function AvailableSessionsSection() {
 
 function DayRow({ dayName }) {
   const [numTimeIntervals, setNumTimeIntervals] = useState(1);
-  return <div style={tutoring_styles.DayRow}>
-    <div style={tutoring_styles.DayNameContainer}>
-      <h2 style={tutoring_styles.DayName}>
-        {dayName}
-      </h2>
-    </div>
-    <div style={tutoring_styles.SwitchContainer}>
-      <Switch checked={numTimeIntervals > 0} onChange={
-        (event) => setNumTimeIntervals((old) => (old == 0 ? 1 : 0))
-      } />
-      <p>{numTimeIntervals > 0 ? 'Open' : 'Closed'}</p>
-    </div>
-    <div style={tutoring_styles.TimeIntervalStack}>
-      {Array(numTimeIntervals).fill(0).map((_, index) =>
-        <TimeIntervalSelector
-          bottom={index === (numTimeIntervals - 1)}
-          key={index}
-          setNumTimeIntervals={setNumTimeIntervals} />
-      )}
-    </div>
-  </div>;
+  return (
+    <TableRow
+      key={dayName}
+      sx={{ borderColor: 'white' }}
+    >
+      <TableCell sx={{ borderColor: 'white', padding: '8px'  }} component="th" scope="row">
+        <h2 style={tutoring_styles.DayName}>
+          {dayName}
+        </h2>
+      </TableCell>
+      <TableCell sx={{ borderColor: 'white', padding: '8px' }} align="right">
+        <div style={tutoring_styles.SwitchContainer}>
+          <Switch checked={numTimeIntervals > 0} onChange={
+            (event) => setNumTimeIntervals((old) => (old == 0 ? 1 : 0))
+          } />
+        </div>
+      </TableCell>
+      <TableCell sx={{ borderColor: 'white', padding: '8px'  }} align="right">
+        {Array(numTimeIntervals).fill(0).map((_, index) =>
+          <TimeIntervalSelector
+            bottom={index === (numTimeIntervals - 1)}
+            key={index}
+            setNumTimeIntervals={setNumTimeIntervals} />
+        )}
+      </TableCell>
+    </TableRow>
+  );
 }
 
 function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
@@ -233,5 +264,5 @@ const tutoring_styles = ({
   SubHeading:
   {
     fontSize: '18px'
-  }
+  },
 })
