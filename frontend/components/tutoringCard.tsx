@@ -42,7 +42,7 @@ function TutoringCard({
         <Grid item lg={4} md={12}>
           <div style={{float: "right"}}>
             <Button variant="primary" sx={{margin: "0 5px 0 5px"}}> Join </Button>
-            <Button variant="text" sx={{margin: "0 5px 0 5px"}}> Manage </Button>
+            <Button variant="text" sx={{margin: "0 5px 0 5ipx"}}> Manage </Button>
           </div>
         </Grid>
       </Grid>
