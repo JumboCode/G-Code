@@ -1,19 +1,14 @@
-import React from "react";
-import axios from "axios";
+import * as React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { theme } from '../theme.ts'
 
 export default function Home() {
-
-  React.useEffect(() => {
-    axios.get('http://localhost:8000/api/students')
-      .then(res => {
-        console.log(res)
-      })
-  }, []);
-
-
   return (
-    <>
-      <a href="./Dashboard"> go to dashboard </a>
-    </>
+    <ThemeProvider theme={theme}>
+      <Button variant='primary'>Click Me</Button>
+      <Button variant='secondary'>Click Me</Button>
+      <Button variant='text'>Click Me</Button>
+    </ThemeProvider>
   );
 }

@@ -1,8 +1,9 @@
 import React from "react";
 import dashboardStyles from "../styles/Dashboard.module.css";
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Button } from '@mui/material'
 import { CalendarToday, AccessTime } from "@mui/icons-material";
 import Image from "next/image";
+
 
 function TutoringCard({
   name,
@@ -29,7 +30,7 @@ function TutoringCard({
 
           <div className={dashboardStyles.tutoringSessionTextDetails}>
             <div className={dashboardStyles.tutoringSessionName}>{name}</div>
-            
+
             <div className={dashboardStyles.tutoringSessionLogistics}>
               <CalendarToday />
               <div className={dashboardStyles.tutoringSessionDate}>{date}</div>
@@ -39,7 +40,10 @@ function TutoringCard({
           </div>
         </Grid>
         <Grid item lg={4} md={12}>
-          <div className={dashboardStyles.joinButton}> Join Now</div>
+          <div style={{float: "right"}}>
+            <Button variant="primary" sx={{margin: "0 5px 0 5px"}}> Join </Button>
+            <Button variant="text" sx={{margin: "0 5px 0 5px"}}> Manage </Button>
+          </div>
         </Grid>
       </Grid>
     </>

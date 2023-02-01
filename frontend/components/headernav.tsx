@@ -3,8 +3,7 @@ import Header from './header'
 import Sidebar from './sidebar'
 import { Box, Drawer } from "@mui/material";
 import "@fontsource/poppins";
-
-const drawerWidth = 240;
+import { DRAWER_WIDTH } from '../constants';
 
 interface Props {
   window?: () => Window;
@@ -29,7 +28,7 @@ export default function HeaderNav(props: Props) {
       <Header />
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -43,7 +42,7 @@ export default function HeaderNav(props: Props) {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
           }}
         >
           <Header />
@@ -53,7 +52,7 @@ export default function HeaderNav(props: Props) {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
           }}
           open
         >
