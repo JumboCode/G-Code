@@ -15,6 +15,7 @@ export const theme = createTheme({
         {
           props: { variant: 'primary' },
           style: {
+            fontWeight: 'bold',
             backgroundColor: '#6A5DF9',
             color: '#fff',
             borderRadius: '30px',
@@ -34,6 +35,7 @@ export const theme = createTheme({
         {
           props: { variant: 'secondary' },
           style: {
+            fontWeight: 'bold',
             backgroundColor: '#fff',
             color: '#6A5DF9',
             borderRadius: '30px',
@@ -53,6 +55,7 @@ export const theme = createTheme({
         {
           props: { variant: 'text' },
           style: {
+            fontWeight: 'normal',
             backgroundColor: '#fff',
             color: '#000',
             borderRadius: '30px',

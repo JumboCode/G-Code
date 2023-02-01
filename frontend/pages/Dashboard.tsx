@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Box, CssBaseline } from "@mui/material";
+import { Grid, Box, CssBaseline, Button } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
 import { DRAWER_WIDTH } from "../constants";
 import dashboardStyles from "../styles/Dashboard.module.css";
@@ -63,17 +63,17 @@ export default function Dashboard() {
             </Grid>
             <Grid item sm={12} md={8}>
               <div className={dashboardStyles.header2}>Coming Up Soon</div>
-              <div className={dashboardStyles.leftCard}>
+              <div className={dashboardStyles.dashboardCard}>
                 <div className={dashboardStyles.cardTitle}>
                   <TutoringCardDisplay sessions={2} />
                 </div>
               </div>
               <div className={dashboardStyles.header2}>Assignments</div>
 
-              <List className={dashboardStyles.leftCard} sx={{ backgroundColor: 'white' }}>
-
+              <List className={dashboardStyles.dashboardCard} sx={{ backgroundColor: 'white' }}>
                 {assignmentList.map(assignment => (
                   <ListItem
+                    key={assignment.name}
                     secondaryAction={
                       <IconButton edge="end" aria-label="delete">
                         <ArrowForwardIosIcon />
@@ -81,7 +81,7 @@ export default function Dashboard() {
                     }
                   >
                     <ListItemAvatar>
-                      <Avatar sx={{backgroundColor: "#F5F7F9"}}>
+                      <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
                         <img src="./AssignmentIcon.svg" />
                       </Avatar>
                     </ListItemAvatar>
@@ -94,18 +94,18 @@ export default function Dashboard() {
               </List>
 
               <div className={dashboardStyles.header2}>Events</div>
-              <List className={dashboardStyles.leftCard} sx={{ backgroundColor: 'white' }}>
+              <List className={dashboardStyles.dashboardCard} sx={{ backgroundColor: 'white' }}>
 
-                {eventList.map(assignment => (
-                  <ListItem>
+                {eventList.map(event => (
+                  <ListItem key={event.name}>
                     <ListItemAvatar>
-                      <Avatar sx={{backgroundColor: "#F5F7F9"}}>
+                      <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
                         <img src="./EventIcon.svg" />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary={assignment.name}
-                      secondary={assignment.eventDate}
+                      primary={event.name}
+                      secondary={event.eventDate}
                     />
                   </ListItem>
                 ))}
@@ -114,22 +114,39 @@ export default function Dashboard() {
             <Grid item sm={12} md={4}>
               <div className={dashboardStyles.header2}> Ask Somebody </div>
 
-              <div className={dashboardStyles.question}>Programming Help</div>
-              <div className={dashboardStyles.question}>Career Development</div>
+              <Grid container spacing={2}>
+                <Grid item md={12} lg={6}>
+                  <div className={dashboardStyles.question}>
+                    <img src="FAQBoardIcon.svg" /><br />
+                    Programming Help
+                  </div>
+                </Grid>
+                <Grid item md={12} lg={6}>
+                  <div className={dashboardStyles.question}>
+                    <img src="FAQBoardIcon.svg" /><br />
+                    FAQ Board
+                  </div>
+                </Grid>
+              </Grid>
 
-              <div className={dashboardStyles.header2}>Anonymous FAQs</div>
-              <div className={dashboardStyles.rightCard}>
-                Trending Questions Board
-                <div className={dashboardStyles.arrowIcon}>{">"}</div>
+              <div className={dashboardStyles.header2}>Work Together</div>
+              <div className={dashboardStyles.dashboardCard}>
+                <ListItemText
+                  primary={'Javascript Peers Study Session'}
+                  secondary={'Sun, Nov 27, 3:30 - 5:00 PM'}
+                />
+                <Button variant="secondary">
+                  Sign up
+                </Button>
               </div>
 
               <div className={dashboardStyles.header2}>Community Resources</div>
-              <div className={dashboardStyles.rightCard}>
-                Commonly Asked Questions
+              <div className={dashboardStyles.dashboardCard}>
+                Class Materials
                 <div className={dashboardStyles.arrowIcon}>{">"}</div>
               </div>
-              <div className={dashboardStyles.rightCard}>
-                Helpful Links for HW
+              <div className={dashboardStyles.dashboardCard}>
+                People Directory
                 <div className={dashboardStyles.arrowIcon}>{">"}</div>
               </div>
             </Grid>

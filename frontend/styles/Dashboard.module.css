@@ -51,7 +51,7 @@
   width: 100pc;
 }
 
-.leftCard {
+.dashboardCard {
   margin-top: 1rem;
   padding: 1rem 1.5rem 1rem 1.5rem;
 
@@ -68,9 +68,10 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   background-color: white;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);;
 }
 
-.rightCard {
+/* .rightCard {
   font-family: "IBM Plex Sans", sans-serif;
   margin-top: 1rem;
   background-color: white;
@@ -82,7 +83,7 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
-}
+} */
 
 .question {
   margin-top: 10px;
@@ -103,8 +104,8 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   background-color: #715cfa;
-
-  width: 11pc;
+  width: 100%;
+  height: 175px;
 }
 
 .tutoringSessionCard {
