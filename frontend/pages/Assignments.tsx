@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Box, CssBaseline} from "@mui/material";
+import { Grid, Box, CssBaseline } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
 
 const drawerWidth = 240;
@@ -60,8 +60,8 @@ function Questions() {
 
 function QuestionActions({ text, imageLink }) {
   return <div style={AssignmentStyle.QuestionActionBox}>
-    <picture>
-      <img src={imageLink} alt="" />
+    <picture style={AssignmentStyle.QuestionIcon}>
+      <img style={AssignmentStyle.IconStyle} src={imageLink} alt="" />
     </picture>
     <h3>{text}</h3>
   </div>
@@ -94,16 +94,27 @@ let AssignmentStyle = ({
   },
   QuestionActionList:
   {
-    width: '20vw',
+    // width: '20vw',
     marginLeft: '10vw',
+    marginRight: '5vw',
     // backgroundColor: 'yellow',
 
   },
   QuestionActionBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: '2vw',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#715CFA',
-    //height: '12vh',
-    width: '12vw',
-    borderRadius: '27.17',
+    height: '32vh',
+  },
+  QuestionIcon: {
+    padding: '1vw',
+  },
+  IconStyle: {
+    height: '8vw',
   },
   Assignment: {
     border: '1px solid #E0E0E0',
