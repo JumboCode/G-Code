@@ -51,6 +51,7 @@ class Student(BaseModel):
     emailverified: bool = Field(...)
     pronouns: str = Field(...)
     mentorid: str = Field(...)
+    accepted_registration: bool = Field(False)
 
     class Config:
         allow_population_by_field_name = True

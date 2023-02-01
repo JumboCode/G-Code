@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from '../components/sidebar'
 import styles from '../styles/Home.module.css'
 import Select from '@mui/material/Select'
-import { DropDownMenu, TimeMenu } from './Menus'
+import { DropDownMenu, TimeMenu } from '../components/menus'
 import Switch from '@mui/material/Switch';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -13,44 +13,52 @@ import Help from '../components/help'
 import Filter from '../components/filter'
 import Booking from '../components/booking'
 
+import { Box, CssBaseline } from "@mui/material";
+import HeaderNav from '../components/headernav.tsx';
+import { DRAWER_WIDTH } from '../constants';
+
 const button_style = { color: '#3D495C' };
+const is_student = false
 
 export default function Scheduling() {
-  const is_student = false;
   return (
     <>
-      {
-        is_student &&
-        <div className={styles.container}>
-          <Sidebar currentPageTitle="Tutoring" />
-          <Heading />
-          <Filter />
-          <Help />
-        </div>
-      }
-      {
-        !is_student &&
-        <div className={styles.container}>
-          <Sidebar currentPageTitle="Tutoring" />
-          <div style={tutoring_styles.ScheduleContainer}>
-            <PageHeading />
-            <AvailableSessionsSection />
-            <h2 style={{ ...tutoring_styles.SubHeading, marginLeft: '3vw' }}>
-              Available Times for Signup
-            </h2>
-            <div style={tutoring_styles.WeekContainer}>
-              <DayRow dayName="Sunday" />
-              <DayRow dayName="Monday" />
-              <DayRow dayName="Tuesday" />
-              <DayRow dayName="Wednesday" />
-              <DayRow dayName="Thursday" />
-              <DayRow dayName="Friday" />
-              <DayRow dayName="Saturday" />
-
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <HeaderNav currentPageTitle="Office Hours" />
+        <Box
+          component="main"
+          className={styles.content}
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
+        >
+          {
+            is_student &&
+            <div>
+              <Filter />
+              <Help />
             </div>
-          </div>
-        </div>
-      }
+          }
+          {
+            !is_student &&
+            <div style={tutoring_styles.ScheduleContainer}>
+              <PageHeading />
+              <AvailableSessionsSection />
+              <h2 style={{ ...tutoring_styles.SubHeading }}>
+                Available Times for Signup
+              </h2>
+              <div style={tutoring_styles.WeekContainer}>
+                <DayRow dayName="Sunday" />
+                <DayRow dayName="Monday" />
+                <DayRow dayName="Tuesday" />
+                <DayRow dayName="Wednesday" />
+                <DayRow dayName="Thursday" />
+                <DayRow dayName="Friday" />
+                <DayRow dayName="Saturday" />
+              </div>
+            </div>
+          }
+        </Box>
+      </Box>
     </>
   )
 }
@@ -98,18 +106,6 @@ function AvailableSessionsSection() {
   )
 }
 
-// function MeetingDuration() {
-//   return <div>
-//     <h2> Duration </h2>
-//     <div style={tutoring_styles.TimeContainer}>
-//       <h3 style={tutoring_styles.TimeBox} > 30 Minutes </h3>
-//       <h3 style={tutoring_styles.TimeBox}> 40 Minutes </h3>
-//       <h3 style={tutoring_styles.TimeBox}> 60 Minutes </h3>
-//       <h3 style={tutoring_styles.TimeBox} > 120 Minutes </h3>
-//     </div>
-//   </div>
-// }
-
 function DayRow({ dayName }) {
   const [numTimeIntervals, setNumTimeIntervals] = useState(1);
   return <div style={tutoring_styles.DayRow}>
@@ -156,7 +152,7 @@ function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
 const tutoring_styles = ({
   PageHeadingContainer:
   {
-    marginLeft: '3vw',
+    paddingTop: '50px',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -167,7 +163,6 @@ const tutoring_styles = ({
     display: 'flex',
     flexDirection: 'row',
     height: 'auto',
-    // width: 'auto',
     gap: '1%',
     marginLeft: '10px'
   },
@@ -179,26 +174,17 @@ const tutoring_styles = ({
   },
   WeekContainer:
   {
-    // display: 'inline-block',
-    // position: 'relative',
-    // width: '1071.91px',
-    width: '80vw',
-    marginLeft: '3vw',
-    // height: '524.64px',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid #DFDFDF',
-    // width: 'auto'
+    backgroundColor: 'white',
+    borderRadius: '20px'
   },
   ScheduleContainer:
   {
-    // width: '100%',
-    // backgroundColor: 'yellow',
     display: 'flex',
     flexDirection: 'column',
-    //justifyContent: 'center',
-    //alignItems: 'center',
   },
   DayNameContainer:
   {
@@ -240,7 +226,6 @@ const tutoring_styles = ({
   },
   AvailableSessionsContainer:
   {
-    marginLeft: '3vw',
     display: 'flex',
     flexDirection: 'column',
     marginBottom: '20px'

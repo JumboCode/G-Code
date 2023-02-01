@@ -1,9 +1,14 @@
-import React from "react";
+import * as React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { theme } from '../theme.ts'
 
 export default function Home() {
   return (
-    <>
-      <a href="./Dashboard" > Go to dashboard </a>
-    </>
+    <ThemeProvider theme={theme}>
+      <Button variant='primary'>Click Me</Button>
+      <Button variant='secondary'>Click Me</Button>
+      <Button variant='text'>Click Me</Button>
+    </ThemeProvider>
   );
 }

@@ -1,6 +1,6 @@
 .header1 {
   position: relative;
-  margin: 2rem;
+  margin: 2rem 0 2rem 0;
 
   font-family: "IBM Plex Sans", sans-serif;
   font-style: normal;
@@ -53,7 +53,7 @@
 
 .leftCard {
   margin-top: 1rem;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem 1rem 1.5rem;
 
   font-family: "Poppins";
   font-size: 17px;
@@ -67,13 +67,13 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
-
-  width: 100pc;
+  background-color: white;
 }
 
 .rightCard {
   font-family: "IBM Plex Sans", sans-serif;
   margin-top: 1rem;
+  background-color: white;
 
   padding: 1rem;
   text-align: left;
@@ -82,8 +82,6 @@
   border: 1px solid #eaeaea;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
-
-  width: 100pc;
 }
 
 .question {
@@ -91,6 +89,8 @@
   margin-bottom: 10px;
   margin-left: 10px;
   padding: 1rem;
+  display: inline-block;
+  cursor: pointer;
 
   font-family: IBM Plex Sans;
   font-size: 18px;
@@ -121,13 +121,13 @@
 
   align-content: row;
 
-  max-width: 45pc;
+  /* max-width: 45pc; */
 }
 
 .tutoringSessionCard {
   display: flex;
   align-content: row;
-  max-width: 45pc;
+  /* max-width: 45pc; */
   justify-content: space-between;
 }
 
@@ -165,7 +165,7 @@
   margin-right: 20px;
   margin-left: 5px;
   text-align: left;
-  display: flex;
+  /* display: flex; */
   color: #00777f;
 }
 
@@ -173,7 +173,7 @@
   margin-right: 20px;
   margin-left: 5px;
   text-align: left;
-  display: flex;
+  /* display: flex; */
   color: #00777f;
 }
 
@@ -211,28 +211,15 @@
 }
 
 .joinButton {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   color: white;
   font-family: "IBM Plex Sans", sans-serif;
-
   font-family: "IBM Plex Sans";
   font-style: normal;
   font-size: 17px;
-  line-height: 22px;
-
-  /* position: absolute; */
-  width: 132px;
-  height: 42px;
-  /* left: calc(50% - 123px / 2 - 139px); */
-  /*top: calc(50% - 45px / 2 + 77.31px);*/
-
-  float: right;
-
-  background: #131736;
-  border-radius: 10px;
+  margin: 10px;
+  background: #6A5DF9;
+  border-radius: 30px;
+  cursor: pointer;
 }
 
 .rescheduleButton {
@@ -286,8 +273,3 @@
   left: 15.5px;
   border: #b90064;
 }
-
-/* .break {
-  flex-basis: 100%;
-  height: 0;
-} */
