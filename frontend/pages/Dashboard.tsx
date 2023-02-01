@@ -59,16 +59,16 @@ export default function Dashboard() {
         >
           <Grid container spacing={2}>
             <Grid className={dashboardStyles.header1} item xs={12}>
-              <p> Welcome, Ariya </p>
+              <p> Hey, Ariya 🤟 </p>
             </Grid>
-            <Grid item sm={12} md={8}>
+            <Grid item xs={12} md={8}>
               <div className={dashboardStyles.header2}>Coming Up Soon</div>
               <div className={dashboardStyles.dashboardCard}>
                 <div className={dashboardStyles.cardTitle}>
                   <TutoringCardDisplay sessions={2} />
                 </div>
               </div>
-              <div className={dashboardStyles.header2}>Assignments</div>
+              <div className={dashboardStyles.header2}>2 Assignments</div>
 
               <List className={dashboardStyles.dashboardCard} sx={{ backgroundColor: 'white' }}>
                 {assignmentList.map(assignment => (
@@ -93,7 +93,7 @@ export default function Dashboard() {
                 ))}
               </List>
 
-              <div className={dashboardStyles.header2}>Events</div>
+              <div className={dashboardStyles.header2}> 1 Event </div>
               <List className={dashboardStyles.dashboardCard} sx={{ backgroundColor: 'white' }}>
 
                 {eventList.map(event => (
@@ -111,17 +111,17 @@ export default function Dashboard() {
                 ))}
               </List>
             </Grid>
-            <Grid item sm={12} md={4}>
+            <Grid item xs={12} md={4}>
               <div className={dashboardStyles.header2}> Ask Somebody </div>
 
               <Grid container spacing={2}>
-                <Grid item md={12} lg={6}>
+                <Grid item xs={6} md={12} lg={6}>
                   <div className={dashboardStyles.question}>
                     <img src="FAQBoardIcon.svg" /><br />
                     Programming Help
                   </div>
                 </Grid>
-                <Grid item md={12} lg={6}>
+                <Grid item xs={6} md={12} lg={6}>
                   <div className={dashboardStyles.question}>
                     <img src="FAQBoardIcon.svg" /><br />
                     FAQ Board

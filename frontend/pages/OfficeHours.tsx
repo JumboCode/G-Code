@@ -12,6 +12,8 @@ import Heading from '../components/heading'
 import Help from '../components/help'
 import Filter from '../components/filter'
 import Booking from '../components/booking'
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from '../theme.ts'
 
 import { Box, CssBaseline } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
@@ -31,7 +33,7 @@ export default function Scheduling() {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <HeaderNav currentPageTitle="Office Hours" />
@@ -59,32 +61,19 @@ export default function Scheduling() {
               <TableContainer className={styles.pageElement} component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                   <TableBody>
-
                     {
                       days.map(day => (
                         <DayRow dayName={day} />
                       ))
                     }
-
-
                   </TableBody>
                 </Table>
               </TableContainer>
-
-              {/* <div className={styles.pageElement}>
-                <DayRow dayName="Sunday" />
-                <DayRow dayName="Monday" />
-                <DayRow dayName="Tuesday" />
-                <DayRow dayName="Wednesday" />
-                <DayRow dayName="Thursday" />
-                <DayRow dayName="Friday" />
-                <DayRow dayName="Saturday" />
-              </div> */}
             </div>
           }
         </Box>
       </Box>
-    </>
+    </ThemeProvider>
   )
 }
 
@@ -92,7 +81,7 @@ function PageHeading() {
   return (
     <div style={tutoring_styles.PageHeadingContainer}>
       <h1>Office Hours Schedule</h1>
-      <h3 style={tutoring_styles.TimeZone}> Time Zone </h3>
+      {/* <h3 style={tutoring_styles.TimeZone}> Time Zone </h3> */}
       <DropDownMenu
         width={'auto'}
         options={[
@@ -138,19 +127,19 @@ function DayRow({ dayName }) {
       key={dayName}
       sx={{ borderColor: 'white' }}
     >
-      <TableCell sx={{ borderColor: 'white', padding: '8px'  }} component="th" scope="row">
+      <TableCell sx={{ borderColor: 'white', padding: '2px'  }} component="th" scope="row">
         <h2 style={tutoring_styles.DayName}>
           {dayName}
         </h2>
       </TableCell>
-      <TableCell sx={{ borderColor: 'white', padding: '8px' }} align="right">
+      <TableCell sx={{ borderColor: 'white', padding: '2px' }} align="right">
         <div style={tutoring_styles.SwitchContainer}>
           <Switch checked={numTimeIntervals > 0} onChange={
             (event) => setNumTimeIntervals((old) => (old == 0 ? 1 : 0))
           } />
         </div>
       </TableCell>
-      <TableCell sx={{ borderColor: 'white', padding: '8px'  }} align="right">
+      <TableCell sx={{ borderColor: 'white', padding: '2px'  }} align="right">
         {Array(numTimeIntervals).fill(0).map((_, index) =>
           <TimeIntervalSelector
             bottom={index === (numTimeIntervals - 1)}
