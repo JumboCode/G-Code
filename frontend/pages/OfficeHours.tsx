@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import Sidebar from '../components/sidebar'
 import styles from '../styles/Home.module.css'
-import Select from '@mui/material/Select'
 import { DropDownMenu, TimeMenu } from '../components/menus'
 import Switch from '@mui/material/Switch';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
-import Heading from '../components/heading'
 import Help from '../components/help'
 import Filter from '../components/filter'
-import Booking from '../components/booking'
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '../theme.ts'
-
 import { Box, CssBaseline } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
 import { DRAWER_WIDTH } from '../constants';
@@ -22,7 +17,6 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
