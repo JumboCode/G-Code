@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Box, CssBaseline } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
-import dashboardStyles from "../styles/Dashboard.module.css";
+import styles from "../styles/Home.module.css";
 import axios from "axios";
 import { DRAWER_WIDTH } from '../constants';
 
@@ -43,7 +43,7 @@ return (
         sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
       >
         <Grid container spacing={2}>
-          <Grid className={dashboardStyles.header1} item xs={12}>
+          <Grid className={styles.header1} item xs={12}>
             <p> Students </p>
           </Grid>
           <Grid item sm={12} md={12}>
