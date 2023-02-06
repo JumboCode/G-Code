@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Sidebar currentPageTitle={"HOME"} />
-      <div className={dashboardStyles.grid}>
+      {/* <div className={dashboardStyles.grid}>
         <div className={dashboardStyles.header1}>
           <p> Welcome, Ariya </p>
         </div>
@@ -58,7 +58,7 @@ export default function Home() {
             <div className={dashboardStyles.arrowIcon}>{">"}</div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
