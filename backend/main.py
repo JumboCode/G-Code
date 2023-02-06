@@ -6,7 +6,7 @@ Authors: G-Code Jumbocode Team
 
 import random
 import string
-from datetime import datetime
+from datetime import datetime, date
 
 from http.client import HTTPException
 from fastapi import FastAPI
@@ -15,12 +15,15 @@ from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from model import Student
+from model import Appointment
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import jwt
 import bcrypt
 from database import *
 from datetime import datetime
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 # Create app
 app = FastAPI()
@@ -28,6 +31,7 @@ load_dotenv()
 
 # Used for encrypting session tokens
 session_secret = os.environ["SECRET_SESSION_KEY"]
+registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Import functions from database.py
 from database import (
@@ -40,6 +44,7 @@ from database import (
 from database import (
     fetch_all_students,
     fetch_all_admins,
+    fetch_user_by_email,
     fetch_one_invite,
     create_student_invite,
     create_student,
@@ -220,8 +225,78 @@ async def put_student_join(access_token: str, student_data: Student):
     '''
     studentFromKey = fetch_one_invite(access_token)
     if studentFromKey:
+        # await create_student(student_data)
+        # raise HTTPException(404, f"there are no students with this key")
         s = create_student(student_data.dict())
         remove_student_invite(access_token)
         return s
     else:
         return HTTPException("Student was not created")
+
+@app.put("/api/put_appointment/")
+async def put_appointment(appointment_data: Appointment):
+    '''
+    Purpose: add an appointment linked to the current admin to the data base 
+
+    Input: An appointment object 
+    '''
+    response = create_appointment(appointment_data.dict())
+    return response 
+
+@app.put("/api/assign_student_to_appoint/")
+async def assign_student_to_appointment(appointmentID: str , studentID : str):
+    '''
+    Purpose: updates an appointment by linking it to the student reserving the appointment, 
+             and marks as reserved 
+    
+    Input: The appointment ID, and the ID of the student registering 
+    '''
+    response = reserve_appointment(appointmentID, studentID)   
+    return response 
+
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str):
+    '''
+    Purpose: If there are more than 24 before the appointment, update the apppointment 
+            by removing the student cancel and unmark as reserved
+
+    Input: the appointment ID to mark as unreserved 
+    '''
+    response = cancel_appointment(appointmentID)
+    return response 
+
+@app.post("/api/create_user/")
+async def remove_student_from_appointment(new_users: dict):
+    if fetch_user_by_email(new_users["email"]) != None:
+        raise HTTPException(status_code=500, detail="A user with the given " 
+                                                    "email already exists")
+    
+    access_code = str(hash((new_users["email"], registration_secret)))
+    today = date.today().isoformat()
+
+    ## TODO: Student and Admin models require a lot of temporary placeholder 
+    # values, should these be required?
+    create_new_user(new_users["firstName"], new_users['lastName'], new_users["email"], 
+                    new_users['accType'])
+    if new_users['accType'] == 'Student':
+        create_student_invite(access_code, new_users["email"], today)
+    elif new_users['accType'] == "Tutor":
+        create_admin_invite(access_code, new_users["email"], today)
+
+def sent_invite_email(to_contact: Student):
+    student_id = fetch_student_by_username(to_contact.username)['_id']
+    message = Mail(
+        from_email = 'jumbo.g.code@gmail.com',
+        to_emails = to_contact.email,
+        subject = 'G-Code Invitation',
+        # TODO: Switch URL in html_content from localhost to actual url
+        html_content = '<div> <p>You\'ve been invited to join G-Code\'s course' 
+                        'page! Please click the following link: </p>'
+                        '<a href=\'http://localhost:3000/' + str(student_id) + 
+                        '\'> Sign-Up </a> </div>'
+   )
+    try:
+        sg = SendGridAPIClient(os.environ["SENDGRID_API_KEY"])
+        response = sg.send(message)
+    except Exception as e:
+        print(e.message)

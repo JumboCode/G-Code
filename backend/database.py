@@ -5,10 +5,12 @@ Purpose: Connects to the database and provides all functionality for accessing
 '''
 
 from model import StudentInvite
+from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, Appointment
-from datetime import datetime
+from model import Student, Admin, StudentInvite, Appointment
+from datetime import datetime, timedelta
+from bson.objectid import ObjectId
 import os
 
 # load enviornment variables
@@ -22,7 +24,9 @@ students = database.students
 admins = database.admins
 appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
+appointments = database.appointments
 si = database.student_invites
+ai = database.admin_invites
 
 
 def fetch_all_students():
@@ -69,6 +73,20 @@ def fetch_one_invite(ak):
     document = si.find_one({"accesscode": ak})
     return document
 
+def create_new_user(firstname, lastname, email, account_type):
+        
+    newUser = {
+        'firstname': firstname,
+        'lastname': lastname,
+        "email": email,
+        "emailverified": False,
+    }
+
+    if (account_type == "Student"):
+        students.insert_one(newUser)
+    elif (account_type == "Tutor"):
+        admins.insert_one(newUser)
+
 def create_student(Student):
     studToAdd = Student
     result = students.insert_one(studToAdd)
@@ -91,6 +109,16 @@ def fetch_session_by_username(username):
     Purpose: Fetchs a session from the database with the given unique username
     '''
     return sessions.find_one({"username": username})
+
+def fetch_user_by_email(email):
+    '''
+    Purpose: Fetchs the user, either an admin or student, with the given email
+    '''
+
+    user = students.find_one({"email": email})
+    if user is None:
+        user = admins.find_one({"email": email})
+    return user
 
 
 def add_session(username, permission_level, curr_time):
@@ -121,6 +149,39 @@ def create_student_invite(ak, em, d):
     si.insert_one(inviteToAdd) 
     return inviteToAdd
 
+def create_admin_invite(ak, em, d):
+    inviteToAdd = {
+        "accesscode": ak,
+        "requestdate": d,
+        "email": em
+    }
+    ai.insert_one(inviteToAdd) 
+    return inviteToAdd
+
+def create_appointment(appointment):
+    '''
+    Purpose: Creates an appointment and associates with the admin creating it 
+    '''
+    result =  appointments.insert_one(appointment)
+    return appointment
+
+def reserve_appointment(appointmentID, studentID):
+    '''
+    Purpose: Links an appointment to a student when that students reserves the appointment, 
+             and marks as reserved 
+    '''
+    appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": studentID, "reserved": True } })
+    return appointmentID
+
+def cancel_appointment(appointmentID):
+    '''
+    Purpose: If there are more than 24 before the appointment, cancel and unmark as reserved
+    '''
+    appointmentDoc = appointments.find_one({"_id": ObjectId(appointmentID)})
+    if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
+        appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": "", "reserved": False } })
+    return appointmentID
+
 def remove_student_invite(ak):
     si.delete_one({"accesscode": ak})
     return True
@@ -138,4 +199,3 @@ def fetch_filtered_appointments(filters):
         print(document)
         appt_list.append(Appointment(**document))
     return appt_list
- 

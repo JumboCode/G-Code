@@ -1,7 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&family=Red+Hat+Display:wght@700&display=swap');
+
+.header1 {
+  position: relative;
+  margin: 2rem 0 2rem 0;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 38.508px;
+  line-height: 50px;
+  height: 5pc;
+  color: #2c3a57;
+}
+
+.header2 {
+  font-family: "Red Hat Display", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #000f25;
+  margin-top: 2rem;
+}
+
+.question {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  padding: 1rem;
+  display: inline-block;
+  cursor: pointer;
+  font-family: IBM Plex Sans;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 23px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #fbfbfd;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  background-color: #715cfa;
+  width: 100%;
+  height: 190px;
+}
+
+.content {
+  background-color: #F9FAFB;
+}
+
 .container {
-  /* padding: 0 2rem; */
   padding: 0;
-  display:inline-flex
+  display: inline-flex;
+  width: 100%;
+  border-top: 1px solid #D8D8DB;
 }
 
 .main {
@@ -85,6 +136,25 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   max-width: 300px;
+}
+
+.pageElement {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 1rem 1.5rem 1rem 1.5rem;
+  font-family: "Poppins";
+  font-size: 17px;
+  font-style: medium;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: 0em;
+  text-align: left;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  background-color: white;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover,

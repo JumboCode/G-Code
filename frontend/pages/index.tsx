@@ -1,16 +1,12 @@
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
-import dashboardStyles from "../styles/Dashboard.module.css";
-import axios from "axios";
-import React from "react";
-import Sidebar from "../components/sidebar";
-import Header from "../components/header";
-import Footer from "../components/footer";
-import TutoringCardDisplay from "../components/tutoringCard";
+import * as React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch'
+import { theme } from '../theme.ts'
 
 export default function Home() {
   return (
+ loginPage
     <div className={styles.container}>
       <Sidebar currentPageTitle={"HOME"} />
       <div className={dashboardStyles.grid}>
@@ -60,5 +56,12 @@ export default function Home() {
         </div>
       </div>
     </div>
+    <ThemeProvider theme={theme}>
+      <Button variant='primary'>Click Me</Button>
+      <Button variant='secondary'>Click Me</Button>
+      <Button variant='text'>Click Me</Button>
+      <Switch color="primary"/>
+    </ThemeProvider>
+main
   );
 }

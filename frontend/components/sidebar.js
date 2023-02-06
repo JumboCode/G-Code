@@ -2,22 +2,21 @@ import React from 'react';
 import { useState } from 'react';
 import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
 import EventRoundedIcon from '@mui/icons-material/EventRounded';
-import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
+import PeopleIcon from '@mui/icons-material/People';
+import LiveHelpIcon from '@mui/icons-material/LiveHelp';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import "@fontsource/poppins";
 import { useRouter } from 'next/router';
+import { Toolbar } from '@mui/material'
 
-function GCodeHeading() {
-    return <div style={styles.GCodeHeading}>
-        <img style={styles.GCodeHeadingImage} src='/GCodeLogo.png' />
-        <h1 style={styles.GCodeHeadingText}>{"Intro to G{Code}"}</h1>
-    </div>;
-}
+const pageTitles = ['Dashboard', 'Office Hours', 'FAQ Board', 'People', 'Assignments']
 
 function SideBarElement({ text, active, setActive }) {
     const [isHover, setIsHover] = useState(false);
     const router = useRouter();
     return <div
+        key={text}
         onClick={function () {
             setActive();
             router.push("/" +
@@ -28,39 +27,52 @@ function SideBarElement({ text, active, setActive }) {
         onMouseOut={() => setIsHover(false)}
         style={{
             ...styles.SidebarElement,
-            backgroundColor: active ? 'rgba(226, 255, 248, 0.84)'
-                : isHover ? 'rgba(226, 255, 248, 0.84)'
+            backgroundColor: (active || isHover) ? '#F3F4F6'
                     : 'white',
+            color: (active || isHover) ? '#6A5DF9'
+                    : '#949494',
         }}>
         {text === "Dashboard" && <GridViewRoundedIcon />}
+loginPage
         {text === "Tutoring" && <EventRoundedIcon />}
         {text === "Course Calendar" && <BookmarksOutlinedIcon />}
         {text === "Resources" && <LocalFireDepartmentOutlinedIcon />}
         {text === "Login" && <GridViewRoundedIcon/>}
         <TextLabel text={text} />
+
+        {text === "Office Hours" && <EventRoundedIcon />}
+        {text === "FAQ Board" && <LiveHelpIcon />}
+        {text === "People" && <PeopleIcon />}
+        {text === "Assignments" && <AssignmentIcon />}
+        <TextLabel text={text} active={active} />
+ main
     </div >;
 }
 
 function TextLabel({ text, active }) {
-    return <h2 style={styles.SideBarText}>
+    return <h2 style={active ? styles.SideBarTextActive : styles.SideBarText}>
         {text}
     </h2>;
 }
 
-// function NotificationNumber({ number }) {
-//     return <div style={{
-//         backgroundColor: 'blue',
-//         borderRadius: '50%',
-//         width: '10%',
-//     }} />;
-// }
-
 export default function Sidebar({ currentPageTitle }) {
     const [activePage, setActivePage] = useState(currentPageTitle);
+    const sidebarElements = pageTitles.map((title) => {
+        return (
+          <SideBarElement
+            text={title}
+            active={activePage === title}
+            setActive={() => setActivePage(title)}
+            key={title}
+          />
+        );
+      });
     return (
         <div style={styles.Sidebar}>
-            <GCodeHeading />
-            <SideBarElement
+            <Toolbar />
+            
+            {sidebarElements}
+            {/* <SideBarElement
                 text="Dashboard"
                 active={activePage === "Dashboard"}
                 setActive={() => setActivePage("Dashboard")}
@@ -79,7 +91,7 @@ export default function Sidebar({ currentPageTitle }) {
                 text="Resources"
                 active={activePage === "Resources"}
                 setActive={() => setActivePage("Resources")}
-            />
+            /> */}
         </div>
     );
 };
@@ -90,11 +102,8 @@ let styles = ({
         background: 'white',
         display: 'flex',
         flexDirection: 'column',
-        width: 'fit-content',
-        height: '100vh',
         gap: '3vh',
         alignItems: 'center',
-        borderRight: '1px solid #DFDFDF',
         fontFamily: "Poppins",
         fontColor: "black"
     },
@@ -110,34 +119,13 @@ let styles = ({
         paddingLeft: '5%',
         cursor: 'pointer',
     },
-    LogoSidebar:
-    {
-        height: '8%',
-        width: '100%',
-        // background: 'teal',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignContent: 'center',
-        gap: '5%'
-    },
     SideBarText:
     {
         fontSize: '14px',
-        color: 'black'
     },
-    GCodeHeadingText:
+    SideBarTextActive:
     {
-        fontFamily: "Poppins",
-        fontSize: '16px'
-    },
-    GCodeHeading:
-    {
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignContent: 'center',
-        gap: '5%'
+        fontSize: '14px',
+        fontWeight: "900",
     },
 })
