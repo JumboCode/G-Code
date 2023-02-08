@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Test+Founders+Grotesk&display=swap');
+
+/* .loginButton {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 7.96509px;
+    gap: 7.97px;
+    text-color: white;
+
+    position: absolute;
+    width: 367px;
+    height: 53px;
+    left: 546px;
+    top: 604px;
+
+    Purple 
+
+    background: #6A5DF9;
+    border-radius: 30px;
+  } */
+
+  
+  
+  .inputBox {
+    box-sizing: border-box;
+
+    position: absolute;
+    height: 51px;
+    left: 0.26px;
+    right: 75.74px;
+    top: 23.24px;
+
+    background: #F5F6F7;
+    border: 1px solid rgba(52, 52, 52, 0.15);
+    border-radius: 10px;
+  }
+
+
+  .container{
+    position: absolute;
+    width: 501.79px;
+    left: 477.51px;
+    top: 206.42px;
+    background: #FEFEFE;
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 10px #ccc;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.password {
+  margin-top: 10px;
+}
+
+.loginButton {
+  width: 100%;
+  background-color: #6A5DF9;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border-radius: 30px;
+  cursor: pointer;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+}

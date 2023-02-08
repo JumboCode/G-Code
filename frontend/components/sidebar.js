@@ -33,11 +33,19 @@ function SideBarElement({ text, active, setActive }) {
                     : '#949494',
         }}>
         {text === "Dashboard" && <GridViewRoundedIcon />}
+loginPage
+        {text === "Tutoring" && <EventRoundedIcon />}
+        {text === "Course Calendar" && <BookmarksOutlinedIcon />}
+        {text === "Resources" && <LocalFireDepartmentOutlinedIcon />}
+        {text === "Login" && <GridViewRoundedIcon/>}
+        <TextLabel text={text} />
+
         {text === "Office Hours" && <EventRoundedIcon />}
         {text === "FAQ Board" && <LiveHelpIcon />}
         {text === "People" && <PeopleIcon />}
         {text === "Assignments" && <AssignmentIcon />}
         <TextLabel text={text} active={active} />
+ main
     </div >;
 }
 
