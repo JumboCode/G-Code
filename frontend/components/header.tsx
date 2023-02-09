@@ -46,7 +46,7 @@ const theme = createTheme({
 });
 
 const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Login']];
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -152,8 +152,8 @@ function Header() {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
+                  <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center"><a href={'./' + setting[1]}>{setting[0]}</a></Typography>
                   </MenuItem>
                 ))}
               </Menu>
