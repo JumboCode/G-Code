@@ -33,19 +33,11 @@ function SideBarElement({ text, active, setActive }) {
                     : '#949494',
         }}>
         {text === "Dashboard" && <GridViewRoundedIcon />}
-loginPage
-        {text === "Tutoring" && <EventRoundedIcon />}
-        {text === "Course Calendar" && <BookmarksOutlinedIcon />}
-        {text === "Resources" && <LocalFireDepartmentOutlinedIcon />}
-        {text === "Login" && <GridViewRoundedIcon/>}
-        <TextLabel text={text} />
-
         {text === "Office Hours" && <EventRoundedIcon />}
         {text === "FAQ Board" && <LiveHelpIcon />}
         {text === "People" && <PeopleIcon />}
         {text === "Assignments" && <AssignmentIcon />}
         <TextLabel text={text} active={active} />
- main
     </div >;
 }
 
@@ -72,26 +64,6 @@ export default function Sidebar({ currentPageTitle }) {
             <Toolbar />
             
             {sidebarElements}
-            {/* <SideBarElement
-                text="Dashboard"
-                active={activePage === "Dashboard"}
-                setActive={() => setActivePage("Dashboard")}
-            />
-            <SideBarElement
-                text="Tutoring"
-                active={activePage === "Tutoring"}
-                setActive={() => setActivePage("Tutoring")}
-            />
-            <SideBarElement
-                text="Course Calendar"
-                active={activePage === "Course Calendar"}
-                setActive={() => setActivePage("Course Calendar")}
-            />
-            <SideBarElement
-                text="Resources"
-                active={activePage === "Resources"}
-                setActive={() => setActivePage("Resources")}
-            /> */}
         </div>
     );
 };
