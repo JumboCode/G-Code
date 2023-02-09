@@ -79,3 +79,13 @@ class Appointment(BaseModel):
     studentName: str = Field(...)
     tutorId: str = Field(...)
 
+class Assignment(BaseModel):
+    assignmentid: str = Field(...)
+    name: str = Field(...)
+    description: str = Field(...)
+    completed: bool = Field(...)
+    dueDate: datetime = Field(...)
+    messages: List[tuple] = Field(...)
+    submissionLink: str = Field(...)
+    submitted: bool = Field(...)
+    studentid: str = Field(...)
