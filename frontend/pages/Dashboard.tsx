@@ -16,6 +16,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function Dashboard() {
 
+  const user_name = "Ariya"
+
   // make call to backend to get real data
   const assignmentList = [
     {
@@ -34,6 +36,14 @@ export default function Dashboard() {
       name: "Discussion: Career Dev with Ryan Lester",
       eventDate: "Sun, Nov 27, 1:00-2:00 PM"
     },
+    {
+      name: "Guest Speaker: Joe Smith",
+      eventDate: "Mon, Nov 28, 1:00-2:00 PM"
+    },
+    {
+      name: "Guest Speaker: Michael Jordan",
+      eventDate: "Tue, Nov 29, 7:00-9:00 PM"
+    },
   ]
 
 
@@ -49,14 +59,14 @@ export default function Dashboard() {
         >
           <Grid container spacing={2}>
             <Grid className={styles.header1} item xs={12}>
-              <p> Hey, Ariya 🤟 </p>
+              <p> Hey, {user_name} 🤟 </p>
             </Grid>
             <Grid item xs={12} md={8}>
               <div className={styles.header2}>Coming Up Soon</div>
               <div className={styles.pageElement}>
                 <TutoringCardDisplay sessions={2} />
               </div>
-              <div className={styles.header2}>2 Assignments</div>
+              <div className={styles.header2}>{assignmentList.length} Assignment{assignmentList.length > 1 && "s"}</div>
 
               <List className={styles.pageElement} sx={{ backgroundColor: 'white' }}>
                 {assignmentList.map(assignment => (
@@ -81,7 +91,7 @@ export default function Dashboard() {
                 ))}
               </List>
 
-              <div className={styles.header2}> 1 Event </div>
+              <div className={styles.header2}> {eventList.length} Event{eventList.length > 1 && "s"} </div>
               <List className={styles.pageElement} sx={{ backgroundColor: 'white' }}>
 
                 {eventList.map(event => (
