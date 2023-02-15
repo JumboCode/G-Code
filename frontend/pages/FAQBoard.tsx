@@ -16,9 +16,21 @@ export default function People() {
           component="main"
           sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
         >
+          <Grid sx={{paddingTop: '50px'}} container spacing={2}>
+            <Grid item xs={8}>
+              <p> title + search component </p>
+            </Grid>
+            <Grid item xs={4}>
+              <p> filler </p>
+            </Grid>
+          </Grid>
+
           <Grid container spacing={2}>
-            <Grid className={styles.header1} item xs={12}>
-              <p> Questions! </p>
+            <Grid item xs={8}>
+              <p> questions list </p>
+            </Grid>
+            <Grid item xs={4}>
+              <p> help panel </p>
             </Grid>
           </Grid>
         </Box>
