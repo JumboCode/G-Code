@@ -13,6 +13,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CommunityResourcesPanel from "../components/communityResourcesPanel";
 
 export default function Dashboard() {
 
@@ -138,15 +139,7 @@ export default function Dashboard() {
                 </Button>
               </div>
 
-              <div className={styles.header2}>Community Resources</div>
-              <div className={styles.pageElement}>
-                Class Materials
-                <div style={{float:"right"}}>{">"}</div>
-              </div>
-              <div className={styles.pageElement}>
-                People Directory
-                <div style={{float:"right"}}>{">"}</div>
-              </div>
+              <CommunityResourcesPanel />
             </Grid>
           </Grid>
         </Box>

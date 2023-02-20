@@ -19,6 +19,7 @@ declare module '@mui/material/Switch' {
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
     h1: true;
+    h3: true;
     h4: true;
     subtitle1: true;
     subtitle2: true;
@@ -150,6 +151,16 @@ export const theme = createTheme({
             fontWeight: '600',
             color: "#29395B"
           },
+        },
+        {
+          props: { variant: 'h3' },
+          style: {
+            fontSize: '20px',
+            fontFamily: 'Red Hat Display',
+            lineHeight: '26px',
+            fontWeight: '700',
+            color: "#000f25"
+          }
         },
         {
           props: { variant: 'h4' },
