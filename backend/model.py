@@ -89,3 +89,11 @@ class Assignment(BaseModel):
     submissionLink: str = Field(...)
     submitted: bool = Field(...)
     studentid: str = Field(...)
+
+class Question(BaseModel):
+    title: str = Field(...)
+    question: str = Field(...)
+    author: str = Field(...)
+    date: datetime = Field(...)
+    numreplies: str = Field(...)
+    topics: List[str] = Field(...)
