@@ -103,12 +103,26 @@ export default function FAQBoard() {
           <Grid sx={{ paddingTop: '50px' }} container spacing={2}>
             <Grid item md={9} xs={12}>
               <Box sx={{ padding: "40px 0 30px 0" }}>
-                <Typography variant="h1">
-                  Community Forum
-                </Typography>
-                <Typography variant="subtitle1">
-                  Ask a question or help out your fellow classmates!
-                </Typography>
+                <Grid container>
+                  <Grid xs={8}>
+                    <Typography variant="h1">
+                      Community Forum
+                    </Typography>
+                    <Typography variant="subtitle1">
+                      Ask a question or help out your fellow classmates!
+                    </Typography>
+                  </Grid>
+                  <Grid xs={4}>
+                    <Box sx={{ float: "right" }}>
+                      <Button sx={{marginRight: "10px"}} variant="secondary">
+                        My Questions
+                      </Button>
+                      <Button variant="primary">
+                        Ask a Question
+                      </Button>
+                    </Box>
+                  </Grid>
+                </Grid>
               </Box>
               <Box sx={{ paddingBottom: '20px' }}>
                 <Grid container spacing={2}>
@@ -140,14 +154,14 @@ export default function FAQBoard() {
                   <Grid item xs={3}>
                     <CustomSelect
                       value={week}
-                      handleChange={event => {setWeek(event.target.value)}}
+                      handleChange={event => { setWeek(event.target.value) }}
                       choices={weeks}
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <CustomSelect
                       value={topic}
-                      handleChange={event => {setTopic(event.target.value)}}
+                      handleChange={event => { setTopic(event.target.value) }}
                       choices={topics}
                     />
                   </Grid>

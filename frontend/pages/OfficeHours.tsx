@@ -21,7 +21,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 const button_style = { color: '#3D495C' };
-const is_student = true
+const is_student = false
 
 export default function Scheduling() {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
