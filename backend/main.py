@@ -45,6 +45,7 @@ from database import (
     fetch_all_students,
     fetch_all_admins,
     fetch_user_by_email,
+    fetch_user_by_username,
     fetch_one_invite,
     create_student_invite,
     create_student,
@@ -75,29 +76,40 @@ def login_page():
         """
 )
 
+@app.get("/validate")
 def validate_session(request: Request):
     '''
     Purpose: Checks that a user's session token is valid
     '''
-    decoded_token = jwt.decode(request.cookies["gcode-session"], 
-                               session_secret, 
-                               algorithms="HS256")
-    username = decoded_token["sub"]
-    session = fetch_session_by_username(username)
-    if session == None:
-        raise HTTPException ( 
-            status_code=403, detail="Invalid session, please log-in"
+    # An invalid user has no permission level
+    user = {"permission_level": "None"}
+    try:
+        if "gcode-session" in request.cookies:
+            decoded_token = jwt.decode(request.cookies["gcode-session"], 
+                                    session_secret, 
+                                    algorithms="HS256")
+            username = decoded_token["sub"]
+            session = fetch_session_by_username(username)
+            if session != None:
+                user = fetch_user_by_username(username)
+                user["permission_level"] = session["permission_level"]
+                del user["password"] # Avoid exposing password to frontend
+    except:
+        raise HTTPException(
+            status_code=403, detail="An error appeared during validation"
         )
-    return session["permission_level"]
+    
+    return user
 
 def validate_admin_session(request: Request, permission_level: str = Depends(validate_session)):
     '''
     Purpose: Checks that a user's session token corresponds to admin privileges
     '''
-    if permission_level != "Admin":
+    if "permission_level" not in user or user["permission_level"] != "Admin":
         raise HTTPException ( 
             status_code=403, detail="Invalid permissions"
         )
+    return user
 
 @app.get("/")
 async def read_root():
@@ -124,8 +136,9 @@ def login(response: Response, username: str = Form(...), password: str = Form(..
     
     stored_password = user["password"]
     stored_password = stored_password.encode('utf-8')
-    encoded_password = password.encode('utf-8')
-    if not bcrypt.checkpw(encoded_password, stored_password):
+    input_password = password.encode('utf-8')
+
+    if not bcrypt.checkpw(input_password, stored_password):
         raise HTTPException(
             status_code=403, detail="Invalid Password"
         )
@@ -152,11 +165,15 @@ def login(response: Response, username: str = Form(...), password: str = Form(..
 
 @app.get("/logout")
 async def logout(request: Request, response: Response):
-    decoded_token = jwt.decode(request.cookies["gcode-session"], 
-                               session_secret, 
-                               algorithms="HS256")
-    username = decoded_token["sub"]
-    remove_session(username)
+    try:
+        decoded_token = jwt.decode(request.cookies["gcode-session"], 
+                                session_secret, 
+                                algorithms="HS256")
+        username = decoded_token["sub"]
+        remove_session(username)
+    except jwt.exceptions.ExpiredSignatureError:
+        pass
+
     response.delete_cookie("gcode-session")
     return {"status":"success"}
 

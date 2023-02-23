@@ -110,6 +110,12 @@ def fetch_session_by_username(username):
     '''
     return sessions.find_one({"username": username})
 
+def fetch_user_by_username(username):
+    user = students.find_one({"username": username},{'_id': 0})
+    if user is None:
+        user = admins.find_one({"username": username},{'_id': 0})
+    return user
+
 def fetch_user_by_email(email):
     '''
     Purpose: Fetchs the user, either an admin or student, with the given email
