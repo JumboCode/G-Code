@@ -13,10 +13,20 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { useState } from 'react';
+import IsUserAuthorized from "../components/authentification";
 
 export default function Dashboard() {
 
-  const user_name = "Ariya"
+  const [user, setUser] = useState(null);
+  const get_user = curr_user => {
+    if (user == null){
+      setUser(curr_user)
+    }
+  }
+  /* Authorize user and return user 
+   * information (ex. first name, username, ect.) */
+  IsUserAuthorized("Student", get_user)
 
   // make call to backend to get real data
   const assignmentList = [
@@ -46,8 +56,9 @@ export default function Dashboard() {
     },
   ]
 
-
-  return (
+  if (user == null){
+    return <p> Loading... </p>
+  } else return (
     <ThemeProvider theme={theme}>
       <Box className={styles.content} sx={{ display: 'flex' }}>
         <CssBaseline />
@@ -59,7 +70,7 @@ export default function Dashboard() {
         >
           <Grid container spacing={2}>
             <Grid className={styles.header1} item xs={12}>
-              <p> Hey, {user_name} 🤟 </p>
+              <p> Hey, {user["firstname"]} 🤟 </p>
             </Grid>
             <Grid item xs={12} md={8}>
               <div className={styles.header2}>Coming Up Soon</div>
