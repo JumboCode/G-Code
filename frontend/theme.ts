@@ -16,6 +16,16 @@ declare module '@mui/material/Switch' {
   }
 }
 
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    h1: true;
+    h3: true;
+    h4: true;
+    subtitle1: true;
+    subtitle2: true;
+  }
+}
+
 export const theme = createTheme({
   components: {
     MuiSwitch: {
@@ -130,5 +140,59 @@ export const theme = createTheme({
         },
       ],
     },
+    MuiTypography: {
+      variants: [
+        {
+          props: { variant: 'h1' },
+          style: {
+            fontSize: '36px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '42.48px',
+            fontWeight: '600',
+            color: "#29395B"
+          },
+        },
+        {
+          props: { variant: 'h3' },
+          style: {
+            fontSize: '20px',
+            fontFamily: 'Red Hat Display',
+            lineHeight: '26px',
+            fontWeight: '700',
+            color: "#000f25"
+          }
+        },
+        {
+          props: { variant: 'h4' },
+          style: {
+            fontSize: '19px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '22.99px',
+            fontWeight: '500',
+            color: "#29395B"
+          },
+        },
+        {
+          props: { variant: 'subtitle1' },
+          style: {
+            fontSize: '16px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '19.36px',
+            fontWeight: '500',
+            color: "#949494"
+          },
+        },
+        {
+          props: { variant: 'subtitle2' },
+          style: {
+            fontSize: '14px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '22.05px',
+            fontWeight: '500',
+            color: "#949494"
+          },
+        },
+      ]
+    }
   },
 });

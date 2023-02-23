@@ -8,7 +8,7 @@ from model import StudentInvite
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite, Appointment
+from model import Student, Admin, StudentInvite, Appointment, Question
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -27,7 +27,7 @@ sessions = database.sessions
 appointments = database.appointments
 si = database.student_invites
 ai = database.admin_invites
-
+questions = database.questions
 
 def fetch_all_students():
     '''
@@ -219,3 +219,13 @@ def get_assignments_by_student_id(studentid):
     for document in cursor:
         assignment_list.append(Assignment(**document))
     return assignment_list
+
+def fetch_all_questions():
+    '''
+    Purpose: Returns all questions stored in the database
+    '''
+    questions_list = []
+    cursor = questions.find({})
+    for document in cursor:
+        questions_list.append(Question(**document))
+    return questions_list

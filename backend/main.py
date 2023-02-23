@@ -49,7 +49,8 @@ from database import (
     fetch_one_invite,
     create_student_invite,
     create_student,
-    remove_student_invite
+    remove_student_invite,
+    fetch_all_questions
 )
 
 # Allow access from frontend
@@ -317,3 +318,8 @@ def sent_invite_email(to_contact: Student):
         response = sg.send(message)
     except Exception as e:
         print(e.message)
+
+@app.get("/api/questions")
+async def get_questions():
+    response = fetch_all_questions()
+    return response
