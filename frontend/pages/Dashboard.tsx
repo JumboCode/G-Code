@@ -36,6 +36,8 @@ export default function Dashboard() {
     },
   ]
 
+import dashboardStyles from "../styles/Dashboard.module.css";
+import TutoringCard from "../components/tutoringCard";
 
   return (
     <ThemeProvider theme={theme}>
