@@ -24,6 +24,8 @@ from database import *
 from datetime import datetime
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from model import Post
+from model import Reply
 
 # Create app
 app = FastAPI()
@@ -50,7 +52,9 @@ from database import (
     create_student_invite,
     create_student,
     remove_student_invite,
-    fetch_all_questions
+    fetch_all_posts,
+    create_post,
+    add_reply
 )
 
 # Allow access from frontend
@@ -319,7 +323,27 @@ def sent_invite_email(to_contact: Student):
     except Exception as e:
         print(e.message)
 
-@app.get("/api/questions")
-async def get_questions():
-    response = fetch_all_questions()
+@app.get("/api/posts")
+async def get_posts():
+    response = fetch_all_posts()
+    return response
+
+@app.put("/api/posts")
+async def put_post(post_data: Post):
+    '''
+    Purpose: Add a post to the database
+
+    Input: A post object
+    '''
+    response = create_post(post_data.dict())
+    return response 
+
+@app.put("/api/postreply")
+async def put_reply(post_ID: str, reply_data: Reply):
+    '''
+    Purpose: Add a reply to a post in the database
+
+    Input: A reply data object and a post id string
+    '''
+    response = add_reply(post_ID, reply_data.dict())
     return response

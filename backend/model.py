@@ -97,3 +97,16 @@ class Question(BaseModel):
     date: datetime = Field(...)
     numreplies: str = Field(...)
     topics: List[str] = Field(...)
+
+class Reply(BaseModel):
+    author_id: str = Field(...)
+    body: str = Field(...)
+    date: datetime = Field(...)
+
+class Post(BaseModel):
+    title: str = Field(...)
+    body: str = Field(...)
+    author_id: str = Field(...)
+    date: datetime = Field(...)
+    topic: str = Field(...)
+    replies: List[Reply] = Field(...)

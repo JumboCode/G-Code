@@ -8,7 +8,7 @@ from model import StudentInvite
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite, Appointment, Question
+from model import Student, Admin, StudentInvite, Appointment, Post, Reply
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -24,10 +24,12 @@ students = database.students
 admins = database.admins
 appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
-appointments = database.appointments
+assignments = database.assignments
 si = database.student_invites
 ai = database.admin_invites
 questions = database.questions
+posts = database.posts
+
 
 def fetch_all_students():
     '''
@@ -220,12 +222,24 @@ def get_assignments_by_student_id(studentid):
         assignment_list.append(Assignment(**document))
     return assignment_list
 
-def fetch_all_questions():
+def fetch_all_posts():
     '''
-    Purpose: Returns all questions stored in the database
+    Purpose: Returns all posts stored in the database
     '''
-    questions_list = []
-    cursor = questions.find({})
+    posts_list = []
+    cursor = posts.find({})
     for document in cursor:
-        questions_list.append(Question(**document))
-    return questions_list
+        posts_list.append(Post(**document))
+    return posts_list
+
+
+def create_post(post: Post):
+    posts.insert_one(post)
+    return post
+
+def add_reply(post_ID: str, reply_data: Reply):
+    posts.update_one(
+        {"_id": post_ID},
+        { "$push": {"replies": reply_data}}
+        )
+    return post_ID
