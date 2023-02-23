@@ -8,6 +8,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import CommunityResourcesPanel from "../components/communityResourcesPanel";
 import EastIcon from '@mui/icons-material/East';
 import CustomSelect from "../components/customSelect";
+import axios from "axios"
 
 export default function FAQBoard() {
 
@@ -24,63 +25,19 @@ export default function FAQBoard() {
     p: 4,
   };
 
-  const questions = [
-    {
-      author: "Michelle Minns",
-      authorType: "Instructor",
-      title: "Tips for connecting to database while using PHP",
-      numReplies: 4,
-      date: "Nov 21",
-      time: "3:30 PM",
-      week: 1,
-      topics: ["PHP"],
-      pinned: false
-    },
-    {
-      author: "Theseus Lim",
-      authorType: "Student",
-      title: "How do I center a DIV???",
-      numReplies: 2,
-      date: "Nov 22",
-      time: "4:20 PM",
-      week: 1,
-      topics: ["HTML", "CSS"],
-      pinned: false
-    },
-    {
-      author: "Joe Speed",
-      authorType: "Student",
-      title: "Who is Shark Meldon???",
-      numReplies: 1,
-      date: "Nov 22",
-      time: "4:20 PM",
-      week: 2,
-      topics: ["Administrative"],
-      pinned: false
-    },
-    {
-      author: "Sam Smith",
-      authorType: "Student",
-      title: "What is an array?",
-      numReplies: 0,
-      date: "Nov 22",
-      time: "4:20 PM",
-      week: 2,
-      topics: ["JavaScript"],
-      pinned: false
-    },
-    {
-      author: "Joe Speed",
-      authorType: "Student",
-      title: "Are we living in a simulation?",
-      numReplies: 2,
-      date: "Nov 22",
-      time: "4:20 PM",
-      week: 3,
-      topics: ["Administrative"],
-      pinned: false
-    },
-  ]
+  const [questions, setQuestions] = React.useState([])
+
+  React.useEffect(() => {
+    axios.get('http://localhost:8000/api/questions')
+      .then(res => {
+        setQuestions(res.data.map(question => 
+            {return (
+              {
+                ...question,
+                date: new Date(Date.parse(question.date))
+              })}))
+      })
+  }, []);
 
   const weeks = ["All Weeks"].concat(Array.from(new Set(questions.map(question => `Week ${question.week}`))))
   const [week, setWeek] = React.useState<string>(weeks[0]);
@@ -287,13 +244,13 @@ export default function FAQBoard() {
                         </ListItemAvatar>
                         <ListItemText style={{ cursor: 'pointer' }}>
                           <Typography variant="subtitle2">
-                            {question.authorType} · {question.author} · {question.date} · {question.time}
+                            {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
                           </Typography>
                           <Typography variant="h4">
                             {question.title}
                           </Typography>
                           <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
-                            {question.numReplies} {question.numReplies == 1 ? "reply" : "replies"}
+                            {question.numreplies} {question.numreplies == 1 ? "reply" : "replies"}
                           </Typography>
                         </ListItemText>
                       </ListItem>
