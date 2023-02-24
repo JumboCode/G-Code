@@ -1,20 +1,21 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, useEffect } from 'react'
+import axios from "axios";
 import "@fontsource/poppins";
 // import Grid from '@material-ui/core/Grid'
 
-class Day_Selection extends Component {
-    
+class Day_Selection extends Component<any, any> {
+
     state = {
         day_selected: new Date()
     };
     readonly today = new Date()
-   
+
     /* Returns array containing string representation of next 7 days */
-    get_days():Date[] {
-        let days:Date[] = new Array()  
+    get_days(): Date[] {
+        let days: Date[] = new Array()
         let curr_day = new Date()
         curr_day.setDate(this.today.getDate())
-        
+
         const DAYS_TO_DISPLAY = 7
         for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
             days.push(curr_day)
@@ -23,22 +24,24 @@ class Day_Selection extends Component {
             curr_day = temp
         }
         return days
-   }
-   
-    handleClick(day_selected: Date) {
-        this.props.set_filter_date(day_selected) /* Updates state of parent component */
-        this.setState({day_selected: day_selected})
     }
 
-    render(){
+    handleClick(day_selected: Date) {
+        this.props.set_filter_date(day_selected) /* Updates state of parent component */
+        this.setState({ day_selected: day_selected })
+    }
+
+    render() {
         let days_of_week: string[] = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
         var dayButtons = [];
         var days = this.get_days()
-        for (let i = 0; i < 7; i++) { 
+        for (let i = 0; i < 7; i++) {
             let curr_day_of_week = days_of_week[days[i].getDay()]
+            //fetch_filtered_appointments({"dayOfWeek":days})
             dayButtons.push(<button type="button"
-                             onClick={() => this.handleClick(days[i])}>{curr_day_of_week + " "}{(days[i]).getDate()}
-                             </button>)
+                key={days[i].toString()}
+                onClick={() => this.handleClick(days[i])}>{curr_day_of_week + " "}{(days[i]).getDate()}
+            </button>)
         }
         return (
             <div>
@@ -65,7 +68,7 @@ function Mentor({ mentor_name }) {
         </h4>
         {/* <p>{timeslots_count} Slots</p> */}
         <button type="button" style={styles.ViewProfileButton}>View Profile</button>
-        <TimeSlot 
+        <TimeSlot
             time={"10:00 AM"}
         />
     </div>
@@ -76,10 +79,10 @@ function TimeSlot({ time }) {
 }
 
 function SessionView({ day, date }) {
-    
+
     /* TODO: actually get list of mentors from database */
     var mentors = [];
-    
+
     return (
         <div style={styles.SessionViewBox}>
             <div style={{
@@ -88,7 +91,7 @@ function SessionView({ day, date }) {
             }}>
                 <h3>Available Sessions on {day}, {date}</h3>
             </div>
-            <Mentor 
+            <Mentor
                 mentor_name={"Nyra Robinson"}
             />
             <button style={styles.BookButton}>Book a Session for {date}</button>
@@ -99,34 +102,52 @@ function SessionView({ day, date }) {
 export default function Filter() {
     const [day_selected, setDay] = useState(new Date());
 
-    
+    // React.useEffect(() => {
+    //     axios.get("http://localhost:8000/api/appointments", { params: { dayOfWeek: 'Monday' } }).then((res) => {
+    //         console.log(res.data)
+    //     });
+    // }, []);
+
+    useEffect(() => {
+        async function fetchDayData() {
+            try {
+                const response = await axios.get('http://localhost:8000/api/appointments', { params: { dayOfWeek: 'Monday' } });
+                console.log(response.data)
+                //setStudents(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchDayData();
+    }, []);
+
     const get_day = new_day_selected => {
         setDay(new_day_selected)
     }
 
-    function get_day_of_week():string {
-        let days_of_week: string[] = ['Monday', 'Tuesday', 'Wednesday', 
-                                      'Thursday', 'Friday', 'Saturday', 
-                                      'Sunday']
-        
-        return days_of_week[day_selected.getDay()]  
+    function get_day_of_week(): string {
+        let days_of_week: string[] = ['Monday', 'Tuesday', 'Wednesday',
+            'Thursday', 'Friday', 'Saturday',
+            'Sunday']
+
+        return days_of_week[day_selected.getDay()]
     }
 
-    function get_month_abbreviation():string {
-        let month_abbreviations: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 
-                                             'May', 'Jun', 'Jul', 'Aug', 
-                                             'Sep', 'Oct', 'Nov', 'Dec']
+    function get_month_abbreviation(): string {
+        let month_abbreviations: string[] = ['Jan', 'Feb', 'Mar', 'Apr',
+            'May', 'Jun', 'Jul', 'Aug',
+            'Sep', 'Oct', 'Nov', 'Dec']
         return month_abbreviations[day_selected.getMonth()]
     }
 
-    function get_day_of_month(){
+    function get_day_of_month() {
         return day_selected.getDate()
     }
 
     return (
         <div>
-            <Day_Selection set_filter_date={get_day}/>
-            <SessionView 
+            <Day_Selection set_filter_date={get_day} />
+            <SessionView
                 day={get_day_of_week()}
                 date={get_month_abbreviation() + " " + get_day_of_month()}
             />

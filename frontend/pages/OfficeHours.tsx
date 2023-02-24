@@ -21,7 +21,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 const button_style = { color: '#3D495C' };
-const is_student = false
+const is_student = true
 
 export default function Scheduling() {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -38,7 +38,7 @@ export default function Scheduling() {
         >
           {
             is_student &&
-            <div>
+            <div style={{ paddingTop: "80px" }}>
               <Filter />
               <Help />
             </div>
@@ -121,7 +121,7 @@ function DayRow({ dayName }) {
       key={dayName}
       sx={{ borderColor: 'white' }}
     >
-      <TableCell sx={{ borderColor: 'white', padding: '2px'  }} component="th" scope="row">
+      <TableCell sx={{ borderColor: 'white', padding: '2px' }} component="th" scope="row">
         <h2 style={tutoring_styles.DayName}>
           {dayName}
         </h2>
@@ -133,7 +133,7 @@ function DayRow({ dayName }) {
           } />
         </div>
       </TableCell>
-      <TableCell sx={{ borderColor: 'white', padding: '2px'  }} align="right">
+      <TableCell sx={{ borderColor: 'white', padding: '2px' }} align="right">
         {Array(numTimeIntervals).fill(0).map((_, index) =>
           <TimeIntervalSelector
             bottom={index === (numTimeIntervals - 1)}
