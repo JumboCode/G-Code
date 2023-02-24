@@ -12,6 +12,7 @@ import axios from 'axios';
 
 export default function Resources() {
     const [open, setOpen] = useState(false);
+    const [error_message, setErrorMessage] = useState(null);
 
     const defaultValues = {
         firstName: '',
@@ -20,22 +21,31 @@ export default function Resources() {
         accType: 'Student'
     };
 
-    const [formVals, setFormVals] = useState(defaultValues);
+    const [accounts, setAccounts] = useState([defaultValues, defaultValues]);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleInput = (event) => {
+    const handleInput = (event, index) => {
         const { name, value } = event.target;
-        setFormVals({
-            ...formVals,
-            [name]: value,
-        });
+        console.log(index)
+        let temp = accounts.slice();
+        temp[index][name] = value;
+        console.log(...temp)
+        setAccounts(temp);
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.post('http://localhost:8000/api/create_user/', formVals)
+
+        axios.post('http://localhost:8000/api/create_users/', accounts)
+            .then(() => {
+                setErrorMessage(null)
+            })
+            .catch(function (error) {
+                console.log(error.response.data);
+                setErrorMessage(error.response.data.detail)
+            })
     }
 
     return (
@@ -64,45 +74,20 @@ export default function Resources() {
                             flexDirection: 'column',
                             gap: '10px'
                         }}>
-                            <Box sx={{
-                                display: 'flex',
-                                gap: '5px'
-                                // width: 'auto',
-
-                            }}>
-                                <TextInput
-                                    name="firstName"
-                                    label="First Name"
-                                    val={formVals.firstName}
-                                    handleInput={handleInput} />
-                                <TextInput
-                                    name="lastName"
-                                    label="Last Name"
-                                    val={formVals.lastName}
-                                    handleInput={handleInput} />
-                                <TextInput
-                                    name="email"
-                                    label="Email"
-                                    val={formVals.email}
-                                    handleInput={handleInput} />
-                                <FormControl sx={{ width: '150px' }}>
-                                    <Select
-                                        name="accType"
-                                        value={formVals.accType}
-                                        onChange={handleInput}
-                                    >
-                                        <MenuItem key={0} value="Student">
-                                            Student
-                                        </MenuItem>
-                                        <MenuItem key={0} value="Tutor">
-                                            Tutor
-                                        </MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
+                            <StudentInput 
+                                accounts={accounts}
+                                handleInput={handleInput}
+                                accountIndex={0} 
+                            />
+                            <StudentInput 
+                                accounts={accounts}
+                                handleInput={handleInput}
+                                accountIndex={1} 
+                            />
                             <Button variant="contained" color="primary" type="submit">
                                 Submit
                             </Button>
+                            <p className={styles.error_message}>{error_message}</p>
                         </Box>
                     </form>
                 </Box>
@@ -111,13 +96,53 @@ export default function Resources() {
     )
 }
 
-function TextInput({ name, label, val, handleInput }) {
+function StudentInput({ accounts, handleInput, accountIndex }) {
+    return <Box sx={{
+        display: 'flex',
+        gap: '5px'
+    }}>
+        <TextInput
+            name="firstName"
+            label="First Name"
+            index={accountIndex}
+            val={accounts[accountIndex].firstName}
+            handleInput={handleInput} />
+        <TextInput
+            name="lastName"
+            label="Last Name"
+            index={accountIndex}
+            val={accounts[accountIndex].lastName}
+            handleInput={handleInput} />
+        <TextInput
+            name="email"
+            label="Email"
+            index={accountIndex}
+            val={accounts[accountIndex].email}
+            handleInput={handleInput} />
+        <FormControl sx={{ width: '150px' }}>
+            <Select
+                name="accType"
+                value={accounts[accountIndex].accType}
+                onChange={(e) => handleInput(e, accountIndex)}
+            >
+                <MenuItem key={0} value="Student">
+                    Student
+                </MenuItem>
+                <MenuItem key={1} value="Tutor">
+                    Tutor
+                </MenuItem>
+            </Select>
+        </FormControl>
+    </Box>
+}
+
+function TextInput({ name, label, val, handleInput, index }) {
     return <TextField
         name={name}
         label={label}
         type="text"
         value={val}
-        onChange={handleInput}
+        onChange={(e) => handleInput(e, index)}
         sx={{ width: '150px' }}
     />
 }

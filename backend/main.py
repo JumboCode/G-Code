@@ -265,23 +265,28 @@ async def remove_student_from_appointment(appointmentID: str):
     response = cancel_appointment(appointmentID)
     return response 
 
-@app.post("/api/create_user/")
-async def remove_student_from_appointment(new_users: dict):
-    if fetch_user_by_email(new_users["email"]) != None:
-        raise HTTPException(status_code=500, detail="A user with the given " 
-                                                    "email already exists")
-    
-    access_code = str(hash((new_users["email"], registration_secret)))
-    today = date.today().isoformat()
+@app.post("/api/create_users/")
+async def create_users (new_users: list):
+    print(type(new_users))
+    for new_user in new_users:
+        print(type(new_user))
+        print("Adding new user!")
+        if fetch_user_by_email(new_user["email"]) != None:
+            error_message = ("A user with the email \"" + new_user["email"] +
+                            "\" already exists")
+            raise HTTPException(status_code=500, detail=error_message)
 
-    ## TODO: Student and Admin models require a lot of temporary placeholder 
-    # values, should these be required?
-    create_new_user(new_users["firstName"], new_users['lastName'], new_users["email"], 
-                    new_users['accType'])
-    if new_users['accType'] == 'Student':
-        create_student_invite(access_code, new_users["email"], today)
-    elif new_users['accType'] == "Tutor":
-        create_admin_invite(access_code, new_users["email"], today)
+        access_code = str(hash((new_user["email"], registration_secret)))
+        today = date.today().isoformat()
+
+        ## TODO: Student and Admin models require a lot of temporary placeholder 
+        # values, should these be required?
+        create_new_user(new_user["firstName"], new_user['lastName'], new_user["email"], 
+                        new_user['accType'])
+        if new_user['accType'] == 'Student':
+            create_student_invite(access_code, new_user["email"], today)
+        elif new_user['accType'] == "Tutor":
+            create_admin_invite(access_code, new_user["email"], today)
 
 def sent_invite_email(to_contact: Student):
     student_id = fetch_student_by_username(to_contact.username)['_id']
