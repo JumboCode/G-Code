@@ -19,14 +19,14 @@ import axios from 'axios';
 export default function Resources() {
     const [open, setOpen] = useState(false);
 
-    // const [formVals, setFormVals] = useState(defaultValues);
-
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const handleSubmit = (event) => {
-        event.preventDefault();
-        // axios.post('http://localhost:8000/api/create_user/', formVals)
+        event.preventDefault()
+        axios.put('http://localhost:8000/api/request_users/', peopleToAdd)
+        setPeopleToAdd([{ ...defaultRow }])
+        handleClose()
     }
 
     const defaultRow = {
@@ -69,129 +69,126 @@ export default function Resources() {
                     boxShadow: 24,
                     p: 4,
                 }}>
-                    <form onSubmit={handleSubmit}>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '10px'
-                        }}>
-                            {peopleToAdd.map((row, index) => {
-                                return (
-                                    <Grid container spacing={1.5} key={index}>
-                                        <Grid item xs={2}>
-                                            <Box
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "space-evenly",
-                                                }}
-                                            >
-                                                <p>
-                                                    Student {index + 1}
-                                                </p>
-                                            </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px'
+                    }}>
+                        {peopleToAdd.map((row, index) => {
+                            return (
+                                <Grid container spacing={1.5} key={index}>
+                                    <Grid item xs={2}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "space-evenly",
+                                            }}
+                                        >
+                                            <p>
+                                                Student {index + 1}
+                                            </p>
+                                        </Box>
 
-                                        </Grid>
-                                        <Grid item xs={2}>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            name="firstname"
+                                            label="First Name"
+                                            type="text"
+                                            value={row.firstname}
+                                            onChange={buildHandleChange(index)}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            name="lastname"
+                                            label="Last Name"
+                                            type="text"
+                                            value={row.lastname}
+                                            onChange={buildHandleChange(index)}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <FormControl fullWidth>
                                             <TextField
-                                                name="firstname"
-                                                label="First Name"
+                                                name="email"
+                                                label="Email"
                                                 type="text"
-                                                value={row.firstname}
+                                                value={row.email}
                                                 onChange={buildHandleChange(index)}
                                             />
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <TextField
-                                                name="lastname"
-                                                label="Last Name"
-                                                type="text"
-                                                value={row.lastname}
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                name="acctype"
+                                                value={row.acctype}
                                                 onChange={buildHandleChange(index)}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <FormControl fullWidth>
-                                                <TextField
-                                                    name="email"
-                                                    label="Email"
-                                                    type="text"
-                                                    value={row.email}
-                                                    onChange={buildHandleChange(index)}
-                                                />
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    name="acctype"
-                                                    value={row.acctype}
-                                                    onChange={buildHandleChange(index)}
-                                                >
-                                                    <MenuItem key={0} value="Student">
-                                                        Student
-                                                    </MenuItem>
-                                                    <MenuItem key={1} value="Tutor">
-                                                        Tutor
-                                                    </MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <Box
+                                            >
+                                                <MenuItem key={0} value="Student">
+                                                    Student
+                                                </MenuItem>
+                                                <MenuItem key={1} value="Tutor">
+                                                    Tutor
+                                                </MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Box
+                                            sx={{
+                                                height: "100%",
+                                                display: "flex",
+                                                justifyContent: "space-evenly",
+                                                alignItems: "center"
+                                            }}
+                                        >
+                                            <Button
+                                                variant="primary"
                                                 sx={{
-                                                    height: "100%",
-                                                    display: "flex",
-                                                    justifyContent: "space-evenly",
-                                                    alignItems: "center"
+                                                    minWidth: 0,
+                                                }}
+                                                onClick={() => {
+                                                    setPeopleToAdd([...peopleToAdd, { ...defaultRow }])
                                                 }}
                                             >
-                                                <Button
-                                                    variant="primary"
-                                                    sx={{
-                                                        minWidth: 0,
-                                                    }}
-                                                    onClick={() => {
-                                                        setPeopleToAdd([...peopleToAdd, { ...defaultRow }])
-                                                    }}
-                                                >
-                                                    +
-                                                </Button>
-                                                <Button
-                                                    disabled={peopleToAdd.length == 1}
-                                                    variant="secondary"
-                                                    sx={{
-                                                        minWidth: 0,
-                                                    }}
-                                                    onClick={() =>
-                                                        setPeopleToAdd(peopleToAdd.filter((_, el_idx) => { return el_idx != index }))
-                                                    }
-                                                >
-                                                    -
-                                                </Button>
-                                            </Box>
-                                        </Grid>
-                                    </Grid>)
-                            })}
-                            <Grid container spacing={2}>
-                                <Grid item xs={6}>
-                                    <FormControl fullWidth>
-                                        <Button variant="secondary">
-                                            Cancel
-                                        </Button>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <FormControl fullWidth>
-                                        <Button variant="primary">
-                                            Submit
-                                        </Button>
-                                    </FormControl>
-                                </Grid>
+                                                +
+                                            </Button>
+                                            <Button
+                                                disabled={peopleToAdd.length == 1}
+                                                variant="secondary"
+                                                sx={{
+                                                    minWidth: 0,
+                                                }}
+                                                onClick={() =>
+                                                    setPeopleToAdd(peopleToAdd.filter((_, el_idx) => { return el_idx != index }))
+                                                }
+                                            >
+                                                -
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                </Grid>)
+                        })}
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <FormControl fullWidth>
+                                    <Button variant="secondary">
+                                        Cancel
+                                    </Button>
+                                </FormControl>
                             </Grid>
-
-                        </Box>
-                    </form>
+                            <Grid item xs={6}>
+                                <FormControl fullWidth>
+                                    <Button variant="primary" onClick={handleSubmit}>
+                                        Invite Users
+                                    </Button>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                    </Box>
                 </Box>
             </Modal>
             <Box sx={{ display: 'flex' }}>
@@ -202,7 +199,7 @@ export default function Resources() {
                     sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
                 >
                     <Box paddingTop="50px">
-                        <Button variant="primary" onClick={handleOpen}>Add Account</Button>
+                        <Button variant="primary" onClick={handleOpen}>Invite Users</Button>
                     </Box>
                 </Box>
             </Box>

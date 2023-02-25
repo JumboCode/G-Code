@@ -30,12 +30,13 @@ export default function FAQBoard() {
   React.useEffect(() => {
     axios.get('http://localhost:8000/api/questions')
       .then(res => {
-        setQuestions(res.data.map(question => 
-            {return (
-              {
-                ...question,
-                date: new Date(Date.parse(question.date))
-              })}))
+        setQuestions(res.data.map(question => {
+          return (
+            {
+              ...question,
+              date: new Date(Date.parse(question.date))
+            })
+        }))
       })
   }, []);
 
@@ -84,8 +85,8 @@ export default function FAQBoard() {
 
   // validation
   const [formValid, setFormValid] = React.useState(true)
-  const validateTitle = (title: string) => {return title != ""}
-  const validateQuestion = (question: string) =>{return question != ""}
+  const validateTitle = (title: string) => { return title != "" }
+  const validateQuestion = (question: string) => { return question != "" }
 
   return (
     <ThemeProvider theme={theme}>
