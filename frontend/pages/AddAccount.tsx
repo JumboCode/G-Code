@@ -8,11 +8,15 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
 
 export default function Resources() {
     const [open, setOpen] = useState(false);
-    const [error_message, setErrorMessage] = useState(null);
+    const [statusMessage, setStatusMessage] = useState("");
+    const [messageColor, setMessageColor] = useState("red");
 
     const defaultValues = {
         firstName: '',
@@ -21,30 +25,55 @@ export default function Resources() {
         accType: 'Student'
     };
 
-    const [accounts, setAccounts] = useState([defaultValues, defaultValues]);
+    const [accounts, setAccounts] = useState([defaultValues]);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const handleInput = (event, index) => {
         const { name, value } = event.target;
-        console.log(index)
-        let temp = accounts.slice();
-        temp[index][name] = value;
-        console.log(...temp)
-        setAccounts(temp);
+
+        setAccounts(
+            accounts.map((acc, i) => {
+                if (i == index) {
+                    return { ...acc, [name]: value }
+                }
+                return acc;
+            })
+        );
+    }
+
+    const addInputRow = () => {
+        setAccounts([...accounts, defaultValues])
+    }
+
+    const deleteInputRow = () => {
+        if(accounts.length > 1)
+            setAccounts(accounts.filter((acc, i) => i != accounts.length-1))
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
+        for (var i = 0; i<accounts.length; i++) {
+            const acc = accounts[i]
+            if (acc.firstName == "" || acc.lastName == "" || acc.email == "") {
+                setMessageColor("red")
+                setStatusMessage("Please make sure all fields are non-empty.")
+                return
+            }
+        }
+
         axios.post('http://localhost:8000/api/create_users/', accounts)
             .then(() => {
-                setErrorMessage(null)
+                setMessageColor("green")
+                setStatusMessage("Succesfully added " +
+                    accounts.length + " students")
             })
             .catch(function (error) {
                 console.log(error.response.data);
-                setErrorMessage(error.response.data.detail)
+                setMessageColor("red")
+                setStatusMessage(error.response.data.detail)
             })
     }
 
@@ -61,7 +90,6 @@ export default function Resources() {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    // width: ,
                     height: 'auto',
                     bgcolor: 'background.paper',
                     border: '2px solid #000',
@@ -74,20 +102,22 @@ export default function Resources() {
                             flexDirection: 'column',
                             gap: '10px'
                         }}>
-                            <StudentInput 
-                                accounts={accounts}
-                                handleInput={handleInput}
-                                accountIndex={0} 
-                            />
-                            <StudentInput 
-                                accounts={accounts}
-                                handleInput={handleInput}
-                                accountIndex={1} 
-                            />
+                            {accounts.map((_, i) =>
+                                <StudentInput
+                                    accounts={accounts}
+                                    handleInput={handleInput}
+                                    accountIndex={i}
+                                    bottom={i == accounts.length-1}
+                                    addRow={addInputRow}
+                                    deleteRow={deleteInputRow}
+                                />
+                            )}
                             <Button variant="contained" color="primary" type="submit">
                                 Submit
                             </Button>
-                            <p className={styles.error_message}>{error_message}</p>
+                            <p style={{ color: messageColor }}>
+                                {statusMessage}
+                            </p>
                         </Box>
                     </form>
                 </Box>
@@ -96,7 +126,9 @@ export default function Resources() {
     )
 }
 
-function StudentInput({ accounts, handleInput, accountIndex }) {
+function StudentInput({ accounts, handleInput, accountIndex, bottom, addRow, deleteRow }) {
+    const button_style = { color: '#3D495C' };
+    
     return <Box sx={{
         display: 'flex',
         gap: '5px'
@@ -133,6 +165,14 @@ function StudentInput({ accounts, handleInput, accountIndex }) {
                 </MenuItem>
             </Select>
         </FormControl>
+        {bottom && <>
+            <IconButton onClick={addRow}>
+                <AddRoundedIcon sx={button_style} />
+            </IconButton>
+            <IconButton onClick={deleteRow}>
+                <DeleteOutlineOutlinedIcon sx={button_style} />
+            </IconButton>
+        </>}
     </Box>
 }
 

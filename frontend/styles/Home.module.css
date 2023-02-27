@@ -118,10 +118,6 @@
   margin-left: 0.5rem;
 }
 
-.error_message {
-  color: red;
-}
-
 @media (max-width: 600px) {
   .grid {
     width: 100%;

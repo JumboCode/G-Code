@@ -267,10 +267,7 @@ async def remove_student_from_appointment(appointmentID: str):
 
 @app.post("/api/create_users/")
 async def create_users (new_users: list):
-    print(type(new_users))
     for new_user in new_users:
-        print(type(new_user))
-        print("Adding new user!")
         if fetch_user_by_email(new_user["email"]) != None:
             error_message = ("A user with the email \"" + new_user["email"] +
                             "\" already exists")
@@ -287,6 +284,7 @@ async def create_users (new_users: list):
             create_student_invite(access_code, new_user["email"], today)
         elif new_user['accType'] == "Tutor":
             create_admin_invite(access_code, new_user["email"], today)
+        
 
 def sent_invite_email(to_contact: Student):
     student_id = fetch_student_by_username(to_contact.username)['_id']
