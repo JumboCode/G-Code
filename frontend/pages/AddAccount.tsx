@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { ThemeProvider, Typography } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import { theme } from '../theme.ts'
 import { DRAWER_WIDTH } from "../constants";
 import HeaderNav from '../components/headernav';
@@ -22,11 +22,16 @@ export default function Resources() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        axios.put('http://localhost:8000/api/request_users/', peopleToAdd)
-        setPeopleToAdd([{ ...defaultRow }])
-        handleClose()
+    const handleSubmit = (_) => {
+        const valid = peopleToAdd.reduceRight((acc, person) => {return (acc && validate_person(person))}, true)
+        if (valid) {
+            axios.put('http://localhost:8000/api/request_users/', peopleToAdd)
+            setPeopleToAdd([{ ...defaultRow }])
+            setPeopleToAddValid(true)
+            handleClose()
+        } else {
+            setPeopleToAddValid(false)
+        }
     }
 
     const defaultRow = {
@@ -37,6 +42,7 @@ export default function Resources() {
     }
 
     const [peopleToAdd, setPeopleToAdd] = React.useState([{ ...defaultRow }])
+    const [peopleToAddValid, setPeopleToAddValid] = React.useState(true)
     const buildHandleChange = (index: number) => {
         return (
             (event) => {
@@ -51,6 +57,16 @@ export default function Resources() {
                         }))
             })
     }
+
+    // validation
+    const validate_string = (input: string) => {return input != ""}
+    const validate_email = (input: string) => {return input.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)}
+    const check_duplicates = (input: string, arr: Array<string>) => {return arr.map(item => item.toLowerCase()).filter((item, index) => arr.indexOf(item.toLowerCase()) != index).includes(input.toLowerCase())}
+    const validate_person = person => {return (
+        validate_string(person.firstname) && 
+        validate_string(person.lastname) && 
+        !check_duplicates(person.email, peopleToAdd.map(person => person.email)) && 
+        validate_email(person.email))}
 
     return (
         <ThemeProvider theme={theme}>
@@ -98,6 +114,7 @@ export default function Resources() {
                                             type="text"
                                             value={row.firstname}
                                             onChange={buildHandleChange(index)}
+                                            error={!peopleToAddValid && !validate_string(row.firstname)}
                                         />
                                     </Grid>
                                     <Grid item xs={2}>
@@ -107,6 +124,7 @@ export default function Resources() {
                                             type="text"
                                             value={row.lastname}
                                             onChange={buildHandleChange(index)}
+                                            error={!peopleToAddValid && !validate_string(row.lastname)}
                                         />
                                     </Grid>
                                     <Grid item xs={2}>
@@ -114,9 +132,10 @@ export default function Resources() {
                                             <TextField
                                                 name="email"
                                                 label="Email"
-                                                type="text"
+                                                type="email"
                                                 value={row.email}
                                                 onChange={buildHandleChange(index)}
+                                                error={!peopleToAddValid && (!validate_email(row.email) || check_duplicates(row.email, peopleToAdd.map(personn => personn.email)))}
                                             />
                                         </FormControl>
                                     </Grid>

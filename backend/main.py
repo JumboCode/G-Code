@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from model import Student
 from model import Appointment
+from model import UserInviteRequest
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import jwt
@@ -47,7 +48,7 @@ from database import (
     fetch_user_by_email,
     fetch_user_by_username,
     fetch_one_invite,
-    create_student_invite,
+    create_user_invite,
     create_student,
     remove_student_invite,
     fetch_all_questions
@@ -114,7 +115,7 @@ def validate_admin_session(request: Request, permission_level: str = Depends(val
 @app.get("/")
 async def read_root():
     '''
-    Purpose: Demo route to test if database is running.
+    Purpose: Demo route to test if backend is running.
     '''
     return {"message" : "Hello, World!"}
 
@@ -216,8 +217,8 @@ async def get_filtered_appointments(filter: list[tuple]):
     response = fetch_filtered_appointments(filter)
     return response
 
-@app.put("/api/request_student")
-async def put_student_request(email: str):
+@app.put("/api/request_user")
+async def put_user_request(firstname: str, lastname: str, email: str, acctype: str):
     '''
     Purpose: Generates an access code for a student and stores the code as well
              as the student's information and the datetime they were added
@@ -226,10 +227,16 @@ async def put_student_request(email: str):
     Input:   For now just the students email address. We will also require
              an authentication token of some sort once that is set up.
     '''
-    accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
     date = datetime.now()
-    create_student_invite(accessKey, email, date)
-    
+    accesskey = ''.join(random.choices(string.ascii_uppercase, k = 6))
+    create_user_invite(firstname, lastname, email, acctype, date, accesskey)
+
+@app.put("/api/request_users")
+async def put_user_requests(user_invite_requests: list[UserInviteRequest]):
+    for user_invite_request in user_invite_requests:
+        date = datetime.now()
+        accesskey = ''.join(random.choices(string.ascii_uppercase, k = 6))
+        create_user_invite(user_invite_request.dict(), date, accesskey)
 
 
 @app.put("/api/student_join")

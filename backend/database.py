@@ -4,11 +4,10 @@ Purpose: Connects to the database and provides all functionality for accessing
          data from the database.
 '''
 
-from model import StudentInvite
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite, Appointment, Question
+from model import Student, Admin, UserInviteRequest, Appointment, Question
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -25,7 +24,7 @@ admins = database.admins
 appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
 appointments = database.appointments
-si = database.student_invites
+user_invites = database.user_invites
 ai = database.admin_invites
 questions = database.questions
 
@@ -74,7 +73,7 @@ def fetch_one_invite(ak):
     return document
 
 def create_new_user(firstname, lastname, email, account_type):
-        
+    
     newUser = {
         'firstname': firstname,
         'lastname': lastname,
@@ -146,14 +145,10 @@ def remove_session(username):
     sessions.delete_one({"username": username})
 
 
-def create_student_invite(ak, em, d):
-    inviteToAdd = {
-        "accesscode": ak,
-        "requestdate": d,
-        "email": em
-    }
-    si.insert_one(inviteToAdd) 
-    return inviteToAdd
+def create_user_invite(user_invite_request: UserInviteRequest, date: datetime, accesscode: str):
+    user_invite_request.update({"date": date, "accesscode": accesscode})
+    user_invites.insert_one(user_invite_request) 
+    return user_invite_request
 
 def create_admin_invite(ak, em, d):
     inviteToAdd = {
