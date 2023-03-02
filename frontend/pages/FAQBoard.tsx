@@ -166,7 +166,7 @@ export default function FAQBoard() {
             <Grid item md={9} xs={12}>
               <Box sx={{ padding: "40px 0 30px 0" }}>
                 <Grid container>
-                  <Grid xs={12} md={8}>
+                  <Grid item xs={12} md={8}>
                     <Typography variant="h1">
                       Community Forum
                     </Typography>
@@ -174,7 +174,7 @@ export default function FAQBoard() {
                       Ask a question or help out your fellow classmates!
                     </Typography>
                   </Grid>
-                  <Grid xs={12} md={4}>
+                  <Grid item xs={12} md={4}>
                     <Button sx={{ margin: "10px" }} variant="secondary">
                       My Questions
                     </Button>
@@ -241,7 +241,7 @@ export default function FAQBoard() {
                     <>
                       <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
                         <ListItemAvatar sx={{ width: '70px' }}>
-                          <Avatar sx={{ height: '50px', width: '50px' }} src="sharkMeldon.png" />
+                          <Avatar sx={{ height: '50px', width: '50px'}}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
                         </ListItemAvatar>
                         <ListItemText style={{ cursor: 'pointer' }}>
                           <Typography variant="subtitle2">
