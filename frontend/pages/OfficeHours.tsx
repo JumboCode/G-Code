@@ -8,9 +8,11 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '../theme.ts'
-import { Grid, Box, CssBaseline } from "@mui/material";
+import { Grid, Box, CssBaseline, MenuItem } from "@mui/material";
 import HeaderNav from '../components/headernav.tsx';
 import { DRAWER_WIDTH } from '../constants';
+import Chip from '@mui/material/Chip';
+import ListItemText from '@mui/material/ListItemText';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,10 +20,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button'
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { ArrowRight } from '@mui/icons-material';
+import Modal from '@mui/material/Modal';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 // import StudentScheduling from '../components/StudentScheduling.tsx';
 
 const button_style = { color: '#3D495C' };
@@ -37,8 +43,48 @@ const tutors = [{
     times: ['7 PM', '7:30 PM', '8 PM', '9 PM', '9:30 PM', '10 PM']
 }]
 
+
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
 export default function Scheduling() {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    const [filterModalOpen, setFilterModalOpen] = useState(false);
+
+    const openFilterModal = () => setFilterModalOpen(true);
+    const closeFilterModal = () => setFilterModalOpen(false);
+
+    // const [selectedFilterDays, setSelectedFilterDays] =
+    //     useState([true, true, true, true, true, true, true]);
+
+    // const isAllDays = () => selectedFilterDays.filter((val) => val == false).length == 0;
+    // const dayIsSelected = (dayIndex) => selectedFilterDays[dayIndex] && !isAllDays();
+
+    const handleFiltersFormSubmit = (event) => {
+        event.preventDefault();
+        // do something with backend
+    }
+
+    const names = [
+        'Michelle Minns',
+        'Laena Tyler',
+    ];
+
+    const [personName, setPersonName] = React.useState<string[]>([]);
+
+    const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+        const {
+            target: { value },
+        } = event;
+        setPersonName(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+
+    const handleDelete = (e: , value: string) => {
+        e.preventDefault();
+        console.log("clicked delete");
+        setPersonName(personName.filter((name) => name !== value));
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -55,6 +101,84 @@ export default function Scheduling() {
                         <div style={{
                             paddingTop: '40px'
                         }}>
+                            <Modal
+                                open={filterModalOpen}
+                                onClose={closeFilterModal}
+                            >
+                                <Box sx={{
+                                    position: 'absolute' as 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    // width: ,
+                                    height: 'auto',
+                                    bgcolor: 'background.paper',
+                                    border: '2px solid #000',
+                                    boxShadow: 24,
+                                    p: 4,
+                                }}>
+                                    <form onSubmit={handleFiltersFormSubmit}>
+                                        <h3>Days</h3>
+                                        <FilterDayButton text='All' />
+                                        <FilterDayButton text='Mon' />
+                                        <FilterDayButton text='Tues' />
+                                        <FilterDayButton text='Wed' />
+                                        <FilterDayButton text='Thurs' />
+                                        <FilterDayButton text='Fri' />
+                                        <FilterDayButton text='Sat' />
+                                        <FilterDayButton text='Sun' />
+                                        <h3>Time</h3>
+                                        <TimeIntervalFilters />
+                                        <h3>Instructors</h3>
+                                        <Select
+                                            multiple
+                                            value={personName}
+                                            onChange={handleChange}
+                                            renderValue={(selected) => (
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip 
+                                                            key={value}
+                                                            label={value}
+                                                            variant='outlined'
+                                                            onDelete={(e) => handleDelete(e, value)}
+                                                            onMouseDown={(event) => {
+                                                                event.stopPropagation();
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </Box>
+                                            )}
+                                        >
+                                            {names.map((name) => (
+                                                <MenuItem
+                                                    key={name}
+                                                    value={name}
+                                                >
+                                                    {name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                        <br />
+                                        <Button sx={{
+                                            marginLeft: '60%',
+                                            color: '#595959',
+                                            border: '1px solid #D9D9D9',
+                                            padding: '10px 15px'
+                                        }}>
+                                            Reset
+                                        </Button>
+                                        <Button sx={{
+                                            color: 'white',
+                                            backgroundColor: '#6A5DF9',
+                                            marginLeft: '5%',
+                                            padding: '10px 15px'
+                                        }}>
+                                            Show 3 Results
+                                        </Button>
+                                    </form>
+                                </Box>
+                            </Modal>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={8}>
                                     <Grid container spacing={2}>
@@ -62,9 +186,13 @@ export default function Scheduling() {
                                             <StudentHeading />
                                         </Grid>
                                         <Grid item xs={12} md={3}>
-                                            <Button variant="secondary" sx={{
-                                                marginTop: '20px'
-                                            }}>
+                                            <Button
+                                                variant="secondary"
+                                                sx={{
+                                                    marginTop: '20px'
+                                                }}
+                                                onClick={openFilterModal}
+                                            >
                                                 <TuneRoundedIcon />
                                                 Filters
                                             </Button>
@@ -94,24 +222,27 @@ export default function Scheduling() {
                                     </Button>
                                 </Grid>
 
-                                <Grid item xs={12} md={4}>
-                                    {/* <Grid container spacing={1}>
-                                        <Grid item xs={12}> */}
+                                <Grid item xs={12} lg={4} spacing={2}>
                                     <p>Can't find a time?</p>
-                                    {/* </Grid>
-                                    </Grid> */}
-                                    {/* <Grid item xs={12}> */}
                                     <Button variant="secondary">+ Suggest New Times</Button>
-                                    {/* </Grid> */}
-                                    {/* <Grid item xs={12}> */}
                                     <Button variant="secondary">Check FAQ Board &#8594;</Button>
-                                    {/* </Grid> */}
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} md={9}>
                                             <p>Work Together</p>
                                         </Grid>
                                         <Grid item xs={12} md={3}>
                                             <Button variant="secondary">+ New</Button>
+                                        </Grid>
+                                        <Grid>
+                                            <div className={styles.pageElement}>
+                                                <ListItemText
+                                                    primary={'Javascript Peers Study Session'}
+                                                    secondary={'Sun, Nov 27, 3:30 - 5:00 PM'}
+                                                />
+                                                <Button variant="secondary">
+                                                    Sign up
+                                                </Button>
+                                            </div>
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -142,7 +273,7 @@ export default function Scheduling() {
                     }
                 </Box>
             </Box>
-        </ThemeProvider>
+        </ThemeProvider >
     )
 }
 
@@ -152,6 +283,21 @@ function StudentHeading() {
         fontFamily: 'Poppins',
         color: '#29395B',
     }}>Got questions? Ask us!</h2>
+}
+
+function FilterDayButton({ text }) {
+    const [selected, setSelected] = useState(text == 'All' ? true : false);
+    return <Button disableRipple sx={{
+        backgroundColor: '#F7F8FA',
+        border: `1px solid ${selected ? '#6A5DF9' : '#F7F8FA'}`,
+        color: selected ? '#6A5DF9' : 'black',
+        margin: '5px',
+        padding: '0 7px'
+    }}
+        onClick={() => setSelected(!selected)}>
+        {text}
+    </Button>
+
 }
 
 function CalendarWeek() {
@@ -174,6 +320,20 @@ function CalendarWeek() {
         <CalendarDay dayName="Sun" dayNum={27} selected={false} />
         <ArrowRightIcon />
     </Box>
+}
+
+function TimeIntervalFilters() {
+    const [numTimeIntervals, setNumTimeIntervals] = useState(1);
+
+    return <>
+        {Array(numTimeIntervals).fill(0).map((_, index) =>
+            <TimeIntervalSelector
+                bottom={index === (numTimeIntervals - 1)}
+                key={index}
+                setNumTimeIntervals={setNumTimeIntervals}
+                showDeleteButton={numTimeIntervals > 1 && index === numTimeIntervals - 1} />
+        )}
+    </>
 }
 
 function CalendarDay({ dayName, dayNum, selected }) {
@@ -324,14 +484,15 @@ function DayRow({ dayName }) {
                     <TimeIntervalSelector
                         bottom={index === (numTimeIntervals - 1)}
                         key={index}
-                        setNumTimeIntervals={setNumTimeIntervals} />
+                        setNumTimeIntervals={setNumTimeIntervals}
+                        showDeleteButton={index === numTimeIntervals - 1} />
                 )}
             </TableCell>
         </TableRow>
     );
 }
 
-function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
+function TimeIntervalSelector({ bottom, setNumTimeIntervals, showDeleteButton }) {
     return <div style={tutoring_styles.TimeIntervalSelector}>
         <TimeMenu />
         TO
@@ -340,11 +501,13 @@ function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
             <IconButton onClick={() => setNumTimeIntervals((old) => old + 1)}>
                 <AddRoundedIcon sx={button_style} />
             </IconButton>
-            <IconButton onClick={() => {
-                setNumTimeIntervals((old) => old - 1);
-            }}>
-                <DeleteOutlineOutlinedIcon sx={button_style} />
-            </IconButton>
+            {showDeleteButton &&
+                <IconButton onClick={() => {
+                    setNumTimeIntervals((old) => old - 1);
+                }}>
+                    <DeleteOutlineOutlinedIcon sx={button_style} />
+                </IconButton>
+            }
         </>}
     </div>
 }
