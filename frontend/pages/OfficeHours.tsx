@@ -23,9 +23,11 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { ArrowRight } from '@mui/icons-material';
 // import StudentScheduling from '../components/StudentScheduling.tsx';
+import GetUserPermission from "../components/permissions";
+import IsUserAuthorized from "../components/authentification";
 
 const button_style = { color: '#3D495C' };
-const is_student = true
+var is_student = true
 
 const tutors = [{
     name: 'Michelle Minns',
@@ -38,9 +40,25 @@ const tutors = [{
 }]
 
 export default function Scheduling() {
+
+    const [user, setUser] = useState(null);
+    const get_user = curr_user => {
+        if (user == null) {
+            setUser(curr_user)
+        }
+    }
+
+    IsUserAuthorized("Student", get_user)
+    console.log(user)
+    if (user != null && user["permission_level"] == "Admin") {
+        is_student = false;
+    }
+
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-    return (
+    if (user == null) {
+        return <p> Loading... </p>
+    } else return (
         <ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
