@@ -80,7 +80,7 @@ export default function Scheduling() {
         );
     };
 
-    const handleDelete = (e: , value: string) => {
+    const handleDelete = (e: React.MouseEvent, value: string) => {
         e.preventDefault();
         console.log("clicked delete");
         setPersonName(personName.filter((name) => name !== value));
