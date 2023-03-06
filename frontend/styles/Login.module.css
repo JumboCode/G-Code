@@ -1,85 +1,73 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Test+Founders+Grotesk&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap");
 
-/* .loginButton {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 7.96509px;
-    gap: 7.97px;
-    text-color: white;
+.inputBox {
+  box-sizing: border-box;
+  background: #f5f6f7;
+  border: 1px solid rgba(52, 52, 52, 0.15);
+  border-radius: 10px;
+}
 
-    position: absolute;
-    width: 367px;
-    height: 53px;
-    left: 546px;
-    top: 604px;
+.containter {
+  display: flex;
+}
 
-    Purple 
-
-    background: #6A5DF9;
-    border-radius: 30px;
-  } */
-
-  
-  
-  .inputBox {
-    box-sizing: border-box;
-
-    position: absolute;
-    height: 51px;
-    left: 0.26px;
-    right: 75.74px;
-    top: 23.24px;
-
-    background: #F5F6F7;
-    border: 1px solid rgba(52, 52, 52, 0.15);
-    border-radius: 10px;
-  }
-
-
-  .container{
-    position: absolute;
-    width: 501.79px;
-    left: 477.51px;
-    top: 206.42px;
-    background: #FEFEFE;
-    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
-    border-radius: 12px;
+.box {
+  width: 30pc;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10pc;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
 }
 
 .formContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: #f2f2f2;
-  padding: 2rem;
+  /* align-items: center; */
+  background-color: white;
+  padding: 3pc;
   border-radius: 1rem;
   box-shadow: 0px 0px 10px #ccc;
 }
+
 .form {
   display: flex;
   flex-direction: column;
-
 }
 
-.password {
-  margin-top: 10px;
-}
-
-.loginButton {
+/* .loginButton {
   width: 100%;
-  background-color: #6A5DF9;
+  background: rgba(106, 93, 249, 1);
   color: white;
   padding: 14px 20px;
   margin: 8px 0;
   border-radius: 30px;
   cursor: pointer;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 600;
   font-size: 15px;
   line-height: 18px;
   text-align: center;
+} */
+
+.signInText {
+  font-family: Space Grotesk;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 42px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: rgba(20, 15, 57, 1);
+}
+
+.forgotPassword {
+  font-family: Inter;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 17px;
+  letter-spacing: 0.15007999539375305px;
+  text-align: right;
+  color: rgba(106, 93, 249, 1);
 }
