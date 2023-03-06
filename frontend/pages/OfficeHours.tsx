@@ -148,9 +148,20 @@ export default function Scheduling() {
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"
                 >
-                  <div>
-                    <FormControl sx={{ m: 1, minWidth: 80 }}>
-                      What do you need help with?
+                  <Box
+                    sx={{
+                      radius: "25px",
+
+                      height: "30pc",
+                      width: "40pc",
+                      // display: "flex",
+                      padding: "2rem",
+                      backgroundColor: "white",
+                      margin: "auto",
+                    }}
+                  >
+                    <p style={{ width: 300 }}>What do you need help with?</p>
+                    <FormControl sx={{ m: 1, minWidth: 300 }}>
                       <InputLabel id="demo-simple-select-autowidth-label">
                         Select
                       </InputLabel>
@@ -163,18 +174,22 @@ export default function Scheduling() {
                         label="Age"
                       >
                         <MenuItem value="">
-                          <em>None</em>
+                          <em>Select</em>
                         </MenuItem>
                         <MenuItem value={10}>Class Topic</MenuItem>
                         <MenuItem value={21}>Assignment</MenuItem>
                         <MenuItem value={22}>Getting to Know G-Code </MenuItem>
-                        <MenuItem value={22}>Career Paths </MenuItem>
-                        <MenuItem value={23}>Interview Practice </MenuItem>
-                        <MenuItem value={24}>Being a Minority in Tech</MenuItem>
-                        <MenuItem value={24}>Personal Project</MenuItem>
+                        <MenuItem value={23}>Career Paths </MenuItem>
+                        <MenuItem value={24}>Interview Practice </MenuItem>
+                        <MenuItem value={25}>Being a Minority in Tech</MenuItem>
+                        <MenuItem value={26}>Personal Project</MenuItem>
                       </Select>
                     </FormControl>
-                  </div>
+                    <p style={{ width: 500 }}>
+                      How do you feel about this topic?
+                    </p>
+                    <p style={{ width: 500 }}>What do you feel stuck on?</p>
+                  </Box>
                 </Modal>
 
                 <Grid item xs={12} md={4}>
