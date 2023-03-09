@@ -1,9 +1,9 @@
-import React from 'react'
-import Header from './header'
-import Sidebar from './sidebar'
+import React from "react";
+import Header from "./header";
+import Sidebar from "./sidebar";
 import { Box, Drawer } from "@mui/material";
 import "@fontsource/poppins";
-import { DRAWER_WIDTH } from '../constants';
+import { DRAWER_WIDTH } from "../constants";
 
 interface Props {
   window?: () => Window;
@@ -12,16 +12,19 @@ interface Props {
 
 export default function HeaderNav(props: Props) {
   const { window, currentPageTitle } = props;
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
   return (
     <>
-      <style jsx global>{`
+      <style jsx global>
+        {`
           body {
-            background-color: #F9FAFB;
+            background-color: #f9fafb;
           }
         `}
       </style>
@@ -41,8 +44,11 @@ export default function HeaderNav(props: Props) {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+            },
           }}
         >
           <Header />
@@ -51,8 +57,11 @@ export default function HeaderNav(props: Props) {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+            },
           }}
           open
         >
@@ -61,5 +70,5 @@ export default function HeaderNav(props: Props) {
         </Drawer>
       </Box>
     </>
-  )
+  );
 }
