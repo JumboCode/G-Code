@@ -1,0 +1,212 @@
+.header1 {
+  position: relative;
+  margin: 2rem;
+
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 38.508px;
+  line-height: 50px;
+
+  width: 80pc;
+  height: 5pc;
+  color: #2c3a57;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  max-width: 80pc;
+  column-gap: 20px;
+}
+
+.leftColumn {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 50pc;
+
+  margin-left: 2rem;
+}
+
+.rightColumn {
+  display: flex;
+  align-content: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 25pc;
+}
+
+.header2 {
+  font-family: "Red Hat Display", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: rgba(110, 89, 247, 1);
+  margin-top: 2rem;
+
+  width: 100pc;
+}
+
+.leftCard {
+  margin-top: 1rem;
+  padding: 1.5rem;
+
+  font-family: "Poppins";
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 82.21px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  width: 100pc;
+}
+
+.question {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  padding: 1rem;
+
+  font-family: IBM Plex Sans;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 23px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #fbfbfd;
+
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  background-color: #715cfa;
+
+  width: 20pc;
+}
+
+.tutoringSessionCard {
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  font-family: IBM Plex Sans;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 23px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.dueDate {
+  font-family: IBM Plex Sans;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  color: #007f77;
+}
+
+.arrowIcon {
+  float: right;
+}
+
+.upperRightCornerText {
+  float: right;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 21px;
+
+  color: #007f77;
+}
+
+.joinButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 7.96509px;
+  gap: 7.97px;
+  color: white;
+  font-family: "IBM Plex Sans", sans-serif;
+
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-size: 17px;
+  line-height: 22px;
+
+  position: absolute;
+  width: 33.3%;
+  height: 45px;
+  left: calc(50% - 123px / 2 - 139px);
+  /*top: calc(50% - 45px / 2 + 77.31px);*/
+
+  background: #131736;
+  border-radius: 25px;
+}
+
+.rescheduleButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 7.96509px;
+  gap: 7.97px;
+  font-family: "IBM Plex Sans";
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 22px;
+
+  position: absolute;
+  width: 33.3%;
+  height: 45px;
+  left: calc(50% - 144px / 2 + 15.14px);
+  /*top: calc(50% - 45px / 2 + 77.31px);*/
+  border-radius: 30px;
+  background-color: white;
+}
+
+.cancelButton {
+  position: absolute;
+  width: relative;
+  height: 16.03px;
+  left: calc(50% - 92.72px / 2 + 159.44px);
+  /*top: calc(50% - 16.03px/2 + 79.1px);*/
+
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 22px;
+
+  color: #b90064;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.buttonContainer {
+  display: flex;
+  position: relative;
+  width: 10px;
+  margin: 10px;
+  height: 0px;
+  left: 15.5px;
+  border: #b90064;
+}
+
+/* .break {
+    flex-basis: 100%;
+    height: 0;
+  } */

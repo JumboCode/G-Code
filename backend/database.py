@@ -4,11 +4,10 @@ Purpose: Connects to the database and provides all functionality for accessing
          data from the database.
 '''
 
-from model import StudentInvite
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite, Appointment
+from model import Student, Admin, UserInviteRequest, Appointment, Question
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -25,9 +24,9 @@ admins = database.admins
 appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
 appointments = database.appointments
-si = database.student_invites
+user_invites = database.user_invites
 ai = database.admin_invites
-
+questions = database.questions
 
 def fetch_all_students():
     '''
@@ -74,7 +73,7 @@ def fetch_one_invite(ak):
     return document
 
 def create_new_user(firstname, lastname, email, account_type):
-        
+    
     newUser = {
         'firstname': firstname,
         'lastname': lastname,
@@ -110,6 +109,12 @@ def fetch_session_by_username(username):
     '''
     return sessions.find_one({"username": username})
 
+def fetch_user_by_username(username):
+    user = students.find_one({"username": username},{'_id': 0})
+    if user is None:
+        user = admins.find_one({"username": username},{'_id': 0})
+    return user
+
 def fetch_user_by_email(email):
     '''
     Purpose: Fetchs the user, either an admin or student, with the given email
@@ -140,14 +145,10 @@ def remove_session(username):
     sessions.delete_one({"username": username})
 
 
-def create_student_invite(ak, em, d):
-    inviteToAdd = {
-        "accesscode": ak,
-        "requestdate": d,
-        "email": em
-    }
-    si.insert_one(inviteToAdd) 
-    return inviteToAdd
+def create_user_invite(user_invite_request: UserInviteRequest, date: datetime, accesscode: str):
+    user_invite_request.update({"date": date, "accesscode": accesscode})
+    user_invites.insert_one(user_invite_request) 
+    return user_invite_request
 
 def create_admin_invite(ak, em, d):
     inviteToAdd = {
@@ -199,3 +200,27 @@ def fetch_filtered_appointments(filters):
         print(document)
         appt_list.append(Appointment(**document))
     return appt_list
+
+def get_assignments_by_assignment_id(assignmentid):
+    cursor = assignments.find({"assignmentid": assignmentid})
+    assignment_list = []
+    for document in cursor:
+        assignment_list.append(Assignment(**document))
+    return assignment_list
+
+def get_assignments_by_student_id(studentid):
+    cursor = assignments.find({"studentid": studentid})
+    assignment_list = []
+    for document in cursor:
+        assignment_list.append(Assignment(**document))
+    return assignment_list
+
+def fetch_all_questions():
+    '''
+    Purpose: Returns all questions stored in the database
+    '''
+    questions_list = []
+    cursor = questions.find({})
+    for document in cursor:
+        questions_list.append(Question(**document))
+    return questions_list

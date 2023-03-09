@@ -8,13 +8,81 @@ declare module '@mui/material/Button' {
   }
 }
 
+declare module '@mui/material/Switch' {
+  interface SwitchPropsColorOverrides {
+    primary: true;
+    secondary: true;
+    text: true;
+  }
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    h1: true;
+    h3: true;
+    h4: true;
+    subtitle1: true;
+    subtitle2: true;
+  }
+}
+
 export const theme = createTheme({
   components: {
+    MuiSwitch: {
+      variants: [
+        {
+          props: { color: 'primary' },
+          style: {
+            width: 42,
+            height: 26,
+            padding: 0,
+            '& .MuiSwitch-switchBase': {
+              padding: 0,
+              margin: 2,
+              transitionDuration: '300ms',
+              '&.Mui-checked': {
+                transform: 'translateX(16px)',
+                color: '#fff',
+                '& + .MuiSwitch-track': {
+                  backgroundColor: '#6E59F7',
+                  opacity: 1,
+                  border: 0,
+                },
+                '&.Mui-disabled + .MuiSwitch-track': {
+                  opacity: 0.5,
+                },
+              },
+              '&.Mui-focusVisible .MuiSwitch-thumb': {
+                color: '#33cf4d',
+                border: '6px solid #fff',
+              },
+              '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: 0.7,
+              },
+            },
+            '& .MuiSwitch-thumb': {
+              boxSizing: 'border-box',
+              width: 22,
+              height: 22,
+            },
+            '& .MuiSwitch-track': {
+              borderRadius: 26 / 2,
+              backgroundColor: '#E9E9EA',
+              opacity: 1,
+              // transition: theme.transitions.create(['background-color'], {
+              //   duration: 500,
+              // }),
+            },
+          },
+        },
+      ],
+    },
     MuiButton: {
       variants: [
         {
           props: { variant: 'primary' },
           style: {
+            fontWeight: 'bold',
             backgroundColor: '#6A5DF9',
             color: '#fff',
             borderRadius: '30px',
@@ -34,6 +102,7 @@ export const theme = createTheme({
         {
           props: { variant: 'secondary' },
           style: {
+            fontWeight: 'bold',
             backgroundColor: '#fff',
             color: '#6A5DF9',
             borderRadius: '30px',
@@ -53,6 +122,7 @@ export const theme = createTheme({
         {
           props: { variant: 'text' },
           style: {
+            fontWeight: 'normal',
             backgroundColor: '#fff',
             color: '#000',
             borderRadius: '30px',
@@ -70,5 +140,59 @@ export const theme = createTheme({
         },
       ],
     },
+    MuiTypography: {
+      variants: [
+        {
+          props: { variant: 'h1' },
+          style: {
+            fontSize: '36px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '42.48px',
+            fontWeight: '600',
+            color: "#29395B"
+          },
+        },
+        {
+          props: { variant: 'h3' },
+          style: {
+            fontSize: '20px',
+            fontFamily: 'Red Hat Display',
+            lineHeight: '26px',
+            fontWeight: '700',
+            color: "#000f25"
+          }
+        },
+        {
+          props: { variant: 'h4' },
+          style: {
+            fontSize: '19px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '22.99px',
+            fontWeight: '500',
+            color: "#29395B"
+          },
+        },
+        {
+          props: { variant: 'subtitle1' },
+          style: {
+            fontSize: '16px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '19.36px',
+            fontWeight: '500',
+            color: "#949494"
+          },
+        },
+        {
+          props: { variant: 'subtitle2' },
+          style: {
+            fontSize: '14px',
+            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            lineHeight: '22.05px',
+            fontWeight: '500',
+            color: "#949494"
+          },
+        },
+      ]
+    }
   },
 });

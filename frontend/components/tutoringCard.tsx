@@ -1,6 +1,6 @@
 import React from "react";
 import dashboardStyles from "../styles/Dashboard.module.css";
-import { Box, Grid, Button } from '@mui/material'
+import { Grid, Button } from '@mui/material'
 import { CalendarToday, AccessTime } from "@mui/icons-material";
 import Image from "next/image";
 

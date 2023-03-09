@@ -11,6 +11,12 @@ import Select from '@mui/material/Select';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import IconButton from '@mui/material/IconButton';
+import { ThemeProvider } from '@mui/material';
+import { theme } from '../theme.ts'
+import { DRAWER_WIDTH } from "../constants";
+import HeaderNav from '../components/headernav';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid'
 import axios from 'axios';
 
 export default function Resources() {
@@ -77,10 +83,18 @@ export default function Resources() {
             })
     }
 
+    // validation
+    const validate_string = (input: string) => {return input != ""}
+    const validate_email = (input: string) => {return input.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)}
+    const check_duplicates = (input: string, arr: Array<string>) => {return arr.map(item => item.toLowerCase()).filter((item, index) => arr.indexOf(item.toLowerCase()) != index).includes(input.toLowerCase())}
+    const validate_person = person => {return (
+        validate_string(person.firstname) && 
+        validate_string(person.lastname) && 
+        !check_duplicates(person.email, peopleToAdd.map(person => person.email)) && 
+        validate_email(person.email))}
+
     return (
-        <div className={styles.container}>
-            <Sidebar currentPageTitle="AddAccount" />
-            <Button onClick={handleOpen}>Add Account</Button>
+        <ThemeProvider theme={theme}>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -120,9 +134,146 @@ export default function Resources() {
                             </p>
                         </Box>
                     </form>
+/*
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px'
+                    }}>
+                        {peopleToAdd.map((row, index) => {
+                            return (
+                                <Grid container spacing={1.5} key={index}>
+                                    <Grid item xs={2}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "space-evenly",
+                                            }}
+                                        >
+                                            <p>
+                                                Student {index + 1}
+                                            </p>
+                                        </Box>
+
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            name="firstname"
+                                            label="First Name"
+                                            type="text"
+                                            value={row.firstname}
+                                            onChange={buildHandleChange(index)}
+                                            error={!peopleToAddValid && !validate_string(row.firstname)}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            name="lastname"
+                                            label="Last Name"
+                                            type="text"
+                                            value={row.lastname}
+                                            onChange={buildHandleChange(index)}
+                                            error={!peopleToAddValid && !validate_string(row.lastname)}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <FormControl fullWidth>
+                                            <TextField
+                                                name="email"
+                                                label="Email"
+                                                type="email"
+                                                value={row.email}
+                                                onChange={buildHandleChange(index)}
+                                                error={!peopleToAddValid && (!validate_email(row.email) || check_duplicates(row.email, peopleToAdd.map(personn => personn.email)))}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                name="acctype"
+                                                value={row.acctype}
+                                                onChange={buildHandleChange(index)}
+                                            >
+                                                <MenuItem key={0} value="Student">
+                                                    Student
+                                                </MenuItem>
+                                                <MenuItem key={1} value="Tutor">
+                                                    Tutor
+                                                </MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Box
+                                            sx={{
+                                                height: "100%",
+                                                display: "flex",
+                                                justifyContent: "space-evenly",
+                                                alignItems: "center"
+                                            }}
+                                        >
+                                            <Button
+                                                variant="primary"
+                                                sx={{
+                                                    minWidth: 0,
+                                                }}
+                                                onClick={() => {
+                                                    setPeopleToAdd([...peopleToAdd, { ...defaultRow }])
+                                                }}
+                                            >
+                                                +
+                                            </Button>
+                                            <Button
+                                                disabled={peopleToAdd.length == 1}
+                                                variant="secondary"
+                                                sx={{
+                                                    minWidth: 0,
+                                                }}
+                                                onClick={() =>
+                                                    setPeopleToAdd(peopleToAdd.filter((_, el_idx) => { return el_idx != index }))
+                                                }
+                                            >
+                                                -
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                </Grid>)
+                        })}
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <FormControl fullWidth>
+                                    <Button variant="secondary">
+                                        Cancel
+                                    </Button>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormControl fullWidth>
+                                    <Button variant="primary" onClick={handleSubmit}>
+                                        Invite Users
+                                    </Button>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                    </Box>
+ */
                 </Box>
             </Modal>
-        </div>
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline />
+                <HeaderNav currentPageTitle="People" />
+                <Box
+                    component="main"
+                    sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
+                >
+                    <Box paddingTop="50px">
+                        <Button variant="primary" onClick={handleOpen}>Invite Users</Button>
+                    </Box>
+                </Box>
+            </Box>
+        </ThemeProvider>
     )
 }
 

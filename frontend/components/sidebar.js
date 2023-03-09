@@ -64,26 +64,6 @@ export default function Sidebar({ currentPageTitle }) {
             <Toolbar />
             
             {sidebarElements}
-            {/* <SideBarElement
-                text="Dashboard"
-                active={activePage === "Dashboard"}
-                setActive={() => setActivePage("Dashboard")}
-            />
-            <SideBarElement
-                text="Tutoring"
-                active={activePage === "Tutoring"}
-                setActive={() => setActivePage("Tutoring")}
-            />
-            <SideBarElement
-                text="Course Calendar"
-                active={activePage === "Course Calendar"}
-                setActive={() => setActivePage("Course Calendar")}
-            />
-            <SideBarElement
-                text="Resources"
-                active={activePage === "Resources"}
-                setActive={() => setActivePage("Resources")}
-            /> */}
         </div>
     );
 };
