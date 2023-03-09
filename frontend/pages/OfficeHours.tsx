@@ -34,6 +34,8 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 // import StudentScheduling from '../components/StudentScheduling.tsx';
 
+/*************** NOTE: USE VERTICAL STEPPER *************/
+
 const button_style = { color: "#3D495C" };
 const is_student = true;
 
