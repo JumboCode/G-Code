@@ -56,32 +56,40 @@ class Admin(BaseModel):
 class Student(BaseModel):
     firstname: str = Field(...)
     lastname: str = Field(...)
-    bio: str = Field(...)
-    birthdate: datetime = Field(...)
     email: EmailStr = Field(...)
-    github: str = Field(...)
-    languages: List[Language] = Field(...)
-    linkedin: str = Field(...)
-    nickname: str = Field(...)
-    phone: str = Field(...)
-    password: str = Field(...)
-    username: str = Field(...)
-    emailverified: bool = Field(...)
-    pronouns: str = Field(...)
-    mentorid: str = Field(...)
-    accepted_registration: bool = Field(False)
+    
+    # birthdate: datetime = Field(...)
+    # github: str = Field(...)
+    # linkedin: str = Field(...)
+    # nickname: str = Field(...)
+    # phone: str = Field(...)
+    # password: str = Field(...)
+    # username: str = Field(...)
+    # languages: List[Language] = Field(...)
+    # pronouns: str = Field(...)
+    # mentorid: str = Field(...)
+    # is_tutor: bool = Field(...)
+    # accepted_registration: bool = Field(False)
+    # bio: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
+class UserInviteRequest(BaseModel):
+    firstname: str = Field(...)
+    lastname: str = Field(...)
+    acctype: str = Field(...)
+    email: EmailStr = Field(...)
 
-class StudentInvite(BaseModel):
+class UserInvite(BaseModel):
+    firstname: str = Field(...)
+    lastname: str = Field(...)
+    acctype: str = Field(...)
     email: EmailStr = Field(...)
     requestdate: datetime = Field(...)
     accesscode: str = Field(...)
-
 
 class Class(BaseModel):
     name: str = Field(...)
