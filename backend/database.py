@@ -8,7 +8,7 @@ from model import StudentInvite
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, StudentInvite, Appointment, Post, Reply
+from model import Student, Admin, StudentInvite, Appointment, Post, PostID, Reply
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -229,7 +229,8 @@ def fetch_all_posts():
     posts_list = []
     cursor = posts.find({})
     for document in cursor:
-        posts_list.append(Post(**document))
+        document['id'] = str(document['_id'])
+        posts_list.append(PostID(**document))
     return posts_list
 
 
