@@ -291,7 +291,7 @@ async def remove_student_from_appointment(appointmentID: str):
     return response 
 
 @app.post("/api/create_user/")
-async def remove_student_from_appointment(new_users: dict):
+async def create_user(new_users: dict):
     if fetch_user_by_email(new_users["email"]) != None:
         raise HTTPException(status_code=500, detail="A user with the given " 
                                                     "email already exists")

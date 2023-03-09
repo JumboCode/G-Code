@@ -25,7 +25,7 @@ import { ArrowRight } from '@mui/icons-material';
 // import StudentScheduling from '../components/StudentScheduling.tsx';
 
 const button_style = { color: '#3D495C' };
-const is_student = true
+const is_student = false
 
 const tutors = [{
   name: 'Michelle Minns',
