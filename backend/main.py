@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from model import Student
 from model import Appointment
+from model import UserInviteRequest
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import jwt
@@ -47,7 +48,7 @@ from database import (
     fetch_user_by_email,
     fetch_user_by_username,
     fetch_one_invite,
-    create_student_invite,
+    create_user_invite,
     create_student,
     remove_student_invite,
     fetch_all_questions
@@ -114,7 +115,7 @@ def validate_admin_session(request: Request, permission_level: str = Depends(val
 @app.get("/")
 async def read_root():
     '''
-    Purpose: Demo route to test if database is running.
+    Purpose: Demo route to test if backend is running.
     '''
     return {"message" : "Hello, World!"}
 
@@ -216,8 +217,8 @@ async def get_filtered_appointments(filter: list[tuple]):
     response = fetch_filtered_appointments(filter)
     return response
 
-@app.put("/api/request_student")
-async def put_student_request(email: str):
+@app.put("/api/request_user")
+async def put_user_request(firstname: str, lastname: str, email: str, acctype: str):
     '''
     Purpose: Generates an access code for a student and stores the code as well
              as the student's information and the datetime they were added
@@ -226,10 +227,16 @@ async def put_student_request(email: str):
     Input:   For now just the students email address. We will also require
              an authentication token of some sort once that is set up.
     '''
-    accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
     date = datetime.now()
-    create_student_invite(accessKey, email, date)
-    
+    accesskey = ''.join(random.choices(string.ascii_uppercase, k = 6))
+    create_user_invite(firstname, lastname, email, acctype, date, accesskey)
+
+@app.put("/api/request_users")
+async def put_user_requests(user_invite_requests: list[UserInviteRequest]):
+    for user_invite_request in user_invite_requests:
+        date = datetime.now()
+        accesskey = ''.join(random.choices(string.ascii_uppercase, k = 6))
+        create_user_invite(user_invite_request.dict(), date, accesskey)
 
 
 @app.put("/api/student_join")
@@ -283,24 +290,27 @@ async def remove_student_from_appointment(appointmentID: str):
     response = cancel_appointment(appointmentID)
     return response 
 
-@app.post("/api/create_user/")
-async def remove_student_from_appointment(new_users: dict):
-    if fetch_user_by_email(new_users["email"]) != None:
-        raise HTTPException(status_code=500, detail="A user with the given " 
-                                                    "email already exists")
-    
-    access_code = str(hash((new_users["email"], registration_secret)))
-    today = date.today().isoformat()
+@app.post("/api/create_users/")
+async def create_users (new_users: list):
+    for new_user in new_users:
+        if fetch_user_by_email(new_user["email"]) != None:
+            error_message = ("A user with the email \"" + new_user["email"] +
+                            "\" already exists")
+            raise HTTPException(status_code=500, detail=error_message)
 
-    ## TODO: Student and Admin models require a lot of temporary placeholder 
-    # values, should these be required?
-    create_new_user(new_users["firstName"], new_users['lastName'], new_users["email"], 
-                    new_users['accType'])
-    if new_users['accType'] == 'Student':
-        create_student_invite(access_code, new_users["email"], today)
-    elif new_users['accType'] == "Tutor":
-        create_admin_invite(access_code, new_users["email"], today)
+        access_code = str(hash((new_user["email"], registration_secret)))
+        today = date.today().isoformat()
 
+        ## TODO: Student and Admin models require a lot of temporary placeholder 
+        # values, should these be required?
+        create_new_user(new_user["firstName"], new_user['lastName'], new_user["email"], 
+                        new_user['accType'])
+        if new_user['accType'] == 'Student':
+            create_student_invite(access_code, new_user["email"], today)
+        elif new_user['accType'] == "Tutor":
+            create_admin_invite(access_code, new_user["email"], today)
+        
+        
 def sent_invite_email(to_contact: Student):
     student_id = fetch_student_by_username(to_contact.username)['_id']
     message = Mail(
