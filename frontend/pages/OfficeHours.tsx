@@ -31,13 +31,36 @@ import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { ArrowRight } from "@mui/icons-material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import StepContent from "@mui/material/StepContent";
+import TextField from "@mui/material/TextField";
 
 // import StudentScheduling from '../components/StudentScheduling.tsx';
 
-/*************** NOTE: USE VERTICAL STEPPER *************/
-
 const button_style = { color: "#3D495C" };
 const is_student = true;
+const steps = [
+  {
+    label: "Select campaign settings",
+    description: `For each ad campaign that you create, you can control how much
+              you're willing to spend on clicks and conversions, which networks
+              and geographical locations you want your ads to show on, and more.`,
+  },
+  {
+    label: "Create an ad group",
+    description:
+      "An ad group contains one or more ads which target a shared set of keywords.",
+  },
+  {
+    label: "Create an ad",
+    description: `Try out different ad text to see what brings in the most customers,
+              and learn how to enhance your ads using features like ad extensions.
+              If you run into any problems with your ads, find out how to tell if
+              they're running and how to resolve approval issues.`,
+  },
+];
 
 const tutors = [
   {
@@ -67,10 +90,28 @@ export default function Scheduling() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [age, setAge] = React.useState("");
+  const [topic, setTopic] = React.useState("");
+  const [comfort, setComfort] = React.useState("");
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+  const handleChangeTopic = (event: SelectChangeEvent) => {
+    setTopic(event.target.value);
+  };
+
+  const handleChangeComfort = (event: SelectChangeEvent) => {
+    setComfort(event.target.value);
+  };
+
+  const [activeStep, setActiveStep] = React.useState(0);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
   };
 
   return (
@@ -162,35 +203,181 @@ export default function Scheduling() {
                       margin: "auto",
                     }}
                   >
-                    <p style={{ width: 300 }}>What do you need help with?</p>
-                    <FormControl sx={{ m: 1, minWidth: 300 }}>
-                      <InputLabel id="demo-simple-select-autowidth-label">
-                        Select
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-autowidth-label"
-                        id="demo-simple-select-autowidth"
-                        value={age}
-                        onChange={handleChange}
-                        autoWidth
-                        label="Age"
-                      >
-                        <MenuItem value="">
-                          <em>Select</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Class Topic</MenuItem>
-                        <MenuItem value={21}>Assignment</MenuItem>
-                        <MenuItem value={22}>Getting to Know G-Code </MenuItem>
-                        <MenuItem value={23}>Career Paths </MenuItem>
-                        <MenuItem value={24}>Interview Practice </MenuItem>
-                        <MenuItem value={25}>Being a Minority in Tech</MenuItem>
-                        <MenuItem value={26}>Personal Project</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <p style={{ width: 500 }}>
-                      How do you feel about this topic?
-                    </p>
-                    <p style={{ width: 500 }}>What do you feel stuck on?</p>
+                    <Box>
+                      <Stepper activeStep={activeStep} orientation="vertical">
+                        <Step key={"What do you need help with"}>
+                          <StepLabel>{"What do you need help with"}</StepLabel>
+                          <StepContent>
+                            <FormControl sx={{ m: 1, minWidth: 300 }}>
+                              <InputLabel id="demo-simple-select-autowidth-label">
+                                Select
+                              </InputLabel>
+                              <Select
+                                labelId="demo-simple-select-autowidth-label"
+                                id="demo-simple-select-autowidth"
+                                value={topic}
+                                onChange={
+                                  // handleChangeTopic
+                                  handleNext
+                                }
+                                autoWidth
+                                label="Topic"
+                              >
+                                <MenuItem value="">
+                                  <em>Select</em>
+                                </MenuItem>
+                                <MenuItem value={10}>Class Topic</MenuItem>
+                                <MenuItem value={21}>Assignment</MenuItem>
+                                <MenuItem value={22}>
+                                  Getting to Know G-Code{" "}
+                                </MenuItem>
+                                <MenuItem value={23}>Career Paths </MenuItem>
+                                <MenuItem value={24}>
+                                  Interview Practice{" "}
+                                </MenuItem>
+                                <MenuItem value={25}>
+                                  Being a Minority in Tech
+                                </MenuItem>
+                                <MenuItem value={26}>Personal Project</MenuItem>
+                              </Select>
+                            </FormControl>
+                            <Box sx={{ mb: 2 }}>
+                              {/* <div>
+                                <Button
+                                  variant="contained"
+                                  onClick={handleNext}
+                                  sx={{ mt: 1, mr: 1 }}
+                                >
+                                  {index === steps.length - 1
+                                    ? "Finish"
+                                    : "Continue"}
+                                </Button>
+                                <Button
+                                  disabled={index === 0}
+                                  onClick={handleBack}
+                                  sx={{ mt: 1, mr: 1 }}
+                                >
+                                  Back
+                                </Button>
+                              </div> */}
+                            </Box>
+                          </StepContent>
+                        </Step>
+                        <Step key={"How do you feel about this topic?"}>
+                          <StepLabel>
+                            {"How do you feel about this topic?"}
+                          </StepLabel>
+                          <StepContent>
+                            <Box sx={{ mb: 2 }}>
+                              <div>
+                                <Button
+                                  variant="outlined"
+                                  onClick={
+                                    // handleChangeComfort
+                                    handleNext
+                                  }
+                                  sx={{ mt: 1, mr: 1 }}
+                                >
+                                  Good - have a quick question
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  onClick={
+                                    // handleChangeComfort
+                                    handleNext
+                                  }
+                                  sx={{ mt: 1, mr: 1 }}
+                                >
+                                  Confused - need some help
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  onClick={
+                                    // handleChangeComfort
+                                    handleNext
+                                  }
+                                  sx={{ mt: 1, mr: 1 }}
+                                >
+                                  I'm so lost (and that;s okay!)
+                                </Button>
+                              </div>
+                              {/* <div>
+                                <Button
+                                  variant="contained"
+                                  onClick={handleNext}
+                                  sx={{ mt: 1, mr: 1 }}
+                                >
+                                  {index === steps.length - 1
+                                    ? "Finish"
+                                    : "Continue"}
+                                </Button>
+                                <Button
+                                  disabled={index === 0}
+                                  onClick={handleBack}
+                                  sx={{ mt: 1, mr: 1 }}
+                                >
+                                  Back
+                                </Button>
+                              </div> */}
+                            </Box>
+                          </StepContent>
+                        </Step>
+                        <Step key={"What do you feel stuck on?"}>
+                          <StepLabel>{"What do you feel stuck on?"}</StepLabel>
+                          <StepContent>
+                            <Box sx={{ mb: 2 }}>
+                              <div>
+                                <TextField
+                                  fullWidth
+                                  id="outlined-multiline-static"
+                                  label="Tell us what you'd like to go over in this session"
+                                  multiline
+                                  rows={4}
+                                  defaultValue=""
+                                />
+                              </div>
+                            </Box>
+                          </StepContent>
+                        </Step>
+                      </Stepper>
+                      {activeStep === steps.length && (
+                        <Paper square elevation={0} sx={{ p: 3 }}>
+                          <p>All steps completed - you&apos;re finished</p>
+                          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+                            Reset
+                          </Button>
+                        </Paper>
+                      )}
+                    </Box>
+                    {/* <p style={{ width: 300 }}>What do you need help with?</p>
+                  <FormControl sx={{ m: 1, minWidth: 300 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">
+                      Select
+                    </InputLabel> */}
+                    {/* <Select
+                      labelId="demo-simple-select-autowidth-label"
+                      id="demo-simple-select-autowidth"
+                      value={age}
+                      onChange={handleChange}
+                      autoWidth
+                      label="Age"
+                    >
+                      <MenuItem value="">
+                        <em>Select</em>
+                      </MenuItem>
+                      <MenuItem value={10}>Class Topic</MenuItem>
+                      <MenuItem value={21}>Assignment</MenuItem>
+                      <MenuItem value={22}>Getting to Know G-Code </MenuItem>
+                      <MenuItem value={23}>Career Paths </MenuItem>
+                      <MenuItem value={24}>Interview Practice </MenuItem>
+                      <MenuItem value={25}>Being a Minority in Tech</MenuItem>
+                      <MenuItem value={26}>Personal Project</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <p style={{ width: 500 }}>
+                    How do you feel about this topic?
+                  </p>
+                  <p style={{ width: 500 }}>What do you feel stuck on?</p> */}
                   </Box>
                 </Modal>
 
