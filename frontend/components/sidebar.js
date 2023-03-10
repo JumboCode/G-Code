@@ -6,23 +6,28 @@ import LocalFireDepartmentOutlinedIcon from "@mui/icons-material/LocalFireDepart
 import PeopleIcon from "@mui/icons-material/People";
 import LiveHelpIcon from "@mui/icons-material/LiveHelp";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import HomeIcon from "@mui/icons-material/Home";
 import "@fontsource/poppins";
 import { useRouter } from "next/router";
 import { Toolbar } from "@mui/material";
 import IsUserAuthorized from "../components/authentification";
 
 function chooseSidebar() {
-  const get_user = (curr_user) => {
-    if (user == null) {
-      setUser(curr_user);
-    }
-  };
+  //   TODO:
+  //   Fix this section bc the get user is weird.
+  //   also, let the default be student not admin in the if statement
 
-  if (IsUserAuthorized("Student", get_user)) {
-    return ["Dashboard", "Office Hours", "FAQ Board", "People", "Assignments"];
-  } else {
-    return ["Dashboard", "Office Hours", "FAQ Board", "People", "Assignments"];
-  }
+  //   const get_user = (curr_user) => {
+  //     if (user == null) {
+  //       setUser(curr_user);
+  //     }
+  //   };
+
+  //   if (IsUserAuthorized("Student", get_user)) {
+  //     return ["Dashboard", "Office Hours", "FAQ Board", "People", "Assignments"];
+  //   } else {
+  return ["Admin", "Add Availability", "Check Appointment Status", "FAQ Board"];
+  //   }
 }
 
 function SideBarElement({ text, active, setActive }) {
@@ -49,6 +54,11 @@ function SideBarElement({ text, active, setActive }) {
       {text === "FAQ Board" && <LiveHelpIcon />}
       {text === "People" && <PeopleIcon />}
       {text === "Assignments" && <AssignmentIcon />}
+
+      {text === "Admin" && <HomeIcon />}
+      {text === "Add Availability" && <EventRoundedIcon />}
+      {text === "Check Appointment Status" && <AssignmentIcon />}
+
       <TextLabel text={text} active={active} />
     </div>
   );
