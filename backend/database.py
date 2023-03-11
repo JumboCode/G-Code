@@ -7,7 +7,7 @@ Purpose: Connects to the database and provides all functionality for accessing
 from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, UserInviteRequest, Appointment, Question
+from model import Student, Admin, Appointment, Question
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -24,8 +24,9 @@ admins = database.admins
 appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
 appointments = database.appointments
-user_invites = database.user_invites
+si = database.student_invites
 ai = database.admin_invites
+classes = database.classes
 questions = database.questions
 
 def fetch_all_students():
@@ -73,7 +74,7 @@ def fetch_one_invite(ak):
     return document
 
 def create_new_user(firstname, lastname, email, account_type):
-    
+        
     newUser = {
         'firstname': firstname,
         'lastname': lastname,
@@ -145,10 +146,14 @@ def remove_session(username):
     sessions.delete_one({"username": username})
 
 
-def create_user_invite(user_invite_request: UserInviteRequest, date: datetime, accesscode: str):
-    user_invite_request.update({"date": date, "accesscode": accesscode})
-    user_invites.insert_one(user_invite_request) 
-    return user_invite_request
+def create_student_invite(ak, em, d):
+    inviteToAdd = {
+        "accesscode": ak,
+        "requestdate": d,
+        "email": em
+    }
+    si.insert_one(inviteToAdd) 
+    return inviteToAdd
 
 def create_admin_invite(ak, em, d):
     inviteToAdd = {
@@ -224,3 +229,27 @@ def fetch_all_questions():
     for document in cursor:
         questions_list.append(Question(**document))
     return questions_list
+
+def add_student_to_class (class_name, student):
+    classes.update_one({'name': class_name}, {'$addToSet': {'students': student}})
+
+def remove_student_from_class (class_name, student):
+    classes.update_one({'name': class_name}, {'$pull': {'students': student}})
+
+def add_instructor_to_class (class_name, instructor):
+    classes.update_one({'name': class_name}, {'$addToSet': {'instructors': instructor}})
+
+def remove_instructor_from_class (class_name, instructor):
+    classes.update_one({'name': class_name}, {'$pull': {'instructors': instructor}})
+
+def get_all_students_in_class (class_name):
+    return classes.find_one({"name": class_name}, {"students": 1, "_id": 0})
+
+def get_all_instructors_in_class (class_name):
+    classes.find({"name": class_name}, {"instructors": 1, "_id": 0})
+
+def update_profile_field (username, permission_level, field_name, new_value):
+    if permission_level == "Student":
+        students.update_one({'username': username}, {"$set": {field_name: new_value}})
+    else:
+        admins.update_one({'username': username}, {"$set": {field_name: new_value}})
