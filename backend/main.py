@@ -187,7 +187,7 @@ async def get_admins():
     response = fetch_all_admins()
     return response
 
-@app.put("/api/appointments")
+@app.post("/api/appointments")
 async def get_filtered_appointments(filter: list[tuple]):
     '''
     Purpose: Filters all available appointments based on the filters the student

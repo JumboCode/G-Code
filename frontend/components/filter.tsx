@@ -111,7 +111,7 @@ export default function Filter() {
     useEffect(() => {
         async function fetchDayData() {
             try {
-                const response = await axios.get('http://localhost:8000/api/appointments', { params: { dayOfWeek: 'Monday' } });
+                const response = await axios.post('http://localhost:8000/api/appointments', { filter: [["dayOfWeek", "Monday"]] });
                 console.log(response.data)
                 //setStudents(response.data);
             } catch (error) {
