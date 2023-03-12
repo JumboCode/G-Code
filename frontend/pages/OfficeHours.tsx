@@ -216,10 +216,10 @@ export default function Scheduling() {
                                 labelId="demo-simple-select-autowidth-label"
                                 id="demo-simple-select-autowidth"
                                 value={topic}
-                                onChange={
-                                  // handleChangeTopic
-                                  handleNext
-                                }
+                                onChange={(event) => {
+                                  handleChangeTopic(event);
+                                  handleNext();
+                                }}
                                 autoWidth
                                 label="Topic"
                               >
@@ -242,24 +242,13 @@ export default function Scheduling() {
                               </Select>
                             </FormControl>
                             <Box sx={{ mb: 2 }}>
-                              {/* <div>
-                                <Button
-                                  variant="contained"
-                                  onClick={handleNext}
-                                  sx={{ mt: 1, mr: 1 }}
-                                >
-                                  {index === steps.length - 1
-                                    ? "Finish"
-                                    : "Continue"}
-                                </Button>
-                                <Button
-                                  disabled={index === 0}
-                                  onClick={handleBack}
-                                  sx={{ mt: 1, mr: 1 }}
-                                >
-                                  Back
-                                </Button>
-                              </div> */}
+                              <Button
+                                variant="contained"
+                                onClick={handleNext}
+                                sx={{ mt: 1, mr: 1 }}
+                              >
+                                Continue
+                              </Button>
                             </Box>
                           </StepContent>
                         </Step>
@@ -272,53 +261,50 @@ export default function Scheduling() {
                               <div>
                                 <Button
                                   variant="outlined"
-                                  onClick={
-                                    // handleChangeComfort
-                                    handleNext
-                                  }
+                                  onClick={(event) => {
+                                    handleChangeComfort(event);
+                                    handleNext();
+                                  }}
                                   sx={{ mt: 1, mr: 1 }}
                                 >
                                   Good - have a quick question
                                 </Button>
                                 <Button
                                   variant="outlined"
-                                  onClick={
-                                    // handleChangeComfort
-                                    handleNext
-                                  }
+                                  onClick={(event) => {
+                                    handleChangeComfort(event);
+                                    handleNext();
+                                  }}
                                   sx={{ mt: 1, mr: 1 }}
                                 >
                                   Confused - need some help
                                 </Button>
                                 <Button
                                   variant="outlined"
-                                  onClick={
-                                    // handleChangeComfort
-                                    handleNext
-                                  }
+                                  onClick={(event) => {
+                                    handleChangeComfort(event);
+                                    handleNext();
+                                  }}
                                   sx={{ mt: 1, mr: 1 }}
                                 >
                                   I'm so lost (and that;s okay!)
                                 </Button>
                               </div>
-                              {/* <div>
+                              <div>
                                 <Button
                                   variant="contained"
                                   onClick={handleNext}
                                   sx={{ mt: 1, mr: 1 }}
                                 >
-                                  {index === steps.length - 1
-                                    ? "Finish"
-                                    : "Continue"}
+                                  Continue
                                 </Button>
                                 <Button
-                                  disabled={index === 0}
                                   onClick={handleBack}
                                   sx={{ mt: 1, mr: 1 }}
                                 >
                                   Back
                                 </Button>
-                              </div> */}
+                              </div>
                             </Box>
                           </StepContent>
                         </Step>
@@ -335,6 +321,15 @@ export default function Scheduling() {
                                   rows={4}
                                   defaultValue=""
                                 />
+                                <div>
+                                  <Button
+                                    variant="contained"
+                                    onClick={handleNext}
+                                    sx={{ mt: 1, mr: 1 }}
+                                  >
+                                    Finish
+                                  </Button>
+                                </div>
                               </div>
                             </Box>
                           </StepContent>
@@ -349,35 +344,6 @@ export default function Scheduling() {
                         </Paper>
                       )}
                     </Box>
-                    {/* <p style={{ width: 300 }}>What do you need help with?</p>
-                  <FormControl sx={{ m: 1, minWidth: 300 }}>
-                    <InputLabel id="demo-simple-select-autowidth-label">
-                      Select
-                    </InputLabel> */}
-                    {/* <Select
-                      labelId="demo-simple-select-autowidth-label"
-                      id="demo-simple-select-autowidth"
-                      value={age}
-                      onChange={handleChange}
-                      autoWidth
-                      label="Age"
-                    >
-                      <MenuItem value="">
-                        <em>Select</em>
-                      </MenuItem>
-                      <MenuItem value={10}>Class Topic</MenuItem>
-                      <MenuItem value={21}>Assignment</MenuItem>
-                      <MenuItem value={22}>Getting to Know G-Code </MenuItem>
-                      <MenuItem value={23}>Career Paths </MenuItem>
-                      <MenuItem value={24}>Interview Practice </MenuItem>
-                      <MenuItem value={25}>Being a Minority in Tech</MenuItem>
-                      <MenuItem value={26}>Personal Project</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <p style={{ width: 500 }}>
-                    How do you feel about this topic?
-                  </p>
-                  <p style={{ width: 500 }}>What do you feel stuck on?</p> */}
                   </Box>
                 </Modal>
 
