@@ -120,7 +120,7 @@ async def read_root():
     return {"message" : "Hello, World!"}
 
 @app.post("/login")
-def login(response: Response, username: str = Form(...), password: str = Form(...)):    
+def login(response: Response, username: str, password: str):   
     student = fetch_student_by_username(username)
     admin = fetch_admin_by_username(username)    
     
@@ -162,7 +162,7 @@ def login(response: Response, username: str = Form(...), password: str = Form(..
             }
     token = jwt.encode(payload, session_secret, algorithm='HS256')
     response.set_cookie("gcode-session", token)
-    return {"ok": True}
+    return {"ok" : True}
 
 @app.get("/logout")
 async def logout(request: Request, response: Response):
