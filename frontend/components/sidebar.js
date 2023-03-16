@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import GridViewRoundedIcon from "@mui/icons-material/GridViewRounded";
 import EventRoundedIcon from "@mui/icons-material/EventRounded";
@@ -12,22 +12,27 @@ import { useRouter } from "next/router";
 import { Toolbar } from "@mui/material";
 import IsUserAuthorized from "../components/authentification";
 
+const isAdmin = true;
+
 function chooseSidebar() {
-  //   TODO:
-  //   Fix this section bc the get user is weird.
-  //   also, let the default be student not admin in the if statement
-
-  //   const get_user = (curr_user) => {
-  //     if (user == null) {
-  //       setUser(curr_user);
-  //     }
-  //   };
-
-  //   if (IsUserAuthorized("Student", get_user)) {
-  //     return ["Dashboard", "Office Hours", "FAQ Board", "People", "Assignments"];
-  //   } else {
-  return ["Admin", "Add Availability", "Check Appointment Status", "FAQ Board"];
+  // TODO:
+  // Fix this section bc the get user is weird.
+  // also, let the default be student not admin in the if statement
+  // const get_user = (curr_user) => {
+  //   if (user == null) {
+  //     setUser(curr_user);
   //   }
+  // };
+  if (isAdmin) {
+    return [
+      "Admin",
+      "Add Availability",
+      "Check Appointment Status",
+      "FAQ Board",
+    ];
+  } else {
+    return ["Dashboard", "Office Hours", "FAQ Board", "People", "Assignments"];
+  }
 }
 
 function SideBarElement({ text, active, setActive }) {

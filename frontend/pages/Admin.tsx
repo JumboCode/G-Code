@@ -28,7 +28,7 @@ export default function Dashboard() {
    * information (ex. first name, username, ect.)
    * TODO: Change to Admin
    */
-  IsUserAuthorized("Student", get_user);
+  IsUserAuthorized("Admin", get_user);
 
   // make call to backend to get real data
   const assignmentList = [
