@@ -301,8 +301,9 @@ function AvailableSessionsSection() {
   return (
     <div style={tutoring_styles.AvailableSessionsContainer}>
       <h2 style={tutoring_styles.SubHeading}>
-        Available Sessions
+        # of Tutoring Sessions This Week
       </h2>
+      <p>Note: You can put in more times than this, this is just a cap on how many of those times can be reserved by students</p>
       <DropDownMenu
         width="110px"
         options={[

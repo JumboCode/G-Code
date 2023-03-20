@@ -81,6 +81,8 @@ export default function Resources() {
                 setMessageColor("red")
                 setStatusMessage(error.response.data.detail)
             })
+
+          //Put a popup here that sends "Successfully added accounts.length students" to the frontend (or an error on failure)
     }
 
     // validation

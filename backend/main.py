@@ -6,25 +6,20 @@ Authors: G-Code Jumbocode Team
 
 import random
 import string
-from datetime import datetime, date
-
-from http.client import HTTPException
-from fastapi import FastAPI
 import os
 from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from model import Student
-from model import Appointment
-from model import UserInviteRequest
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, date, timezone, timedelta
+from http.client import HTTPException
 from dotenv import load_dotenv
 import jwt
 import bcrypt
-from database import *
-from datetime import datetime
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+
+from model import *
+from database import *
 
 # Create app
 app = FastAPI()
@@ -33,26 +28,6 @@ load_dotenv()
 # Used for encrypting session tokens
 session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
-
-# Import functions from database.py
-from database import (
-    fetch_all_students,
-    fetch_all_admins,
-    fetch_filtered_appointments
-)
-
-# Import functions from database.py
-from database import (
-    fetch_all_students,
-    fetch_all_admins,
-    fetch_user_by_email,
-    fetch_user_by_username,
-    fetch_one_invite,
-    create_user_invite,
-    create_student,
-    remove_student_invite,
-    fetch_all_questions
-)
 
 # Allow access from frontend
 origins = ['http://localhost:3000']
@@ -64,6 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Login Route TODO: Uncomment this? Or fix if it doesn't work
 @app.get("/login")
 def login_page():
     return HTMLResponse(
@@ -77,6 +53,12 @@ def login_page():
         """
 )
 
+@app.get("/testgetone")
+def test_get_one(classtype: str, fieldname: str, fieldval):
+    result = fetch_one_by_field(classtype, fieldname, fieldval)
+    return result
+
+# Validation Route
 @app.get("/validate")
 def validate_session(request: Request):
     '''
@@ -99,9 +81,9 @@ def validate_session(request: Request):
         raise HTTPException(
             status_code=403, detail="An error appeared during validation"
         )
-    
     return user
 
+# Validate Admin Session
 def validate_admin_session(request: Request, permission_level: str = Depends(validate_session)):
     '''
     Purpose: Checks that a user's session token corresponds to admin privileges
@@ -112,13 +94,7 @@ def validate_admin_session(request: Request, permission_level: str = Depends(val
         )
     return user
 
-@app.get("/")
-async def read_root():
-    '''
-    Purpose: Demo route to test if backend is running.
-    '''
-    return {"message" : "Hello, World!"}
-
+# Send Login info
 @app.post("/login")
 def login(response: Response, username: str = Form(...), password: str = Form(...)):    
     student = fetch_student_by_username(username)
@@ -164,6 +140,7 @@ def login(response: Response, username: str = Form(...), password: str = Form(..
     response.set_cookie("gcode-session", token)
     return {"ok": True}
 
+# Logout Route
 @app.get("/logout")
 async def logout(request: Request, response: Response):
     try:
@@ -178,35 +155,33 @@ async def logout(request: Request, response: Response):
     response.delete_cookie("gcode-session")
     return {"status":"success"}
 
-
+############################################################################
+# Routes to Get All Of A DB Collection
+# TODO: For students/admins, filter out passwords / other sensitive info
+# TODO: Add HTTP Error checking
 @app.get("/api/students")
 async def get_students():
-    '''
-    Purpose: Returns a JSON array of all student objects in the database.
-
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in database.py.
-             2) Add error checking (return some sort of HTTP error instead of
-                erroring out)
-    '''
-    response = fetch_all_students()
+    response = fetch_all("Students")
     return response
-
 
 @app.get("/api/admins")
 async def get_admins():
-    '''
-    Purpose: Returns a JSON array of all admin objects in the database.
-
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in database.py.
-             2) Add error checking (return some sort of HTTP error instead of
-                erroring out)
-    '''
-    response = fetch_all_admins()
+    response = fetch_all("Admins")
     return response
 
-@app.put("/api/appointments")
+@app.get("/api/appointments")
+async def get_appointments():
+    response = fetch_all("Appointments")
+    return response
+
+@app.get("/api/questions")
+async def get_questions():
+    response = fetch_all("Questions")
+    return response
+###########################################################################
+
+# Get appointments (TODO: should this be a get not a put?)
+@app.put("/api/filtered_appointments")
 async def get_filtered_appointments(filter: list[tuple]):
     '''
     Purpose: Filters all available appointments based on the filters the student
@@ -217,6 +192,7 @@ async def get_filtered_appointments(filter: list[tuple]):
     response = fetch_filtered_appointments(filter)
     return response
 
+# Send request for new user
 @app.put("/api/request_user")
 async def put_user_request(firstname: str, lastname: str, email: str, acctype: str):
     '''
@@ -231,6 +207,7 @@ async def put_user_request(firstname: str, lastname: str, email: str, acctype: s
     accesskey = ''.join(random.choices(string.ascii_uppercase, k = 6))
     create_user_invite(firstname, lastname, email, acctype, date, accesskey)
 
+# Requuest multiple users at the same time
 @app.put("/api/request_users")
 async def put_user_requests(user_invite_requests: list[UserInviteRequest]):
     for user_invite_request in user_invite_requests:
@@ -238,7 +215,7 @@ async def put_user_requests(user_invite_requests: list[UserInviteRequest]):
         accesskey = ''.join(random.choices(string.ascii_uppercase, k = 6))
         create_user_invite(user_invite_request.dict(), date, accesskey)
 
-
+# Lets student join/register
 @app.put("/api/student_join")
 async def put_student_join(access_token: str, student_data: Student):
     '''
@@ -258,13 +235,9 @@ async def put_student_join(access_token: str, student_data: Student):
     else:
         return HTTPException("Student was not created")
 
+# Add new appt to database
 @app.put("/api/put_appointment/")
 async def put_appointment(appointment_data: Appointment):
-    '''
-    Purpose: add an appointment linked to the current admin to the data base 
-
-    Input: An appointment object 
-    '''
     response = create_appointment(appointment_data.dict())
     return response 
 
@@ -328,8 +301,3 @@ def sent_invite_email(to_contact: Student):
         response = sg.send(message)
     except Exception as e:
         print(e.message)
-
-@app.get("/api/questions")
-async def get_questions():
-    response = fetch_all_questions()
-    return response

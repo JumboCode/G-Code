@@ -4,18 +4,16 @@ Purpose: Connects to the database and provides all functionality for accessing
          data from the database.
 '''
 
-from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from model import Student, Admin, UserInviteRequest, Appointment, Question
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
-
-# load enviornment variables
-load_dotenv()
+from typing import Any
 
 # Connect to database
+load_dotenv()
 uri = os.environ["MONGO_DB_URI"]
 client = MongoClient(uri, 8000)
 database = client.db
@@ -28,52 +26,35 @@ user_invites = database.user_invites
 ai = database.admin_invites
 questions = database.questions
 
-def fetch_all_students():
-    '''
-    Purpose: Fetches all students from the students collection and returns
-             them as a list of Student objects
-    
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in main.py.
-    '''
-    student_list = []
-    cursor = students.find({})
-    for document in cursor:
-        student_list.append(Student(**document))
-    return student_list
+model_dic = {"Students":Student, "Admins":Admin, "Invites": UserInviteRequest, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
+
+db_dic = {"Students":students, "Admins":admins, "Invites":user_invites,"Appointments":appointments, "Questions":questions, "Sessions":sessions}
 
 
-def fetch_all_admins():
-    '''
-    Purpose: Fetches all admins from the admins collection and returns
-             them as a list of Admin objects
-    
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in main.py.
-    '''
-    admin_list = []
-    cursor = admins.find({})
+#TODO: Make all fetch_all be able to go through the base one (could have a helper function for filters but I don't think there needs to be one?)
+#TODO: Maybe have two more where it's like return 1 and return filtered/all list and then if there's more than 1 that it finds throw an error
+## Find can take a list of fields to return, so for stuff like user, pass in a list so you don't return the password
+def fetch_all(model_class):
+    result_list = []
+    db = db_dic[model_class]
+    cursor = db.find({})
     for document in cursor:
-        admin_list.append(Admin(**document))
-    return admin_list 
+        result_list.append(model_dic[model_class](**document))
+    return result_list
 
-def fetch_all_student_invites():
-    '''
-    Purpose: Fetches all student requests from the student_requests collection and returns
-             them as a list of Admin objects
-    '''
-    student_invites = []
-    cursor = si.find({})
-    for document in cursor:
-        student_invites.append(StudentInvite(**document))
-    return student_invites
+def fetch_one_by_field(model_class: str, field_name: str, field_value: Any):
+    result_list = []
+    db = db_dic[model_class]
+    cursor = db.find({field_name: field_value})
+    if len(cursor) > 1:
+        return "Multiple Instances Found"
+    return model_dic[model_class](**(cursor[0]))
 
 def fetch_one_invite(ak):
-    document = si.find_one({"accesscode": ak})
+    document = user_invites.find_one({"accesscode": ak})
     return document
 
 def create_new_user(firstname, lastname, email, account_type):
-    
     newUser = {
         'firstname': firstname,
         'lastname': lastname,
@@ -214,13 +195,3 @@ def get_assignments_by_student_id(studentid):
     for document in cursor:
         assignment_list.append(Assignment(**document))
     return assignment_list
-
-def fetch_all_questions():
-    '''
-    Purpose: Returns all questions stored in the database
-    '''
-    questions_list = []
-    cursor = questions.find({})
-    for document in cursor:
-        questions_list.append(Question(**document))
-    return questions_list
