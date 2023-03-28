@@ -9,6 +9,7 @@ import CommunityResourcesPanel from "../components/communityResourcesPanel";
 import EastIcon from '@mui/icons-material/East';
 import CustomSelect from "../components/customSelect";
 import axios from "axios"
+import { useRouter } from 'next/router';
 
 export default function FAQBoard() {
 
@@ -87,6 +88,7 @@ export default function FAQBoard() {
   const [formValid, setFormValid] = React.useState(true)
   const validateTitle = (title: string) => { return title != "" }
   const validateQuestion = (question: string) => { return question != "" }
+  const router = useRouter();
 
   return (
     <ThemeProvider theme={theme}>
@@ -267,7 +269,8 @@ export default function FAQBoard() {
                   Still Confused?
                 </Typography>
                 <Box sx={{ marginTop: '15px' }}>
-                  <Button variant="secondary" sx={{ "width": "100%" }}>
+                  <Button variant="secondary" onClick={() => {
+                        router.push('/OfficeHours')}} sx={{ "width": "100%" }}>
                     Go to Office Hours <EastIcon />
                   </Button>
                 </Box>

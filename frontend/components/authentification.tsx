@@ -17,6 +17,8 @@ export default function IsUserAuthorized(required_permission, save_user) {
           throw new Error('Invalid Permission');
         }
       } catch (error) {
+        console.log(error);
+        console.log("====================" + "\n\n\n\n\n\n\n\n\n\n");
         router.push('/Login');
       }
     };
