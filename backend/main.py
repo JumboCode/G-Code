@@ -6,24 +6,22 @@ Authors: G-Code Jumbocode Team
 
 import random
 import string
-from datetime import datetime, date
-
-from http.client import HTTPException
-from fastapi import FastAPI
 import os
 from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from model import Student
-from model import Appointment
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, date, timezone, timedelta
+from http.client import HTTPException
 from dotenv import load_dotenv
 import jwt
 import bcrypt
-from database import *
-from datetime import datetime
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from model import Post
+from model import Reply
+
+from model import *
+from database import *
 
 # Create app
 app = FastAPI()
@@ -32,33 +30,6 @@ load_dotenv()
 # Used for encrypting session tokens
 session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
-
-# Import functions from database.py
-from database import (
-    fetch_all_students,
-    fetch_all_admins,
-    fetch_filtered_appointments
-)
-
-# Import functions from database.py
-from database import (
-    fetch_all_students,
-    fetch_all_admins,
-    fetch_user_by_email,
-    fetch_user_by_username,
-    fetch_one_invite,
-    create_student_invite,
-    create_student,
-    remove_student_invite,
-    fetch_all_questions,
-    add_student_to_class, 
-    remove_student_from_class, 
-    add_instructor_to_class, 
-    remove_instructor_from_class, 
-    get_all_students_in_class,
-    get_all_instructors_in_class,
-    update_profile_field
-)
 
 # Allow access from frontend
 origins = ['http://localhost:3000']
@@ -70,6 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Login Route TODO: Uncomment this? Or fix if it doesn't work
 @app.get("/login")
 def login_page():
     return HTMLResponse(
@@ -83,6 +55,12 @@ def login_page():
         """
 )
 
+@app.get("/testgetone")
+def test_get_one(classtype: str, fieldname: str, fieldval):
+    result = fetch_one_by_field(classtype, fieldname, fieldval)
+    return result
+
+# Validation Route
 @app.get("/validate")
 def validate_session(request: Request):
     '''
@@ -105,7 +83,6 @@ def validate_session(request: Request):
         raise HTTPException(
             status_code=403, detail="An error appeared during validation"
         )
-    
     return user
 
 def validate_admin_session(request: Request, user: dict = Depends(validate_session)):
@@ -170,6 +147,7 @@ def login(response: Response, username: str = Form(...), password: str = Form(..
     response.set_cookie("gcode-session", token)
     return {"ok": True}
 
+# Logout Route
 @app.get("/logout")
 async def logout(request: Request, response: Response):
     try:
@@ -184,35 +162,33 @@ async def logout(request: Request, response: Response):
     response.delete_cookie("gcode-session")
     return {"status":"success"}
 
-
+############################################################################
+# Routes to Get All Of A DB Collection
+# TODO: For students/admins, filter out passwords / other sensitive info
+# TODO: Add HTTP Error checking
 @app.get("/api/students")
 async def get_students():
-    '''
-    Purpose: Returns a JSON array of all student objects in the database.
-
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in database.py.
-             2) Add error checking (return some sort of HTTP error instead of
-                erroring out)
-    '''
-    response = fetch_all_students()
+    response = fetch_all("Students")
     return response
-
 
 @app.get("/api/admins")
 async def get_admins():
-    '''
-    Purpose: Returns a JSON array of all admin objects in the database.
-
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in database.py.
-             2) Add error checking (return some sort of HTTP error instead of
-                erroring out)
-    '''
-    response = fetch_all_admins()
+    response = fetch_all("Admins")
     return response
 
-@app.put("/api/appointments")
+@app.get("/api/appointments")
+async def get_appointments():
+    response = fetch_all("Appointments")
+    return response
+
+@app.get("/api/questions")
+async def get_questions():
+    response = fetch_all("Questions")
+    return response
+###########################################################################
+
+# Get appointments (TODO: should this be a get not a put?)
+@app.put("/api/filtered_appointments")
 async def get_filtered_appointments(filter: list[tuple]):
     '''
     Purpose: Filters all available appointments based on the filters the student
@@ -223,6 +199,7 @@ async def get_filtered_appointments(filter: list[tuple]):
     response = fetch_filtered_appointments(filter)
     return response
 
+# Send request for new user
 @app.put("/api/request_student")
 async def put_student_request(email: str):
     '''
@@ -237,8 +214,9 @@ async def put_student_request(email: str):
     date = datetime.now()
     create_student_invite(accessKey, email, date)
     
+# Requuest multiple users at the same time
 
-
+# Lets student join/register
 @app.put("/api/student_join")
 async def put_student_join(access_token: str, student_data: Student):
     '''
@@ -258,13 +236,9 @@ async def put_student_join(access_token: str, student_data: Student):
     else:
         return HTTPException("Student was not created")
 
+# Add new appt to database
 @app.put("/api/put_appointment/")
 async def put_appointment(appointment_data: Appointment):
-    '''
-    Purpose: add an appointment linked to the current admin to the data base 
-
-    Input: An appointment object 
-    '''
     response = create_appointment(appointment_data.dict())
     return response 
 
@@ -444,7 +418,27 @@ def sent_invite_email(to_contact: Student):
     except Exception as e:
         print(e.message)
 
-@app.get("/api/questions")
-async def get_questions():
-    response = fetch_all_questions()
+@app.get("/api/posts")
+async def get_posts():
+    response = fetch_all_posts()
+    return response
+
+@app.put("/api/posts")
+async def put_post(post_data: Post):
+    '''
+    Purpose: Add a post to the database
+
+    Input: A post object
+    '''
+    response = create_post(post_data.dict())
+    return response 
+
+@app.put("/api/postreply")
+async def put_reply(post_ID: str, reply_data: Reply):
+    '''
+    Purpose: Add a reply to a post in the database
+
+    Input: A reply data object and a post id string
+    '''
+    response = add_reply(post_ID, reply_data.dict())
     return response

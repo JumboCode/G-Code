@@ -4,18 +4,16 @@ Purpose: Connects to the database and provides all functionality for accessing
          data from the database.
 '''
 
-from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, Appointment, Question
+from model import Student, Admin, StudentInvite, Appointment, Post, PostID, Reply
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
-
-# load enviornment variables
-load_dotenv()
+from typing import Any
 
 # Connect to database
+load_dotenv()
 uri = os.environ["MONGO_DB_URI"]
 client = MongoClient(uri, 8000)
 database = client.db
@@ -23,54 +21,40 @@ students = database.students
 admins = database.admins
 appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
-appointments = database.appointments
+assignments = database.assignments
 si = database.student_invites
 ai = database.admin_invites
 classes = database.classes
 questions = database.questions
+posts = database.posts
 
-def fetch_all_students():
-    '''
-    Purpose: Fetches all students from the students collection and returns
-             them as a list of Student objects
-    
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in main.py.
-    '''
-    student_list = []
-    cursor = students.find({})
+
+model_dic = {"Students":Student, "Admins":Admin, "Invites": UserInviteRequest, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
+
+db_dic = {"Students":students, "Admins":admins, "Invites":user_invites,"Appointments":appointments, "Questions":questions, "Sessions":sessions}
+
+
+#TODO: Make all fetch_all be able to go through the base one (could have a helper function for filters but I don't think there needs to be one?)
+#TODO: Maybe have two more where it's like return 1 and return filtered/all list and then if there's more than 1 that it finds throw an error
+## Find can take a list of fields to return, so for stuff like user, pass in a list so you don't return the password
+def fetch_all(model_class):
+    result_list = []
+    db = db_dic[model_class]
+    cursor = db.find({})
     for document in cursor:
-        student_list.append(Student(**document))
-    return student_list
+        result_list.append(model_dic[model_class](**document))
+    return result_list
 
-
-def fetch_all_admins():
-    '''
-    Purpose: Fetches all admins from the admins collection and returns
-             them as a list of Admin objects
-    
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in main.py.
-    '''
-    admin_list = []
-    cursor = admins.find({})
-    for document in cursor:
-        admin_list.append(Admin(**document))
-    return admin_list 
-
-def fetch_all_student_invites():
-    '''
-    Purpose: Fetches all student requests from the student_requests collection and returns
-             them as a list of Admin objects
-    '''
-    student_invites = []
-    cursor = si.find({})
-    for document in cursor:
-        student_invites.append(StudentInvite(**document))
-    return student_invites
+def fetch_one_by_field(model_class: str, field_name: str, field_value: Any):
+    result_list = []
+    db = db_dic[model_class]
+    cursor = db.find({field_name: field_value})
+    if len(cursor) > 1:
+        return "Multiple Instances Found"
+    return model_dic[model_class](**(cursor[0]))
 
 def fetch_one_invite(ak):
-    document = si.find_one({"accesscode": ak})
+    document = user_invites.find_one({"accesscode": ak})
     return document
 
 def create_new_user(firstname, lastname, email, account_type):
@@ -220,36 +204,25 @@ def get_assignments_by_student_id(studentid):
         assignment_list.append(Assignment(**document))
     return assignment_list
 
-def fetch_all_questions():
+def fetch_all_posts():
     '''
-    Purpose: Returns all questions stored in the database
+    Purpose: Returns all posts stored in the database
     '''
-    questions_list = []
-    cursor = questions.find({})
+    posts_list = []
+    cursor = posts.find({})
     for document in cursor:
-        questions_list.append(Question(**document))
-    return questions_list
+        document['id'] = str(document['_id'])
+        posts_list.append(PostID(**document))
+    return posts_list
 
-def add_student_to_class (class_name, student):
-    classes.update_one({'name': class_name}, {'$addToSet': {'students': student}})
 
-def remove_student_from_class (class_name, student):
-    classes.update_one({'name': class_name}, {'$pull': {'students': student}})
+def create_post(post: Post):
+    posts.insert_one(post)
+    return post
 
-def add_instructor_to_class (class_name, instructor):
-    classes.update_one({'name': class_name}, {'$addToSet': {'instructors': instructor}})
-
-def remove_instructor_from_class (class_name, instructor):
-    classes.update_one({'name': class_name}, {'$pull': {'instructors': instructor}})
-
-def get_all_students_in_class (class_name):
-    return classes.find_one({"name": class_name}, {"students": 1, "_id": 0})
-
-def get_all_instructors_in_class (class_name):
-    classes.find({"name": class_name}, {"instructors": 1, "_id": 0})
-
-def update_profile_field (username, permission_level, field_name, new_value):
-    if permission_level == "Student":
-        students.update_one({'username': username}, {"$set": {field_name: new_value}})
-    else:
-        admins.update_one({'username': username}, {"$set": {field_name: new_value}})
+def add_reply(post_ID: str, reply_data: Reply):
+    posts.update_one(
+        {"_id": post_ID},
+        { "$push": {"replies": reply_data}}
+        )
+    return post_ID
