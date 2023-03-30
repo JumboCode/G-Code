@@ -27,11 +27,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import CommunityResourcesPanel from "../components/communityResourcesPanel";
 import EastIcon from "@mui/icons-material/East";
 import CustomSelect from "../components/customSelect";
-import axios from "axios";
+
+import axios from "axios"
+import { useRouter } from 'next/router';
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
-
-
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 export default function FAQBoard() {
@@ -137,8 +137,11 @@ export default function FAQBoard() {
         return question != "";
     };
 
-    // rich text editor
-    const [rteValue, setRteValue] = React.useState("");
+  // validation
+  const [formValid, setFormValid] = React.useState(true)
+  const validateTitle = (title: string) => { return title != "" }
+  const validateQuestion = (question: string) => { return question != "" }
+  const router = useRouter();
 
     return (
         <ThemeProvider theme={theme}>
@@ -354,100 +357,45 @@ export default function FAQBoard() {
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={2}>
-                        <Grid item md={9} xs={12}>
-                            <Card sx={{ borderRadius: "10px" }}>
-                                <List sx={{ padding: "0 20px 20px 20px" }}>
-                                    {questions
-                                        .filter(filterWeek)
-                                        .filter(filterTopic)
-                                        .filter(filterSearch)
-                                        .map((question) => (
-                                            <>
-                                                <ListItem
-                                                    sx={{
-                                                        padding:
-                                                            "40px 20px 40px 20px",
-                                                    }}
-                                                >
-                                                    <ListItemAvatar
-                                                        sx={{ width: "70px" }}
-                                                    >
-                                                        <Avatar
-                                                            sx={{
-                                                                height: "50px",
-                                                                width: "50px",
-                                                            }}
-                                                        >
-                                                            {" "}
-                                                            {
-                                                                question.author.split(
-                                                                    " "
-                                                                )[0][0]
-                                                            }
-                                                            {
-                                                                question.author.split(
-                                                                    " "
-                                                                )[1][0]
-                                                            }{" "}
-                                                        </Avatar>
-                                                    </ListItemAvatar>
-                                                    <ListItemText
-                                                        style={{
-                                                            cursor: "pointer",
-                                                        }}
-                                                    >
-                                                        <Typography variant="subtitle2">
-                                                            {question.author} ·{" "}
-                                                            {question.date.toDateString()}{" "}
-                                                            ·{" "}
-                                                            {question.date.toLocaleTimeString()}
-                                                        </Typography>
-                                                        <Typography variant="h4">
-                                                            {question.title}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="subtitle2"
-                                                            sx={{
-                                                                fontWeight:
-                                                                    "400",
-                                                            }}
-                                                        >
-                                                            {
-                                                                question.numreplies
-                                                            }{" "}
-                                                            {question.numreplies ==
-                                                            1
-                                                                ? "reply"
-                                                                : "replies"}
-                                                        </Typography>
-                                                    </ListItemText>
-                                                </ListItem>
-                                                <Divider component="li" />
-                                            </>
-                                        ))}
-                                </List>
-                            </Card>
-                        </Grid>
-                        <Grid item md={3} xs={12}>
-                            <Box>
-                                <Typography variant="h3">
-                                    Still Confused?
-                                </Typography>
-                                <Box sx={{ marginTop: "15px" }}>
-                                    <Button
-                                        variant="secondary"
-                                        sx={{ width: "100%" }}
-                                    >
-                                        Go to Office Hours <EastIcon />
-                                    </Button>
-                                </Box>
-                            </Box>
-                            <Box>
-                                <CommunityResourcesPanel />
-                            </Box>
-                        </Grid>
-                    </Grid>
+          <Grid container spacing={2}>
+            <Grid item md={9} xs={12}>
+              <Card sx={{ borderRadius: '10px' }}>
+                <List sx={{ padding: '0 20px 20px 20px' }}>
+                  {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
+                    <>
+                      <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
+                        <ListItemAvatar sx={{ width: '70px' }}>
+                          <Avatar sx={{ height: '50px', width: '50px'}}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText style={{ cursor: 'pointer' }}>
+                          <Typography variant="subtitle2">
+                            {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
+                          </Typography>
+                          <Typography variant="h4">
+                            {question.title}
+                          </Typography>
+                          <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
+                            {question.numreplies} {question.numreplies == 1 ? "reply" : "replies"}
+                          </Typography>
+                        </ListItemText>
+                      </ListItem>
+                      <Divider component="li" />
+                    </>
+                  )}
+                </List>
+              </Card>
+            </Grid>
+            <Grid item md={3} xs={12}>
+              <Box>
+                <Typography variant="h3">
+                  Still Confused?
+                </Typography>
+                <Box sx={{ marginTop: '15px' }}>
+                  <Button variant="secondary" onClick={() => {
+                        router.push('/OfficeHours')}} sx={{ "width": "100%" }}>
+                    Go to Office Hours <EastIcon />
+                  </Button>
+
                 </Box>
             </Box>
         </ThemeProvider>
