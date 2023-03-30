@@ -16,9 +16,11 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommunityResourcesPanel from "../components/communityResourcesPanel";
 import { useState } from 'react';
 import IsUserAuthorized from "../components/authentification";
+import { useRouter } from 'next/router';
 
 export default function Dashboard() {
 
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const get_user = curr_user => {
     if (user == null){
@@ -71,6 +73,7 @@ export default function Dashboard() {
         >
           <Grid container spacing={2}>
             <Grid className={styles.header1} item xs={12}>
+              {/* get a firstname from backend */}
               <p> Hey, {user["firstname"]} 🤟 </p>
             </Grid>
             <Grid item xs={12} md={8}>
@@ -85,7 +88,8 @@ export default function Dashboard() {
                   <ListItem
                     key={assignment.name}
                     secondaryAction={
-                      <IconButton edge="end" aria-label="delete">
+                      <IconButton edge="end" aria-label="delete" onClick={() => {
+                        router.push('/Assignments')}}>
                         <ArrowForwardIosIcon />
                       </IconButton>
                     }
@@ -127,13 +131,16 @@ export default function Dashboard() {
               <Grid container spacing={2}>
                 <Grid item xs={6} md={12} lg={6}>
                   <div className={styles.question}>
-                    <img src="FAQBoardIcon.svg" /><br />
+                    <img src="FAQBoardIcon.svg" onClick={() => {
+                      router.push('/OfficeHours')}}/><br /> 
                     Programming Help
+                    {/* NEED TO ADD PROPER LINK: GOES TO FAQBOARD */}
                   </div>
                 </Grid>
                 <Grid item xs={6} md={12} lg={6}>
                   <div className={styles.question}>
-                    <img src="FAQBoardIcon.svg" /><br />
+                    <img src="FAQBoardIcon.svg" onClick={() => {
+                      router.push('/FAQBoard')}}/><br />
                     FAQ Board
                   </div>
                 </Grid>

@@ -21,11 +21,13 @@ students = database.students
 admins = database.admins
 appointments = database.appointments #change based on the actual collection
 sessions = database.sessions
-appointments = database.appointments
+assignments = database.assignments
 si = database.student_invites
 ai = database.admin_invites
 classes = database.classes
 questions = database.questions
+posts = database.posts
+
 
 model_dic = {"Students":Student, "Admins":Admin, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
 
@@ -187,36 +189,25 @@ def get_assignments_by_student_id(studentid):
         assignment_list.append(Assignment(**document))
     return assignment_list
 
-def fetch_all_questions():
+def fetch_all_posts():
     '''
-    Purpose: Returns all questions stored in the database
+    Purpose: Returns all posts stored in the database
     '''
-    questions_list = []
-    cursor = questions.find({})
+    posts_list = []
+    cursor = posts.find({})
     for document in cursor:
-        questions_list.append(Question(**document))
-    return questions_list
+        document['id'] = str(document['_id'])
+        posts_list.append(PostID(**document))
+    return posts_list
 
-def add_student_to_class (class_name, student):
-    classes.update_one({'name': class_name}, {'$addToSet': {'students': student}})
 
-def remove_student_from_class (class_name, student):
-    classes.update_one({'name': class_name}, {'$pull': {'students': student}})
+def create_post(post: Post):
+    posts.insert_one(post)
+    return post
 
-def add_instructor_to_class (class_name, instructor):
-    classes.update_one({'name': class_name}, {'$addToSet': {'instructors': instructor}})
-
-def remove_instructor_from_class (class_name, instructor):
-    classes.update_one({'name': class_name}, {'$pull': {'instructors': instructor}})
-
-def get_all_students_in_class (class_name):
-    return classes.find_one({"name": class_name}, {"students": 1, "_id": 0})
-
-def get_all_instructors_in_class (class_name):
-    classes.find({"name": class_name}, {"instructors": 1, "_id": 0})
-
-def update_profile_field (username, permission_level, field_name, new_value):
-    if permission_level == "Student":
-        students.update_one({'username': username}, {"$set": {field_name: new_value}})
-    else:
-        admins.update_one({'username': username}, {"$set": {field_name: new_value}})
+def add_reply(post_ID: str, reply_data: Reply):
+    posts.update_one(
+        {"_id": post_ID},
+        { "$push": {"replies": reply_data}}
+        )
+    return post_ID

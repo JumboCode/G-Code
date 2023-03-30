@@ -29,13 +29,14 @@ export default function Assignments() {
             <div className={assignentStyles.question}>
               Schedule an Appointment
             </div>
-            <div className={assignentStyles.question}>Q and A Board</div>
+            <div className={assignentStyles.question}><Link to="FAQBoard">Q and A Board</Link></div>
           </div>
 
           <div></div>
         </div>
         <Routes>
           <Route path="/Assignment1" element={<Assignment />}></Route>
+          <Route path="/FAQBoard"></Route>
         </Routes>
       </div>
     </Router>

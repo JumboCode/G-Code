@@ -17,6 +17,8 @@ import jwt
 import bcrypt
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from model import Post
+from model import Reply
 
 from model import *
 from database import *
@@ -467,3 +469,28 @@ def sent_invite_email(to_contact: Student):
         response = sg.send(message)
     except Exception as e:
         print(e.message)
+
+@app.get("/api/posts")
+async def get_posts():
+    response = fetch_all_posts()
+    return response
+
+@app.put("/api/posts")
+async def put_post(post_data: Post):
+    '''
+    Purpose: Add a post to the database
+
+    Input: A post object
+    '''
+    response = create_post(post_data.dict())
+    return response 
+
+@app.put("/api/postreply")
+async def put_reply(post_ID: str, reply_data: Reply):
+    '''
+    Purpose: Add a reply to a post in the database
+
+    Input: A reply data object and a post id string
+    '''
+    response = add_reply(post_ID, reply_data.dict())
+    return response
