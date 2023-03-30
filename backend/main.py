@@ -53,11 +53,6 @@ def login_page():
         """
 )
 
-@app.get("/testgetone")
-def test_get_one(classtype: str, fieldname: str, fieldval):
-    result = fetch_one_by_field(classtype, fieldname, fieldval)
-    return result
-
 # Validation Route
 @app.get("/validate")
 def validate_session(request: Request):
@@ -102,47 +97,47 @@ async def read_root():
 
 @app.post("/login")
 def login(response: Response, username: str = Form(...), password: str = Form(...)):    
-    student = fetch_student_by_username(username)
-    admin = fetch_admin_by_username(username)    
+    # student = fetch_one("Students", "username", username)
+    # admin = fetch_one("Admins", "username", username)  
     
-    if student != None:
-        user = student
-        user_type = "Student"
-    elif admin != None:
-        user = admin
-        user_type = "Admin"
-    else:
-        raise HTTPException(
-            status_code=403, detail="Invalid Username"
-        )
+    # if student != None:
+    #     user = student
+    #     user_type = "Student"
+    # elif admin != None:
+    #     user = admin
+    #     user_type = "Admin"
+    # else:
+    #     raise HTTPException(
+    #         status_code=403, detail="Invalid Username"
+    #     )
     
-    stored_password = user["password"]
-    stored_password = stored_password.encode('utf-8')
-    input_password = password.encode('utf-8')
+    # stored_password = password
+    # stored_password = stored_password.encode('utf-8')
+    # input_password = password.encode('utf-8')
 
-    if not bcrypt.checkpw(input_password, stored_password):
-        raise HTTPException(
-            status_code=403, detail="Invalid Password"
-        )
+    # if not bcrypt.checkpw(input_password, stored_password):
+    #     raise HTTPException(
+    #         status_code=403, detail="Invalid Password"
+    #     )
 
-    # If the user trying to log-in already has an active session, it's removed
-    # so that duplicate session data will not be created
-    if fetch_session_by_username(username) != None:
-        remove_session(username)
-        response.delete_cookie("gcode-session")
+    # # If the user trying to log-in already has an active session, it's removed
+    # # so that duplicate session data will not be created
+    # if fetch_session_by_username(username) != None:
+    #     remove_session(username)
+    #     response.delete_cookie("gcode-session")
 
-    # Passing timezone.utc to the datetime.now() call that's used in add_session
-    # is necessary for the time-to-live index in the MongoDB database to work,
-    # which automatically removes sessions from the database after 4 hours
-    add_session(username, user_type, datetime.now(timezone.utc))
+    # # Passing timezone.utc to the datetime.now() call that's used in add_session
+    # # is necessary for the time-to-live index in the MongoDB database to work,
+    # # which automatically removes sessions from the database after 4 hours
+    # add_session(username, user_type, datetime.now(timezone.utc))
 
-    payload = {
-                'sub': username,
-                'exp': datetime.now(timezone.utc) + timedelta(hours=4),
-                'iat': datetime.now(timezone.utc),
-            }
-    token = jwt.encode(payload, session_secret, algorithm='HS256')
-    response.set_cookie("gcode-session", token)
+    # payload = {
+    #             'sub': username,
+    #             'exp': datetime.now(timezone.utc) + timedelta(hours=4),
+    #             'iat': datetime.now(timezone.utc),
+    #         }
+    # token = jwt.encode(payload, session_secret, algorithm='HS256')
+    # response.set_cookie("gcode-session", token)
     return {"ok": True}
 
 # Logout Route
@@ -161,9 +156,10 @@ async def logout(request: Request, response: Response):
     return {"status":"success"}
 
 ############################################################################
-# Routes to Get All Of A DB Collection
+# Routes to Get All Of a DB Collection
 # TODO: For students/admins, filter out passwords / other sensitive info
 # TODO: Add HTTP Error checking
+
 @app.get("/api/students")
 async def get_students():
     response = fetch_all("Students")
@@ -183,7 +179,63 @@ async def get_appointments():
 async def get_questions():
     response = fetch_all("Questions")
     return response
+
+@app.get("/api/studentinvites")
+async def get_studentinvites():
+    response = fetch_all("StudentInvites")
+    return response
+
+@app.get("/api/admininvites")
+async def get_admininvites():
+    response = fetch_all("AdminInvites")
+    return response
 ###########################################################################
+
+
+
+###########################################################################
+# Routes to Get One Item From a DB Collection
+# TODO: For certain requests, check if user is allowed to make the get request, and return "Access Denied" if not
+# TODO: Handle "No Result Found" or "Multiple Instances Found"
+
+@app.get("/api/one_student")
+async def get_one_student(field_name: str, field_value: Any):
+    response = fetch_one("Students", field_name, field_value)
+    return response
+
+@app.get("/api/one_admin")
+async def get_one_admin(field_name: str, field_value: Any):
+    response = fetch_one("Admins", field_name, field_value)
+    return response
+
+@app.get("/api/one_appointment")
+async def get_one_appointment(field_name: str, field_value: Any):
+    response = fetch_one("Appointments", field_name, field_value)
+    return response
+
+@app.get("/api/one_question")
+async def get_one_question(field_name: str, field_value: Any):
+    response = fetch_one("Questions", field_name, field_value)
+    return response
+
+@app.get("/api/one_studentinvite")
+async def get_one_studentinvite(field_name: str, field_value: Any):
+    response = fetch_one("StudentInvites", field_name, field_value)
+    return response
+
+@app.get("/api/one_admininvite")
+async def get_one_admininvite(field_name: str, field_value: Any):
+    response = fetch_one("AdminInvites", field_name, field_value)
+    return response
+##########################################################################
+
+
+##########################################################################
+# Routes to Get All Items From a DB Collection With Multiple Filters
+@app.get("/api/filter_students")
+async def get_filtered_students(filters: list[tuple]):
+    response = fetch_filtered("Students", filters)
+    return response
 
 # Get appointments (TODO: should this be a get not a put?)
 @app.put("/api/filtered_appointments")
@@ -194,7 +246,7 @@ async def get_filtered_appointments(filter: list[tuple]):
 
     Input:  List of tuples which contains the category and the preference
     '''
-    response = fetch_filtered_appointments(filter)
+    response = fetch_filtered("Appointments", filter)
     return response
 
 # Send request for new user

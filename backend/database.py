@@ -6,7 +6,7 @@ Purpose: Connects to the database and provides all functionality for accessing
 
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, Appointment, Question
+from model import *
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -27,9 +27,9 @@ ai = database.admin_invites
 classes = database.classes
 questions = database.questions
 
-model_dic = {"Students":Student, "Admins":Admin, "Invites": UserInviteRequest, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
+model_dic = {"Students":Student, "Admins":Admin, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
 
-db_dic = {"Students":students, "Admins":admins, "Invites":user_invites,"Appointments":appointments, "Questions":questions, "Sessions":sessions}
+db_dic = {"Students":students, "Admins":admins, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions}
 
 
 #TODO: Make all fetch_all be able to go through the base one (could have a helper function for filters but I don't think there needs to be one?)
@@ -43,17 +43,35 @@ def fetch_all(model_class):
         result_list.append(model_dic[model_class](**document))
     return result_list
 
-def fetch_one_by_field(model_class: str, field_name: str, field_value: Any):
+def fetch_one(model_class: str, field_name: str, field_value: Any):
     result_list = []
     db = db_dic[model_class]
     cursor = db.find({field_name: field_value})
-    if len(cursor) > 1:
+    for document in cursor:
+        result_list.append(model_dic[model_class](**document))
+    if len(result_list) == 0:
+        return "No Result Found"
+    elif len(result_list) > 1:
         return "Multiple Instances Found"
-    return model_dic[model_class](**(cursor[0]))
+    return result_list[0]
 
-def fetch_one_invite(ak):
-    document = user_invites.find_one({"accesscode": ak})
-    return document
+def fetch_filtered(model_class: str, filters: list[tuple]):
+    result_list = []
+    db = db_dic[model_class]
+    filter_dict = {}
+
+    if (model_class == "Appointments"):
+        filter_dict.update({"reserved" : False})
+
+    for filter in filters:
+        if (len(filter) == 2):
+            filter_dict.update({filter[0]:filter[1]})
+    
+    cursor = db.find(filter_dict)
+    for document in cursor:
+        result_list.append(model_dic[model_class](**document))
+    
+    return result_list
 
 def create_new_user(firstname, lastname, email, account_type):
         
@@ -73,24 +91,6 @@ def create_student(Student):
     studToAdd = Student
     result = students.insert_one(studToAdd)
     return studToAdd
-
-def fetch_student_by_username(username):
-    '''
-    Purpose: Fetch the student with the given username
-    '''
-    return students.find_one({"username": username})
-
-def fetch_admin_by_username(username):
-    '''
-    Purpose: Fetch the student with the given username
-    '''
-    return admins.find_one({"username": username})
-
-def fetch_session_by_username(username):
-    '''
-    Purpose: Fetchs a session from the database with the given unique username
-    '''
-    return sessions.find_one({"username": username})
 
 def fetch_user_by_username(username):
     user = students.find_one({"username": username},{'_id': 0})
@@ -126,7 +126,6 @@ def remove_session(username):
     Purpose: Removes a session from the database
     '''
     sessions.delete_one({"username": username})
-
 
 def create_student_invite(ak, em, d):
     inviteToAdd = {
@@ -173,20 +172,6 @@ def cancel_appointment(appointmentID):
 def remove_student_invite(ak):
     si.delete_one({"accesscode": ak})
     return True
-
-def fetch_filtered_appointments(filters):
-    filter_dict = {"reserved" : False}
-
-    for fil in filters:
-        filter_dict.update({fil[0]:fil[1]})
-    
-    appt_list = []
-    cursor = appointments.find(filter_dict)
-    print (cursor)
-    for document in cursor:
-        print(document)
-        appt_list.append(Appointment(**document))
-    return appt_list
 
 def get_assignments_by_assignment_id(assignmentid):
     cursor = assignments.find({"assignmentid": assignmentid})
