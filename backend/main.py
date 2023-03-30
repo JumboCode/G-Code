@@ -14,7 +14,7 @@ import os
 from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from model import Student
+from model import Student, LoginInfo
 from model import Appointment
 from model import UserInviteRequest
 from datetime import datetime, timezone, timedelta
@@ -120,7 +120,10 @@ async def read_root():
     return {"message" : "Hello, World!"}
 
 @app.post("/login")
-def login(response: Response, username: str, password: str):   
+def login(authentication: LoginInfo):   
+    print(authentication)
+    username = authentication.email
+    password = authentication.password
     student = fetch_student_by_username(username)
     admin = fetch_admin_by_username(username)    
     
@@ -148,7 +151,7 @@ def login(response: Response, username: str, password: str):
     # so that duplicate session data will not be created
     if fetch_session_by_username(username) != None:
         remove_session(username)
-        response.delete_cookie("gcode-session")
+        # response.delete_cookie("gcode-session")
 
     # Passing timezone.utc to the datetime.now() call that's used in add_session
     # is necessary for the time-to-live index in the MongoDB database to work,
@@ -161,8 +164,8 @@ def login(response: Response, username: str, password: str):
                 'iat': datetime.now(timezone.utc),
             }
     token = jwt.encode(payload, session_secret, algorithm='HS256')
-    response.set_cookie("gcode-session", token)
-    return {"ok" : True}
+    # response.set_cookie("gcode-session", token)
+    return {'Token' : token}
 
 @app.get("/logout")
 async def logout(request: Request, response: Response):

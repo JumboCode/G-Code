@@ -105,3 +105,7 @@ class Question(BaseModel):
     date: datetime = Field(...)
     numreplies: str = Field(...)
     topics: List[str] = Field(...)
+
+class LoginInfo(BaseModel):
+    email: str = Field(...)
+    password: str = Field(...)
