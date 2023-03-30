@@ -8,14 +8,13 @@ import random
 import string
 from datetime import datetime, date
 
-from http.client import HTTPException
-from fastapi import FastAPI
+from fastapi import FastAPI, status, HTTPException
 import os
 from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from model import Student
-from model import Appointment
+from model import UserModel, UserInModel, AppointmentModel
+from fastapi.security import OAuth2PasswordRequestForm
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 import jwt
@@ -35,29 +34,17 @@ registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Import functions from database.py
 from database import (
-    fetch_all_students,
-    fetch_all_admins,
-    fetch_filtered_appointments
-)
-
-# Import functions from database.py
-from database import (
-    fetch_all_students,
-    fetch_all_admins,
+    fetch_all_users,
     fetch_user_by_email,
-    fetch_user_by_username,
-    fetch_one_invite,
-    create_student_invite,
-    create_student,
-    remove_student_invite,
-    fetch_all_questions,
+    fetch_all_posts,
     add_student_to_class, 
     remove_student_from_class, 
     add_instructor_to_class, 
     remove_instructor_from_class, 
     get_all_students_in_class,
     get_all_instructors_in_class,
-    update_profile_field
+    update_profile_field,
+    fetch_filtered_appointments
 )
 
 # Allow access from frontend
@@ -69,6 +56,65 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+################################################################################
+
+from oauth import get_current_user
+from hashing import Hash
+from jwttoken import create_access_token
+
+@app.get("/")
+async def read_root(current_user: UserModel = Depends(get_current_user)):
+    '''
+    Purpose: Demo route to test if database is running.
+    '''
+    return {"message" : "Hello, World!"}
+
+
+@app.post("/login")
+def login(request: OAuth2PasswordRequestForm = Depends()):    
+    print(request.username)
+    user = fetch_user_by_email(request.username)
+    print(user)
+
+    if not user:
+        raise HTTPException(status_code=403, detail="Invalid Username")
+
+    if not Hash.verify(user["password"], request.password):
+        raise HTTPException(status_code=404, detail="wrong username or password")
+    
+    access_token = create_access_token(data={"sub": user["email"]})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+    # If the user trying to log-in already has an active session, it's removed
+    # so that duplicate session data will not be created
+    # if fetch_session_by_username(username) != None:
+    #     remove_session(username)
+    #     response.delete_cookie("gcode-session")
+
+    # Passing timezone.utc to the datetime.now() call that's used in add_session
+    # is necessary for the time-to-live index in the MongoDB database to work,
+    # which automatically removes sessions from the database after 4 hours
+    # add_session(username, user_type, datetime.now(timezone.utc))
+
+    # payload = {
+    #             'sub': username,
+    #             'exp': datetime.now(timezone.utc) + timedelta(hours=4),
+    #             'iat': datetime.now(timezone.utc),
+    #         }
+    # token = jwt.encode(payload, session_secret, algorithm='HS256')
+    # response.set_cookie("gcode-session", token)
+    # return {"ok": True}
+
+@app.post("/create_user")
+def create_user(user: UserInModel):
+    create_new_user(user)
+
+@app.get("/me", response_model=UserModel)
+def get_self(current_user = Depends(get_current_user)):
+    return fetch_user_by_email(current_user.email)
+
+################################################################################
 
 @app.get("/login")
 def login_page():
@@ -118,58 +164,6 @@ def validate_admin_session(request: Request, user: dict = Depends(validate_sessi
         )
     return user
 
-@app.get("/")
-async def read_root():
-    '''
-    Purpose: Demo route to test if database is running.
-    '''
-    return {"message" : "Hello, World!"}
-
-@app.post("/login")
-def login(response: Response, username: str = Form(...), password: str = Form(...)):    
-    student = fetch_student_by_username(username)
-    admin = fetch_admin_by_username(username)    
-    
-    if student != None:
-        user = student
-        user_type = "Student"
-    elif admin != None:
-        user = admin
-        user_type = "Admin"
-    else:
-        raise HTTPException(
-            status_code=403, detail="Invalid Username"
-        )
-    
-    stored_password = user["password"]
-    stored_password = stored_password.encode('utf-8')
-    input_password = password.encode('utf-8')
-
-    if not bcrypt.checkpw(input_password, stored_password):
-        raise HTTPException(
-            status_code=403, detail="Invalid Password"
-        )
-
-    # If the user trying to log-in already has an active session, it's removed
-    # so that duplicate session data will not be created
-    if fetch_session_by_username(username) != None:
-        remove_session(username)
-        response.delete_cookie("gcode-session")
-
-    # Passing timezone.utc to the datetime.now() call that's used in add_session
-    # is necessary for the time-to-live index in the MongoDB database to work,
-    # which automatically removes sessions from the database after 4 hours
-    add_session(username, user_type, datetime.now(timezone.utc))
-
-    payload = {
-                'sub': username,
-                'exp': datetime.now(timezone.utc) + timedelta(hours=4),
-                'iat': datetime.now(timezone.utc),
-            }
-    token = jwt.encode(payload, session_secret, algorithm='HS256')
-    response.set_cookie("gcode-session", token)
-    return {"ok": True}
-
 @app.get("/logout")
 async def logout(request: Request, response: Response):
     try:
@@ -185,7 +179,7 @@ async def logout(request: Request, response: Response):
     return {"status":"success"}
 
 
-@app.get("/api/students")
+@app.get("/api/users")
 async def get_students():
     '''
     Purpose: Returns a JSON array of all student objects in the database.
@@ -195,7 +189,7 @@ async def get_students():
              2) Add error checking (return some sort of HTTP error instead of
                 erroring out)
     '''
-    response = fetch_all_students()
+    response = fetch_all_users()
     return response
 
 
@@ -240,7 +234,7 @@ async def put_student_request(email: str):
 
 
 @app.put("/api/student_join")
-async def put_student_join(access_token: str, student_data: Student):
+async def put_student_join(access_token: str, student_data: UserModel):
     '''
     Purpose: Verifies that access token that was added is valid and then
              adds the student with all of their data into the database.
@@ -259,7 +253,7 @@ async def put_student_join(access_token: str, student_data: Student):
         return HTTPException("Student was not created")
 
 @app.put("/api/put_appointment/")
-async def put_appointment(appointment_data: Appointment):
+async def put_appointment(appointment_data: AppointmentModel):
     '''
     Purpose: add an appointment linked to the current admin to the data base 
 
@@ -299,7 +293,7 @@ async def assign_student_to_class (username : str, class_name : str,
 
     Input: the student name, and the class name to assign them to
     '''
-    student = fetch_student_by_username(username)
+    student = fetch_user_by_username(username)
     if student is None:
         raise HTTPException(status_code=500, 
                             detail="The given student does not exist")
@@ -313,7 +307,7 @@ async def assign_student_to_class (username : str, class_name : str,
 
     Input: the student name, and the class name to assign them to
     '''
-    student = fetch_student_by_username(username)
+    student = fetch_user_by_username(username)
     if student is None:
         raise HTTPException(status_code=500, 
                             detail="The given student does not exist")
@@ -327,7 +321,7 @@ async def assign_instructor_to_class (username : str, class_name : str,
 
     Input: the student name, and the class name to assign them to
     '''
-    instructor = fetch_admin_by_username(username)
+    instructor = fetch_user_by_username(username)
     if instructor is None:
         raise HTTPException(status_code=500, 
                             detail="The given instructor does not exist")
@@ -341,7 +335,7 @@ async def unassign_instructor_from_class (username : str, class_name : str,
 
     Input: the student name, and the class name to assign them to
     '''
-    instructor = fetch_admin_by_username(username)
+    instructor = fetch_user_by_username(username)
     if instructor is None:
         raise HTTPException(status_code=500, 
                             detail="The given instructor does not exist")
@@ -363,17 +357,12 @@ async def view_instructors_in_class (class_name : str,
 @app.post("/api/edit_user_profile")
 async def edit_user_profile (username: str, new_profile_values: dict, 
                              admin_user: dict = Depends(validate_admin_session)):
-    student = fetch_student_by_username(username)
-    admin = fetch_admin_by_username(username)   
+    user = fetch_user_by_username(username)
 
-    # TODO - automatically insert permission level when fetching all users, 
-    #        will simplify code
-    if student != None:
-        user = student
+    if user["acctype"] == 'student':
         user["permission_level"] = "Student"
         editable_fields = ["firstname", "lastname", "email", "mentorid"]
-    elif admin != None:
-        user = admin
+    elif user["acctype"] != 'admin':
         user["permission_level"] = "Admin"
         editable_fields = ["classes", "mentees"]
     else:
@@ -424,10 +413,10 @@ async def create_users (new_users: list):
         if new_user['accType'] == 'Student':
             create_student_invite(access_code, new_user["email"], today)
         elif new_user['accType'] == "Tutor":
-            create_admin_invite(access_code, new_user["email"], today)
+            create_user_invite(access_code, new_user["email"], today)
 
-def sent_invite_email(to_contact: Student):
-    student_id = fetch_student_by_username(to_contact.username)['_id']
+def sent_invite_email(to_contact: UserModel):
+    student_id = fetch_user_by_username(to_contact.username)['_id']
     message = Mail(
         from_email = 'jumbo.g.code@gmail.com',
         to_emails = to_contact.email,
@@ -446,5 +435,5 @@ def sent_invite_email(to_contact: Student):
 
 @app.get("/api/questions")
 async def get_questions():
-    response = fetch_all_questions()
+    response = fetch_all_posts()
     return response

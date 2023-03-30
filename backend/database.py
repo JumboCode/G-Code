@@ -4,10 +4,10 @@ Purpose: Connects to the database and provides all functionality for accessing
          data from the database.
 '''
 
-from model import Appointment
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from model import Student, Admin, Appointment, Question
+from model import UserModel, UserInviteModel, AppointmentModel, AssignmentModel, PostModel, UserInModel
+from hashing import Hash
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
@@ -16,116 +16,67 @@ import os
 load_dotenv()
 
 # Connect to database
-uri = os.environ["MONGO_DB_URI"]
-client = MongoClient(uri, 8000)
-database = client.db
-students = database.students
-admins = database.admins
-appointments = database.appointments #change based on the actual collection
-sessions = database.sessions
+uri          = os.environ["MONGO_DB_URI"]
+client       = MongoClient(uri, 8000)
+database     = client.db
+
+# Extract collections
+users        = database.users
+user_invites = database.user_invites
+assignments  = database.assignments
 appointments = database.appointments
-si = database.student_invites
-ai = database.admin_invites
-classes = database.classes
-questions = database.questions
-
-def fetch_all_students():
-    '''
-    Purpose: Fetches all students from the students collection and returns
-             them as a list of Student objects
-    
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in main.py.
-    '''
-    student_list = []
-    cursor = students.find({})
-    for document in cursor:
-        student_list.append(Student(**document))
-    return student_list
+posts        = database.posts
+classes      = database.classes
+sessions     = database.sessions
 
 
-def fetch_all_admins():
-    '''
-    Purpose: Fetches all admins from the admins collection and returns
-             them as a list of Admin objects
-    
-    Todo:    1) Don't send student passwords back in response. This can either
-                be done here or in main.py.
-    '''
-    admin_list = []
-    cursor = admins.find({})
-    for document in cursor:
-        admin_list.append(Admin(**document))
-    return admin_list 
-
-def fetch_all_student_invites():
-    '''
-    Purpose: Fetches all student requests from the student_requests collection and returns
-             them as a list of Admin objects
-    '''
-    student_invites = []
-    cursor = si.find({})
-    for document in cursor:
-        student_invites.append(StudentInvite(**document))
-    return student_invites
-
-def fetch_one_invite(ak):
-    document = si.find_one({"accesscode": ak})
+def stringify_object_id(document):
+    document.id = str(document.id)
     return document
 
-def create_new_user(firstname, lastname, email, account_type):
-        
-    newUser = {
-        'firstname': firstname,
-        'lastname': lastname,
-        "email": email,
-        "emailverified": False,
-    }
+def fetch_all_users():
+    student_list = []
+    cursor = users.find({})
+    for document in cursor:
+        student_list.append(stringify_object_id(UserModel(**document)))
+    return student_list
 
-    if (account_type == "Student"):
-        students.insert_one(newUser)
-    elif (account_type == "Tutor"):
-        admins.insert_one(newUser)
+def fetch_all_user_invites():
+    student_invites = []
+    cursor = user_invites.find({})
+    for document in cursor:
+        student_invites.append(UserInviteModel(**document))
+    return student_invites
 
-def create_student(Student):
-    studToAdd = Student
-    result = students.insert_one(studToAdd)
-    return studToAdd
+def fetch_one_user_invite(access_code: str):
+    document = user_invites.find_one({"accesscode": access_code})
+    return document
 
-def fetch_student_by_username(username):
-    '''
-    Purpose: Fetch the student with the given username
-    '''
-    return students.find_one({"username": username})
+def create_new_user(user: UserInModel):
+    hashed_password = Hash.bcrypt(user.password)
+    user_object = dict(user)
+    user_object["password"] = hashed_password
+    users.insert_one(user_object)
 
-def fetch_admin_by_username(username):
-    '''
-    Purpose: Fetch the student with the given username
-    '''
-    return admins.find_one({"username": username})
+def team_accounts():
+    firstnames = ["Theseus", "Jimmy", "Emma", "Elizabeth", "Sean", "Aidan", "Kimaya", "Jyoti", "Ruby", "Sarah", "Megan"]
+    lastnames = ["L", "M", "P", "F", "R", "B", "W", "B", "M", "G", "Y"]
+    for i in range(11):
+        this_user: UserInModel() 
+        this_user.firstname = firstnames[i]
+        this_user.lastname = lastnames[i]
+        this_user.email = firstnames[i]
+        this_user.password = firstnames[i]
+        # this_user.username = firstnames[i]
+
+        create_new_user(this_user)
 
 def fetch_session_by_username(username):
-    '''
-    Purpose: Fetchs a session from the database with the given unique username
-    '''
     return sessions.find_one({"username": username})
 
-def fetch_user_by_username(username):
-    user = students.find_one({"username": username},{'_id': 0})
-    if user is None:
-        user = admins.find_one({"username": username},{'_id': 0})
-    return user
-
 def fetch_user_by_email(email):
-    '''
-    Purpose: Fetchs the user, either an admin or student, with the given email
-    '''
-
-    user = students.find_one({"email": email})
-    if user is None:
-        user = admins.find_one({"email": email})
-    return user
-
+    user = users.find_one({"email": email})
+    return stringify_object_id(UserModel(**user))
 
 def add_session(username, permission_level, curr_time):
     '''
@@ -135,8 +86,7 @@ def add_session(username, permission_level, curr_time):
     '''
     new_session = {"username": username, 
                    "permission_level": permission_level, 
-                   "created_at": curr_time}
-                   
+                   "created_at": curr_time}       
     sessions.insert_one(new_session)
 
 def remove_session(username):
@@ -145,24 +95,18 @@ def remove_session(username):
     '''
     sessions.delete_one({"username": username})
 
-
-def create_student_invite(ak, em, d):
+def create_user_invite(access_code: str, email: str, request_date: str):
     inviteToAdd = {
-        "accesscode": ak,
-        "requestdate": d,
-        "email": em
+        "accesscode": access_code,
+        "requestdate": request_date,
+        "email": email
     }
-    si.insert_one(inviteToAdd) 
+    user_invites.insert_one(inviteToAdd) 
     return inviteToAdd
 
-def create_admin_invite(ak, em, d):
-    inviteToAdd = {
-        "accesscode": ak,
-        "requestdate": d,
-        "email": em
-    }
-    ai.insert_one(inviteToAdd) 
-    return inviteToAdd
+def remove_user_invite(ak):
+    user_invites.delete_one({"accesscode": ak})
+    return True
 
 def create_appointment(appointment):
     '''
@@ -188,10 +132,6 @@ def cancel_appointment(appointmentID):
         appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": "", "reserved": False } })
     return appointmentID
 
-def remove_student_invite(ak):
-    si.delete_one({"accesscode": ak})
-    return True
-
 def fetch_filtered_appointments(filters):
     filter_dict = {"reserved" : False}
 
@@ -203,31 +143,31 @@ def fetch_filtered_appointments(filters):
     print (cursor)
     for document in cursor:
         print(document)
-        appt_list.append(Appointment(**document))
+        appt_list.append(AppointmentModel(**document))
     return appt_list
 
 def get_assignments_by_assignment_id(assignmentid):
     cursor = assignments.find({"assignmentid": assignmentid})
     assignment_list = []
     for document in cursor:
-        assignment_list.append(Assignment(**document))
+        assignment_list.append(AssignmentModel(**document))
     return assignment_list
 
 def get_assignments_by_student_id(studentid):
     cursor = assignments.find({"studentid": studentid})
     assignment_list = []
     for document in cursor:
-        assignment_list.append(Assignment(**document))
+        assignment_list.append(AssignmentModel(**document))
     return assignment_list
 
-def fetch_all_questions():
+def fetch_all_posts():
     '''
     Purpose: Returns all questions stored in the database
     '''
     questions_list = []
-    cursor = questions.find({})
+    cursor = posts.find({})
     for document in cursor:
-        questions_list.append(Question(**document))
+        questions_list.append(PostModel(**document))
     return questions_list
 
 def add_student_to_class (class_name, student):
@@ -250,6 +190,6 @@ def get_all_instructors_in_class (class_name):
 
 def update_profile_field (username, permission_level, field_name, new_value):
     if permission_level == "Student":
-        students.update_one({'username': username}, {"$set": {field_name: new_value}})
+        users.update_one({'username': username}, {"$set": {field_name: new_value}})
     else:
-        admins.update_one({'username': username}, {"$set": {field_name: new_value}})
+        users.update_one({'username': username}, {"$set": {field_name: new_value}})
