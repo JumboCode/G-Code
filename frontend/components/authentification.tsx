@@ -17,7 +17,7 @@ export default function IsUserAuthorized(required_permission, save_user) {
           throw new Error('Invalid Permission');
         }
       } catch (error) {
-        router.push('/Login');
+        //router.push('/Login');
       }
     };
     validateSession();
