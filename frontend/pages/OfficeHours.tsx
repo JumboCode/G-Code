@@ -23,9 +23,14 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { ArrowRight } from '@mui/icons-material';
 // import StudentScheduling from '../components/StudentScheduling.tsx';
+import GetUserPermission from "../components/permissions";
+import IsUserAuthorized from "../components/authentification";
 
 const button_style = { color: '#3D495C' };
-const is_student = true
+
+// Don't forget to take this out
+var is_student = true
+
 
 const tutors = [{
   name: 'Michelle Minns',
@@ -38,61 +43,77 @@ const tutors = [{
 }]
 
 export default function Scheduling() {
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <HeaderNav currentPageTitle="Office Hours" />
-        <Box
-          component="main"
-          className={styles.content}
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
-        >
-          {
-            is_student &&
-            <div style={{
-              paddingTop: '40px'
-            }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={8}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={9}>
-                      <StudentHeading />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <Button variant="secondary" sx={{
-                        marginTop: '20px'
-                      }}>
-                        <TuneRoundedIcon />
-                        Filters
-                      </Button>
-                    </Grid>
-                  </Grid>
-                  <CalendarWeek />
-                  <p style={{
-                    color: '#61646D',
-                  }}>
-                    Appointments Available on Tuesday, Nov 22
-                  </p>
-                  <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    width: '90%'
-                  }}>
-                    {tutors.map((tutor) => <TutorProfile {...tutor} />)}
-                  </Box>
-                  <Button sx={{
-                    backgroundColor: '#61646D',
-                    width: '90%',
-                    marginTop: '20px',
-                    color: 'white'
-                  }}>
-                    Continue →
-                  </Button>
-                </Grid>
+    const [user, setUser] = useState(null);
+    const get_user = curr_user => {
+        if (user == null) {
+            setUser(curr_user)
+        }
+    }
+
+    IsUserAuthorized("Student", get_user)
+    console.log(user)
+    if (user != null && user["permission_level"] == "Admin") {
+        is_student = false;
+    }
+
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+    if (user == null) {
+        return <p> Loading... </p>
+    } else return (
+        <ThemeProvider theme={theme}>
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline />
+                <HeaderNav currentPageTitle="Office Hours" />
+                <Box
+                    component="main"
+                    className={styles.content}
+                    sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
+                >
+                    {
+                        is_student &&
+                        <div style={{
+                            paddingTop: '40px'
+                        }}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={8}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} md={9}>
+                                            <StudentHeading />
+                                        </Grid>
+                                        <Grid item xs={12} md={3}>
+                                            <Button variant="secondary" sx={{
+                                                marginTop: '20px'
+                                            }}>
+                                                <TuneRoundedIcon />
+                                                Filters
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                    <CalendarWeek />
+                                    <p style={{
+                                        color: '#61646D',
+                                    }}>
+                                        Appointments Available on Tuesday, Nov 22
+                                    </p>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '10px',
+                                        width: '90%'
+                                    }}>
+                                        {tutors.map((tutor) => <TutorProfile {...tutor} />)}
+                                    </Box>
+                                    <Button sx={{
+                                        backgroundColor: '#61646D',
+                                        width: '90%',
+                                        marginTop: '20px',
+                                        color: 'white'
+                                    }}>
+                                        Continue →
+                                    </Button>
+                                </Grid>
 
                 <Grid item xs={12} md={4}>
                   {/* <Grid container spacing={1}>
@@ -280,8 +301,9 @@ function AvailableSessionsSection() {
   return (
     <div style={tutoring_styles.AvailableSessionsContainer}>
       <h2 style={tutoring_styles.SubHeading}>
-        Available Sessions
+        # of Tutoring Sessions This Week
       </h2>
+      <p>Note: You can put in more times than this, this is just a cap on how many of those times can be reserved by students</p>
       <DropDownMenu
         width="110px"
         options={[

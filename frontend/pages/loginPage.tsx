@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import Cookies from 'js-cookie';
 import React, { useState } from "react";
 import Head from "next/head";
@@ -14,7 +15,6 @@ export default function loginPage() {
     const [loginError, setloginError] = useState(false);
 
     const postInfo = () => {
-
         axios.post('http://localhost:8000/login', {
     email: 'password_test:test',
     password: 'test'
