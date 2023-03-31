@@ -124,6 +124,11 @@ class Question(BaseModel):
     numreplies: str = Field(...)
     topics: List[str] = Field(...)
 
+
+class LoginInfo(BaseModel):
+    email: str = Field(...)
+    password: str = Field(...)
+
 class Reply(BaseModel):
     author_id: str = Field(...)
     body: str = Field(...)
@@ -139,3 +144,4 @@ class Post(BaseModel):
 
 class PostID(Post):
     id: str = Field(...)
+

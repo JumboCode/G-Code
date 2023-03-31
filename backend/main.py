@@ -10,7 +10,11 @@ import os
 from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from datetime import datetime, date, timezone, timedelta
+
+from model import Student, LoginInfo
+from model import Appointment
+from model import UserInviteRequest
+from datetime import datetime, timezone, timedelta, date
 from http.client import HTTPException
 from dotenv import load_dotenv
 import jwt
@@ -98,9 +102,13 @@ async def read_root():
     return {"message" : "Hello, World!"}
 
 @app.post("/login")
-def login(response: Response, username: str = Form(...), password: str = Form(...)):    
-    # student = fetch_one("Students", "username", username)
-    # admin = fetch_one("Admins", "username", username)  
+def login(authentication: LoginInfo):   
+    print(authentication)
+    username = authentication.email
+    password = authentication.password
+    student = fetch_student_by_username(username)
+    admin = fetch_admin_by_username(username)    
+
     
     # if student != None:
     #     user = student
@@ -113,34 +121,36 @@ def login(response: Response, username: str = Form(...), password: str = Form(..
     #         status_code=403, detail="Invalid Username"
     #     )
     
-    # stored_password = password
-    # stored_password = stored_password.encode('utf-8')
-    # input_password = password.encode('utf-8')
 
-    # if not bcrypt.checkpw(input_password, stored_password):
-    #     raise HTTPException(
-    #         status_code=403, detail="Invalid Password"
-    #     )
+    stored_password = user["password"]
+    stored_password = stored_password.encode('utf-8')
+    input_password = password.encode('utf-8')
 
-    # # If the user trying to log-in already has an active session, it's removed
-    # # so that duplicate session data will not be created
-    # if fetch_session_by_username(username) != None:
-    #     remove_session(username)
-    #     response.delete_cookie("gcode-session")
+    if not bcrypt.checkpw(input_password, stored_password):
+        raise HTTPException(
+            status_code=403, detail="Invalid Password"
+        )
 
-    # # Passing timezone.utc to the datetime.now() call that's used in add_session
-    # # is necessary for the time-to-live index in the MongoDB database to work,
-    # # which automatically removes sessions from the database after 4 hours
-    # add_session(username, user_type, datetime.now(timezone.utc))
+    # If the user trying to log-in already has an active session, it's removed
+    # so that duplicate session data will not be created
+    if fetch_session_by_username(username) != None:
+        remove_session(username)
+        # response.delete_cookie("gcode-session")
 
-    # payload = {
-    #             'sub': username,
-    #             'exp': datetime.now(timezone.utc) + timedelta(hours=4),
-    #             'iat': datetime.now(timezone.utc),
-    #         }
-    # token = jwt.encode(payload, session_secret, algorithm='HS256')
+    # Passing timezone.utc to the datetime.now() call that's used in add_session
+    # is necessary for the time-to-live index in the MongoDB database to work,
+    # which automatically removes sessions from the database after 4 hours
+    add_session(username, user_type, datetime.now(timezone.utc))
+
+    payload = {
+                'sub': username,
+                'exp': datetime.now(timezone.utc) + timedelta(hours=4),
+                'iat': datetime.now(timezone.utc),
+            }
+    token = jwt.encode(payload, session_secret, algorithm='HS256')
     # response.set_cookie("gcode-session", token)
-    return {"ok": True}
+    return {'Token' : token}
+
 
 # Logout Route
 @app.get("/logout")
