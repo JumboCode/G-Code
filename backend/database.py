@@ -14,24 +14,24 @@ from typing import Any
 
 # Connect to database
 load_dotenv()
-uri = os.environ["MONGO_DB_URI"]
-client = MongoClient(uri, 8000)
+uri      = os.environ["MONGO_DB_URI"]
+client   = MongoClient(uri, 8000)
 database = client.db
-students = database.students
-admins = database.admins
+
+users        = database.users
 appointments = database.appointments #change based on the actual collection
-sessions = database.sessions
-assignments = database.assignments
-si = database.student_invites
-ai = database.admin_invites
-classes = database.classes
-questions = database.questions
-posts = database.posts
+sessions     = database.sessions
+assignments  = database.assignments
+si           = database.student_invites
+ai           = database.admin_invites
+classes      = database.classes
+questions    = database.questions
+posts        = database.posts
 
 
-model_dic = {"Students":Student, "Admins":Admin, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
+model_dic = {"Users": users, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
 
-db_dic = {"Students":students, "Admins":admins, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions}
+db_dic = {"Users":users, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions}
 
 
 #TODO: Make all fetch_all be able to go through the base one (could have a helper function for filters but I don't think there needs to be one?)
@@ -75,40 +75,37 @@ def fetch_filtered(model_class: str, filters: list[tuple]):
     
     return result_list
 
-def create_new_user(firstname, lastname, email, account_type):
-        
-    newUser = {
-        'firstname': firstname,
-        'lastname': lastname,
-        "email": email,
-        "emailverified": False,
-    }
+def create_new_user(user: UserIn):
+    users.insert_one(user)
+    
+    # newUser = {
+    #     'firstname': firstname,
+    #     'lastname': lastname,
+    #     "email": email,
+    #     "emailverified": False,
+    # }
+    # if (account_type == "Student"):
+    #     students.insert_one(newUser)
+    # elif (account_type == "Tutor"):
+    #     admins.insert_one(newUser)
 
-    if (account_type == "Student"):
-        students.insert_one(newUser)
-    elif (account_type == "Tutor"):
-        admins.insert_one(newUser)
-
-def create_student(Student):
-    studToAdd = Student
-    result = students.insert_one(studToAdd)
-    return studToAdd
-
-def fetch_user_by_username(username):
-    user = students.find_one({"username": username},{'_id': 0})
-    if user is None:
-        user = admins.find_one({"username": username},{'_id': 0})
-    return user
+# def create_student(Student):
+#     studToAdd = Student
+#     result = students.insert_one(studToAdd)
+#     return studToAdd
 
 def fetch_user_by_email(email):
-    '''
-    Purpose: Fetchs the user, either an admin or student, with the given email
-    '''
-
-    user = students.find_one({"email": email})
-    if user is None:
-        user = admins.find_one({"email": email})
+    user = users.find_one({"email": email}, {'_id': 0})
     return user
+
+# def fetch_user_by_email(email):
+#     '''
+#     Purpose: Fetchs the user, either an admin or student, with the given email
+#     '''
+#     user = students.find_one({"email": email})
+#     if user is None:
+#         user = admins.find_one({"email": email})
+#     return user
 
 
 def add_session(username, permission_level, curr_time):
@@ -120,8 +117,10 @@ def add_session(username, permission_level, curr_time):
     new_session = {"username": username, 
                    "permission_level": permission_level, 
                    "created_at": curr_time}
-                   
     sessions.insert_one(new_session)
+
+def fetch_session_by_username(username):
+    sessions.find({"username": username})
 
 def remove_session(username):
     '''

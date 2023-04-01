@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from './header'
+import Header from './header.tsx'
 import Sidebar from './sidebar'
 import { Box, Drawer } from "@mui/material";
 import "@fontsource/poppins";
