@@ -47,6 +47,7 @@ class Token(BaseModel):
     token_type: str
 class TokenData(BaseModel):
     email: Optional[str] = None
+    type: Optional[str] = None
 
 # class Admin(BaseModel):  
 #     firstname: str = Field(...)
@@ -89,10 +90,10 @@ class TokenData(BaseModel):
     # accepted_registration: bool = Field(False)
     # bio: str = Field(...)
 
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    # class Config:
+    #     allow_population_by_field_name = True
+    #     arbitrary_types_allowed = True
+    #     json_encoders = {ObjectId: str}
 
 class UserInviteRequest(BaseModel):
     firstname: str = Field(...)

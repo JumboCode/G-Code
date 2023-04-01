@@ -54,9 +54,7 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
 
 @app.post("/login")
 def login(request: OAuth2PasswordRequestForm = Depends()):    
-    print(request.username)
     user = fetch_user_by_email(request.username)
-    print(user)
 
     if not user:
         raise HTTPException(status_code=403, detail="Invalid Username")
@@ -64,7 +62,7 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     if not Hash.verify(user["password"], request.password):
         raise HTTPException(status_code=404, detail="wrong username or password")
     
-    access_token = create_access_token(data={"sub": user["email"]})
+    access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
     return {"access_token": access_token, "token_type": "bearer"}
 
 ############################################################################
@@ -215,129 +213,138 @@ async def assign_student_to_appointment(appointmentID: str , studentID : str):
     response = reserve_appointment(appointmentID, studentID)   
     return response 
 
-# @app.put("/api/remove_student_from_appoint/")
-# async def remove_student_from_appointment(appointmentID: str, 
-#                                           admin_user: dict = Depends(validate_admin_session)):
-#     '''
-#     Purpose: If there are more than 24 before the appointment, update the apppointment 
-#             by removing the student cancel and unmark as reserved
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
+    '''
+    Purpose: If there are more than 24 before the appointment, update the apppointment 
+            by removing the student cancel and unmark as reserved
 
-#     Input: the appointment ID to mark as unreserved 
-#     '''
-#     response = cancel_appointment(appointmentID)
-#     return response 
+    Input: the appointment ID to mark as unreserved 
+    '''
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to remove student")
+    response = cancel_appointment(appointmentID)
+    return response 
 
-# @app.put("/api/assign_student_to_class/")
-# async def assign_student_to_class (username : str, class_name : str, 
-#                                    admin_user: dict = Depends(validate_admin_session)):
-#     '''
-#     Purpose: Allows the admin to create a new student and add them to a class
+@app.put("/api/assign_student_to_class/")
+async def assign_student_to_class (username : str, class_name : str, 
+                                   user: dict = Depends(get_current_user)):
+    '''
+    Purpose: Allows the admin to create a new student and add them to a class
 
-#     Input: the student name, and the class name to assign them to
-#     '''
-#     student = fetch_student_by_username(username)
-#     if student is None:
-#         raise HTTPException(status_code=500, 
-#                             detail="The given student does not exist")
-#     add_student_to_class(class_name, student)
+    Input: the student name, and the class name to assign them to
+    '''
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to assign student")
+    student = fetch_student_by_username(username)
+    if student is None:
+        raise HTTPException(status_code=500, 
+                            detail="The given student does not exist")
+    add_student_to_class(class_name, student)
 
-# @app.put("/api/unassign_student_from_class/")
-# async def assign_student_to_class (username : str, class_name : str, 
-#                                    admin_user: dict = Depends(validate_admin_session)):
-#     '''
-#     Purpose: Allows the admin to create a new student and add them to a class
+@app.put("/api/unassign_student_from_class/")
+async def unassign_student_to_class (username : str, class_name : str, 
+                                   user: dict = Depends(get_current_user)):
+    '''
+    Purpose: Allows the admin to create a new student and add them to a class
 
-#     Input: the student name, and the class name to assign them to
-#     '''
-#     student = fetch_student_by_username(username)
-#     if student is None:
-#         raise HTTPException(status_code=500, 
-#                             detail="The given student does not exist")
-#     remove_student_from_class(class_name, student)
+    Input: the student name, and the class name to assign them to
+    '''
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to unassign student")
+    student = fetch_student_by_username(username)
+    if student is None:
+        raise HTTPException(status_code=500, 
+                            detail="The given student does not exist")
+    remove_student_from_class(class_name, student)
 
-# @app.put("/api/assign_instructor_to_class/")
-# async def assign_instructor_to_class (username : str, class_name : str, 
-#                                       admin_user: dict = Depends(validate_admin_session)):
-#     '''
-#     Purpose: Allows the admin to create a new student and add them to a class
+@app.put("/api/assign_instructor_to_class/")
+async def assign_instructor_to_class (username : str, class_name : str, 
+                                      user: dict = Depends(get_current_user)):
+    '''
+    Purpose: Allows the admin to create a new student and add them to a class
 
-#     Input: the student name, and the class name to assign them to
-#     '''
-#     instructor = fetch_admin_by_username(username)
-#     if instructor is None:
-#         raise HTTPException(status_code=500, 
-#                             detail="The given instructor does not exist")
-#     add_instructor_to_class(class_name, instructor)
+    Input: the student name, and the class name to assign them to
+    '''
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to assign instructor")
+    instructor = fetch_admin_by_username(username)
+    if instructor is None:
+        raise HTTPException(status_code=500, 
+                            detail="The given instructor does not exist")
+    add_instructor_to_class(class_name, instructor)
 
-# @app.put("/api/unassign_instructor_from_class/")
-# async def unassign_instructor_from_class (username : str, class_name : str, 
-#                                           admin_user: dict = Depends(validate_admin_session)):
-#     '''
-#     Purpose: Allows the admin to create a new student and add them to a class
+@app.put("/api/unassign_instructor_from_class/")
+async def unassign_instructor_from_class (username : str, class_name : str, 
+                                          user: dict = Depends(get_current_user)):
+    '''
+    Purpose: Allows the admin to create a new student and add them to a class
 
-#     Input: the student name, and the class name to assign them to
-#     '''
-#     instructor = fetch_admin_by_username(username)
-#     if instructor is None:
-#         raise HTTPException(status_code=500, 
-#                             detail="The given instructor does not exist")
-#     remove_instructor_from_class(class_name, instructor)
+    Input: the student name, and the class name to assign them to
+    '''
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to unassign instructor")
+    instructor = fetch_admin_by_username(username)
+    if instructor is None:
+        raise HTTPException(status_code=500, 
+                            detail="The given instructor does not exist")
+    remove_instructor_from_class(class_name, instructor)
 
-# @app.get("/api/view_students_in_class/")
-# async def view_students_in_class (class_name : str, 
-#                                   admin_user: dict = Depends(validate_admin_session)):
-#     # Conversion to string must be done because student documents may have an
-#     # 'ObjectId' field, which is non-iterable and will result in a type-error 
-#     # if returned directly
-#     return  str(get_all_students_in_class(class_name))
+@app.get("/api/view_students_in_class/")
+async def view_students_in_class (class_name : str, 
+                                  user: dict = Depends(get_current_user)):
+    # Conversion to string must be done because student documents may have an
+    # 'ObjectId' field, which is non-iterable and will result in a type-error 
+    # if returned directly
+    return  str(get_all_students_in_class(class_name))
 
-# @app.get("/api/view_instructors_in_class/")
-# async def view_instructors_in_class (class_name : str, 
-#                                      user: dict = Depends(validate_admin_session)):
-#     return str(get_all_instructors_in_class(class_name))
+@app.get("/api/view_instructors_in_class/")
+async def view_instructors_in_class (class_name : str, 
+                                     user: dict = Depends(get_current_user)):
+    return str(get_all_instructors_in_class(class_name))
 
-# @app.post("/api/edit_user_profile")
-# async def edit_user_profile (username: str, new_profile_values: dict, 
-#                              admin_user: dict = Depends(validate_admin_session)):
-#     student = fetch_student_by_username(username)
-#     admin = fetch_admin_by_username(username)   
+@app.post("/api/edit_user_profile")
+async def edit_user_profile (username: str, new_profile_values: dict, 
+                             admin_user: dict = Depends(get_current_user)):
+    student = fetch_student_by_username(username)
+    admin = fetch_admin_by_username(username)   
 
-#     # TODO - automatically insert permission level when fetching all users, 
-#     #        will simplify code
-#     if student != None:
-#         user = student
-#         user["permission_level"] = "Student"
-#         editable_fields = ["firstname", "lastname", "email", "mentorid"]
-#     elif admin != None:
-#         user = admin
-#         user["permission_level"] = "Admin"
-#         editable_fields = ["classes", "mentees"]
-#     else:
-#         raise HTTPException(
-#             status_code=403, detail="Invalid Username"
-#         )
+    # TODO - automatically insert permission level when fetching all users, 
+    #        will simplify code
+    if student != None:
+        user = student
+        user["permission_level"] = "Student"
+        editable_fields = ["firstname", "lastname", "email", "mentorid"]
+    elif admin != None:
+        user = admin
+        user["permission_level"] = "Admin"
+        editable_fields = ["classes", "mentees"]
+    else:
+        raise HTTPException(
+            status_code=403, detail="Invalid Username"
+        )
     
-#     for field in new_profile_values:
-#         if field not in editable_fields:
-#             raise HTTPException(status_code=500, 
-#                             detail =  ("The " + field 
-#                                        + " cannot be edited"))
-#         update_profile_field(username, user["permission_level"], 
-#                              field, new_profile_values[field])
+    for field in new_profile_values:
+        if field not in editable_fields:
+            raise HTTPException(status_code=500, 
+                            detail =  ("The " + field 
+                                       + " cannot be edited"))
+        update_profile_field(username, user["permission_level"], 
+                             field, new_profile_values[field])
 
 
-# @app.post("/api/edit_own_profile")
-# async def student_profile_self_view (new_profile_values: dict, 
-#                                      user: dict = Depends(validate_session)):
-#     uneditable_fields = ["emailverified", "mentorid", "accepted_registration"]
-#     username = user["username"]
-#     for field in new_profile_values:
-#         if field in uneditable_fields:
-#             raise HTTPException(status_code=500, 
-#                             detail =  ("The " + field 
-#                                        + " cannot be edited by students"))
-#         update_profile_field(username, user["permission_level"], 
-#                              field, new_profile_values[field])
+@app.post("/api/edit_own_profile")
+async def student_profile_self_view (new_profile_values: dict, 
+                                     user: dict = Depends(get_current_user)):
+    uneditable_fields = ["emailverified", "mentorid", "accepted_registration"]
+    username = user["username"]
+    for field in new_profile_values:
+        if field in uneditable_fields:
+            raise HTTPException(status_code=500, 
+                            detail =  ("The " + field 
+                                       + " cannot be edited by students"))
+        update_profile_field(username, user["permission_level"], 
+                             field, new_profile_values[field])
 
 @app.post("/api/create_users/")
 async def create_users (new_users: list):

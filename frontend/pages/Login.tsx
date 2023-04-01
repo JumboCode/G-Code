@@ -20,17 +20,24 @@ export default function Login() {
 
 
     const postInfo = () => {
-        axios.post(`http://127.0.0.1:8000/login`, {
-            email: username,
-            password: password
-        }, {
+        const postData = {
+            grant_type: '',
+            username: username,
+            password: password,
+            scope: '',
+            client_id: '',
+            client_secret: ''
+        };
+
+        axios.post('http://localhost:8000/login', postData, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'accept': 'application/json'
             }
         })
             .then(function success(response) {
-                const token = response.data.Token;
+                console.log(response)
+                const token = response.data.access_token;
                 Cookies.set('gcode-session', token, { expires: 7 });
                 router.push('/Dashboard');
             })

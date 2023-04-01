@@ -19,11 +19,11 @@ def create_access_token(data: dict):
 def verify_token(token:str,credentials_exception):
 	try:
 		payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-		email: str = payload.get("sub")
-		print(email)
+		email: str = payload.get("email")
+		type: str = payload.get("type")
 		if email is None:
 			raise credentials_exception
-		token_data = TokenData(email=email)
+		token_data = TokenData(email=email, type=type)
 		return token_data
 	except:
 	    raise credentials_exception
