@@ -10,6 +10,7 @@ import logo from './public/GCodeLogo.png'
 import { Button, ThemeProvider } from "@mui/material";
 import { theme } from '../theme.ts';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 export default function Login() {
     const router = useRouter();
@@ -19,9 +20,18 @@ export default function Login() {
 
 
     const postInfo = () => {
-        axios.post(`http://127.0.0.1:8000/login?Username=${username}&Password=${password}`)
+        axios.post(`http://127.0.0.1:8000/login`, {
+            email: username,
+            password: password
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            }
+        })
             .then(function success(response) {
-                console.log(response);
+                const token = response.data.Token;
+                Cookies.set('gcode-session', token, { expires: 7 });
                 router.push('/Dashboard');
             })
             .catch(function failure(error) {

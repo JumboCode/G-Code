@@ -9,11 +9,11 @@ import string
 import os
 from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.security import OAuth2PasswordRequestForm
+from hashing import Hash
+from jwttoken import create_access_token, verify_token
+from oauth import get_current_user
 
-from model import Student, LoginInfo
-from model import Appointment
-from model import UserInviteRequest
 from datetime import datetime, timezone, timedelta, date
 from http.client import HTTPException
 from dotenv import load_dotenv
@@ -21,8 +21,6 @@ import jwt
 import bcrypt
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from model import Post
-from model import Reply
 
 from model import *
 from database import *
@@ -45,127 +43,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Login Route TODO: Uncomment this? Or fix if it doesn't work
-@app.get("/login")
-def login_page():
-    return HTMLResponse(
-        """
-        <form action="/login" method="post">
-        Username: <input type="text" name="username" required>
-        <br>
-        Password: <input type="password" name="password" required>
-        <input type="submit" value="Login">
-        </form>
-        """
-)
-
-# Validation Route
-@app.get("/validate")
-def validate_session(request: Request):
-    '''
-    Purpose: Checks that a user's session token is valid
-    '''
-    # An invalid user has no permission level
-    user = {"permission_level": "None"}
-    try:
-        if "gcode-session" in request.cookies:
-            decoded_token = jwt.decode(request.cookies["gcode-session"], 
-                                    session_secret, 
-                                    algorithms="HS256")
-            username = decoded_token["sub"]
-            session = fetch_session_by_username(username)
-            if session != None:
-                user = fetch_user_by_username(username)
-                user["permission_level"] = session["permission_level"]
-                del user["password"] # Avoid exposing password to frontend
-    except:
-        raise HTTPException(
-            status_code=403, detail="An error appeared during validation"
-        )
-    return user
-
-def validate_admin_session(request: Request, user: dict = Depends(validate_session)):
-    '''
-    Purpose: Checks that a user's session token corresponds to admin privileges
-    '''
-    if "permission_level" not in user or user["permission_level"] != "Admin":
-        raise HTTPException ( 
-            status_code=403, detail="Invalid permissions"
-        )
-    return user
-
 @app.get("/")
-async def read_root():
+async def read_root(current_user: UserIn = Depends(get_current_user)):
     '''
     Purpose: Demo route to test if database is running.
     '''
-    return {"message" : "Hello, World!"}
+    user = fetch_user_by_email(current_user.email)
+    del user["password"]
+    return user
 
 @app.post("/login")
-def login(authentication: LoginInfo):   
-    print(authentication)
-    username = authentication.email
-    password = authentication.password
-    student = fetch_student_by_username(username)
-    admin = fetch_admin_by_username(username)    
+def login(request: OAuth2PasswordRequestForm = Depends()):    
+    print(request.username)
+    user = fetch_user_by_email(request.username)
+    print(user)
 
+    if not user:
+        raise HTTPException(status_code=403, detail="Invalid Username")
+
+    if not Hash.verify(user["password"], request.password):
+        raise HTTPException(status_code=404, detail="wrong username or password")
     
-    # if student != None:
-    #     user = student
-    #     user_type = "Student"
-    # elif admin != None:
-    #     user = admin
-    #     user_type = "Admin"
-    # else:
-    #     raise HTTPException(
-    #         status_code=403, detail="Invalid Username"
-    #     )
-    
-
-    stored_password = user["password"]
-    stored_password = stored_password.encode('utf-8')
-    input_password = password.encode('utf-8')
-
-    if not bcrypt.checkpw(input_password, stored_password):
-        raise HTTPException(
-            status_code=403, detail="Invalid Password"
-        )
-
-    # If the user trying to log-in already has an active session, it's removed
-    # so that duplicate session data will not be created
-    if fetch_session_by_username(username) != None:
-        remove_session(username)
-        # response.delete_cookie("gcode-session")
-
-    # Passing timezone.utc to the datetime.now() call that's used in add_session
-    # is necessary for the time-to-live index in the MongoDB database to work,
-    # which automatically removes sessions from the database after 4 hours
-    add_session(username, user_type, datetime.now(timezone.utc))
-
-    payload = {
-                'sub': username,
-                'exp': datetime.now(timezone.utc) + timedelta(hours=4),
-                'iat': datetime.now(timezone.utc),
-            }
-    token = jwt.encode(payload, session_secret, algorithm='HS256')
-    # response.set_cookie("gcode-session", token)
-    return {'Token' : token}
-
-
-# Logout Route
-@app.get("/logout")
-async def logout(request: Request, response: Response):
-    try:
-        decoded_token = jwt.decode(request.cookies["gcode-session"], 
-                                session_secret, 
-                                algorithms="HS256")
-        username = decoded_token["sub"]
-        remove_session(username)
-    except jwt.exceptions.ExpiredSignatureError:
-        pass
-
-    response.delete_cookie("gcode-session")
-    return {"status":"success"}
+    access_token = create_access_token(data={"sub": user["email"]})
+    return {"access_token": access_token, "token_type": "bearer"}
 
 ############################################################################
 # Routes to Get All Of a DB Collection
@@ -280,7 +180,7 @@ async def put_student_request(email: str):
 
 # Lets student join/register
 @app.put("/api/student_join")
-async def put_student_join(access_token: str, student_data: Student):
+async def put_student_join(access_token: str, student_data: User):
     '''
     Purpose: Verifies that access token that was added is valid and then
              adds the student with all of their data into the database.
@@ -315,129 +215,129 @@ async def assign_student_to_appointment(appointmentID: str , studentID : str):
     response = reserve_appointment(appointmentID, studentID)   
     return response 
 
-@app.put("/api/remove_student_from_appoint/")
-async def remove_student_from_appointment(appointmentID: str, 
-                                          admin_user: dict = Depends(validate_admin_session)):
-    '''
-    Purpose: If there are more than 24 before the appointment, update the apppointment 
-            by removing the student cancel and unmark as reserved
+# @app.put("/api/remove_student_from_appoint/")
+# async def remove_student_from_appointment(appointmentID: str, 
+#                                           admin_user: dict = Depends(validate_admin_session)):
+#     '''
+#     Purpose: If there are more than 24 before the appointment, update the apppointment 
+#             by removing the student cancel and unmark as reserved
 
-    Input: the appointment ID to mark as unreserved 
-    '''
-    response = cancel_appointment(appointmentID)
-    return response 
+#     Input: the appointment ID to mark as unreserved 
+#     '''
+#     response = cancel_appointment(appointmentID)
+#     return response 
 
-@app.put("/api/assign_student_to_class/")
-async def assign_student_to_class (username : str, class_name : str, 
-                                   admin_user: dict = Depends(validate_admin_session)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
+# @app.put("/api/assign_student_to_class/")
+# async def assign_student_to_class (username : str, class_name : str, 
+#                                    admin_user: dict = Depends(validate_admin_session)):
+#     '''
+#     Purpose: Allows the admin to create a new student and add them to a class
 
-    Input: the student name, and the class name to assign them to
-    '''
-    student = fetch_student_by_username(username)
-    if student is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given student does not exist")
-    add_student_to_class(class_name, student)
+#     Input: the student name, and the class name to assign them to
+#     '''
+#     student = fetch_student_by_username(username)
+#     if student is None:
+#         raise HTTPException(status_code=500, 
+#                             detail="The given student does not exist")
+#     add_student_to_class(class_name, student)
 
-@app.put("/api/unassign_student_from_class/")
-async def assign_student_to_class (username : str, class_name : str, 
-                                   admin_user: dict = Depends(validate_admin_session)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
+# @app.put("/api/unassign_student_from_class/")
+# async def assign_student_to_class (username : str, class_name : str, 
+#                                    admin_user: dict = Depends(validate_admin_session)):
+#     '''
+#     Purpose: Allows the admin to create a new student and add them to a class
 
-    Input: the student name, and the class name to assign them to
-    '''
-    student = fetch_student_by_username(username)
-    if student is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given student does not exist")
-    remove_student_from_class(class_name, student)
+#     Input: the student name, and the class name to assign them to
+#     '''
+#     student = fetch_student_by_username(username)
+#     if student is None:
+#         raise HTTPException(status_code=500, 
+#                             detail="The given student does not exist")
+#     remove_student_from_class(class_name, student)
 
-@app.put("/api/assign_instructor_to_class/")
-async def assign_instructor_to_class (username : str, class_name : str, 
-                                      admin_user: dict = Depends(validate_admin_session)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
+# @app.put("/api/assign_instructor_to_class/")
+# async def assign_instructor_to_class (username : str, class_name : str, 
+#                                       admin_user: dict = Depends(validate_admin_session)):
+#     '''
+#     Purpose: Allows the admin to create a new student and add them to a class
 
-    Input: the student name, and the class name to assign them to
-    '''
-    instructor = fetch_admin_by_username(username)
-    if instructor is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given instructor does not exist")
-    add_instructor_to_class(class_name, instructor)
+#     Input: the student name, and the class name to assign them to
+#     '''
+#     instructor = fetch_admin_by_username(username)
+#     if instructor is None:
+#         raise HTTPException(status_code=500, 
+#                             detail="The given instructor does not exist")
+#     add_instructor_to_class(class_name, instructor)
 
-@app.put("/api/unassign_instructor_from_class/")
-async def unassign_instructor_from_class (username : str, class_name : str, 
-                                          admin_user: dict = Depends(validate_admin_session)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
+# @app.put("/api/unassign_instructor_from_class/")
+# async def unassign_instructor_from_class (username : str, class_name : str, 
+#                                           admin_user: dict = Depends(validate_admin_session)):
+#     '''
+#     Purpose: Allows the admin to create a new student and add them to a class
 
-    Input: the student name, and the class name to assign them to
-    '''
-    instructor = fetch_admin_by_username(username)
-    if instructor is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given instructor does not exist")
-    remove_instructor_from_class(class_name, instructor)
+#     Input: the student name, and the class name to assign them to
+#     '''
+#     instructor = fetch_admin_by_username(username)
+#     if instructor is None:
+#         raise HTTPException(status_code=500, 
+#                             detail="The given instructor does not exist")
+#     remove_instructor_from_class(class_name, instructor)
 
-@app.get("/api/view_students_in_class/")
-async def view_students_in_class (class_name : str, 
-                                  admin_user: dict = Depends(validate_admin_session)):
-    # Conversion to string must be done because student documents may have an
-    # 'ObjectId' field, which is non-iterable and will result in a type-error 
-    # if returned directly
-    return  str(get_all_students_in_class(class_name))
+# @app.get("/api/view_students_in_class/")
+# async def view_students_in_class (class_name : str, 
+#                                   admin_user: dict = Depends(validate_admin_session)):
+#     # Conversion to string must be done because student documents may have an
+#     # 'ObjectId' field, which is non-iterable and will result in a type-error 
+#     # if returned directly
+#     return  str(get_all_students_in_class(class_name))
 
-@app.get("/api/view_instructors_in_class/")
-async def view_instructors_in_class (class_name : str, 
-                                     user: dict = Depends(validate_admin_session)):
-    return str(get_all_instructors_in_class(class_name))
+# @app.get("/api/view_instructors_in_class/")
+# async def view_instructors_in_class (class_name : str, 
+#                                      user: dict = Depends(validate_admin_session)):
+#     return str(get_all_instructors_in_class(class_name))
 
-@app.post("/api/edit_user_profile")
-async def edit_user_profile (username: str, new_profile_values: dict, 
-                             admin_user: dict = Depends(validate_admin_session)):
-    student = fetch_student_by_username(username)
-    admin = fetch_admin_by_username(username)   
+# @app.post("/api/edit_user_profile")
+# async def edit_user_profile (username: str, new_profile_values: dict, 
+#                              admin_user: dict = Depends(validate_admin_session)):
+#     student = fetch_student_by_username(username)
+#     admin = fetch_admin_by_username(username)   
 
-    # TODO - automatically insert permission level when fetching all users, 
-    #        will simplify code
-    if student != None:
-        user = student
-        user["permission_level"] = "Student"
-        editable_fields = ["firstname", "lastname", "email", "mentorid"]
-    elif admin != None:
-        user = admin
-        user["permission_level"] = "Admin"
-        editable_fields = ["classes", "mentees"]
-    else:
-        raise HTTPException(
-            status_code=403, detail="Invalid Username"
-        )
+#     # TODO - automatically insert permission level when fetching all users, 
+#     #        will simplify code
+#     if student != None:
+#         user = student
+#         user["permission_level"] = "Student"
+#         editable_fields = ["firstname", "lastname", "email", "mentorid"]
+#     elif admin != None:
+#         user = admin
+#         user["permission_level"] = "Admin"
+#         editable_fields = ["classes", "mentees"]
+#     else:
+#         raise HTTPException(
+#             status_code=403, detail="Invalid Username"
+#         )
     
-    for field in new_profile_values:
-        if field not in editable_fields:
-            raise HTTPException(status_code=500, 
-                            detail =  ("The " + field 
-                                       + " cannot be edited"))
-        update_profile_field(username, user["permission_level"], 
-                             field, new_profile_values[field])
+#     for field in new_profile_values:
+#         if field not in editable_fields:
+#             raise HTTPException(status_code=500, 
+#                             detail =  ("The " + field 
+#                                        + " cannot be edited"))
+#         update_profile_field(username, user["permission_level"], 
+#                              field, new_profile_values[field])
 
 
-@app.post("/api/edit_own_profile")
-async def student_profile_self_view (new_profile_values: dict, 
-                                     user: dict = Depends(validate_session)):
-    uneditable_fields = ["emailverified", "mentorid", "accepted_registration"]
-    username = user["username"]
-    for field in new_profile_values:
-        if field in uneditable_fields:
-            raise HTTPException(status_code=500, 
-                            detail =  ("The " + field 
-                                       + " cannot be edited by students"))
-        update_profile_field(username, user["permission_level"], 
-                             field, new_profile_values[field])
+# @app.post("/api/edit_own_profile")
+# async def student_profile_self_view (new_profile_values: dict, 
+#                                      user: dict = Depends(validate_session)):
+#     uneditable_fields = ["emailverified", "mentorid", "accepted_registration"]
+#     username = user["username"]
+#     for field in new_profile_values:
+#         if field in uneditable_fields:
+#             raise HTTPException(status_code=500, 
+#                             detail =  ("The " + field 
+#                                        + " cannot be edited by students"))
+#         update_profile_field(username, user["permission_level"], 
+#                              field, new_profile_values[field])
 
 @app.post("/api/create_users/")
 async def create_users (new_users: list):
@@ -462,7 +362,7 @@ async def create_users (new_users: list):
         elif new_user['accType'] == "Tutor":
             create_admin_invite(access_code, new_user["email"], today)
 
-def sent_invite_email(to_contact: Student):
+def sent_invite_email(to_contact: User):
     student_id = fetch_student_by_username(to_contact.username)['_id']
     message = Mail(
         from_email = 'jumbo.g.code@gmail.com',

@@ -16,22 +16,22 @@ export default function loginPage() {
 
     const postInfo = () => {
         axios.post('http://localhost:8000/login', {
-    email: 'password_test:test',
-    password: 'test'
-}, {
-    headers: {
-        'Content-Type': 'application/json',
-        'accept': 'application/json'
-    }
-})
-.then(response => {
-    const token = response.data.Token;
-    console.log(token)
-    Cookies.set('gcode-session', token, { expires: 7 }); // Expires in 7 days
-})
-.catch(error => {
-    console.error(error);
-});
+            email: 'Jimmy',
+            password: 'Jimmy'
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json'
+            }
+        })
+            .then(response => {
+                const token = response.data.Token;
+                console.log(token)
+                Cookies.set('gcode-session', token, { expires: 7 }); // Expires in 7 days
+            })
+            .catch(error => {
+                console.error(error);
+            });
 
     }
 
@@ -39,18 +39,18 @@ export default function loginPage() {
         <div>
             <Sidebar currentPageTitle={"HOME"} />
             <h1>Please Log In</h1>
-                <label>
-                    <p>Username</p>
-                    <input type="text" onChange={e => setUserName(e.target.value)} />
-                </label>
-                <label>
-                    <p>Password</p>
-                    <input type="password" onChange={e => setPassword(e.target.value)} />
-                </label>
-                {loginError && <h2>Username or Password Incorrect</h2>}
-                <div>
-                    <button onClick={postInfo}>Submit</button>
-                </div>
+            <label>
+                <p>Username</p>
+                <input type="text" onChange={e => setUserName(e.target.value)} />
+            </label>
+            <label>
+                <p>Password</p>
+                <input type="password" onChange={e => setPassword(e.target.value)} />
+            </label>
+            {loginError && <h2>Username or Password Incorrect</h2>}
+            <div>
+                <button onClick={postInfo}>Submit</button>
+            </div>
         </div>
     )
 }
