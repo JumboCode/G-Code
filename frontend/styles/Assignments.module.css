@@ -6,11 +6,41 @@
   font-style: normal;
   font-weight: 700;
   font-size: 38.508px;
-  line-height: 50px;
 
   width: 80pc;
-  height: 5pc;
   color: #2c3a57;
+}
+
+.description {
+  position: absolute;
+  left: 210px;
+  top: 200px;
+
+
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 30px;
+
+  /* Dark Blue */
+
+  color: #2C3A57;
+}
+
+.column60 {
+  width: 60%;
+}
+
+.column40 {
+  width: 40%;
+}
+
+.details {
+  position: relative;
+  margin-top: 150px;
+  margin-left: 275px;
+
 }
 
 .grid {
@@ -21,12 +51,25 @@
   column-gap: 20px;
 }
 
-.leftColumn {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 50pc;
+.descriptionBox{
+  position: absolute;
+  width: 700.86px;
+  height: 300px;
+  left: 200px;
+  top: 250px;
 
-  margin-left: 2rem;
+  background: #FFFFFF;
+  border: 1.76918px solid #E0E0E0;
+  border-radius: 53.0754px;
+}
+
+.feedback {
+  position: relative;
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  color: dark blue;
+  left: 30px;
+  top: 450px;
 }
 
 .rightColumn {
@@ -103,16 +146,6 @@
   text-align: left;
 }
 
-.dueDate {
-  font-family: IBM Plex Sans;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 25px;
-  letter-spacing: 0em;
-  text-align: left;
-
-  color: #007f77;
-}
 
 .arrowIcon {
   float: right;
@@ -206,7 +239,106 @@
   border: #b90064;
 }
 
+.dueDate {
+  position: absolute;
+  width: 472px;
+  height: 53px;
+  margin-top: 0px;
+
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 53px;
+  /* identical to box height */
+
+
+  /* Green */
+
+  color: #00777F;
+}
+
 /* .break {
     flex-basis: 100%;
     height: 0;
   } */
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-gap: 20px;
+  }
+  
+  .column60 {
+    grid-column: 1;
+  }
+  
+  .rightSide {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 25pc;
+  }
+  
+  .submitButton {
+    position: absolute;
+    top: 1;
+    right: 0;
+    margin-top: 0px;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 25pc;
+  }
+
+  .resourcesMenu {
+    position: absolute;
+    top: 2;
+    right: 0;
+    margin-top: 60px;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 25pc;
+  }
+
+  .commonQs {
+    position: absolute;
+    top: 2;
+    right: 0;
+    margin-top: 100px;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 25pc;
+    font-family: 'Red Hat Display';
+  }
+  
+  .descriptionBox2{
+    position: absolute;
+    width: 230px;
+    height: 300px;
+    left: 0px;
+    top: 50px;
+  
+    background: #FFFFFF;
+    border: 1.76918px solid #E0E0E0;
+    border-radius: 53.0754px;
+  }
+
+  .details2{
+    position: relative;
+    margin-top: 150px;
+    margin-left: 70px;
+  
+  }

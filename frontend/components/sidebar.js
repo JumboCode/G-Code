@@ -10,7 +10,8 @@ import "@fontsource/poppins";
 import { useRouter } from 'next/router';
 import { Toolbar } from '@mui/material'
 
-const pageTitles = ['Dashboard', 'Office Hours', 'FAQ Board', 'People', 'Assignments']
+
+const pageTitles = ['Dashboard', 'Office Hours', 'FAQ Board', 'People', 'Assignments', 'IndividualAssignment']
 
 function SideBarElement({ text, active, setActive }) {
     const [isHover, setIsHover] = useState(false);
@@ -37,6 +38,7 @@ function SideBarElement({ text, active, setActive }) {
         {text === "FAQ Board" && <LiveHelpIcon />}
         {text === "People" && <PeopleIcon />}
         {text === "Assignments" && <AssignmentIcon />}
+        {text === "IndividualAssignment" && <AssignmentIcon />}
         <TextLabel text={text} active={active} />
     </div >;
 }
