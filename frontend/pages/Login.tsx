@@ -9,25 +9,43 @@ import Sidebar from "../components/sidebar";
 import logo from './public/GCodeLogo.png'
 import { Button, ThemeProvider } from "@mui/material";
 import { theme } from '../theme.ts';
-
-
-// TODO
-// 1. Forgot 
-
-
+import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 export default function Login() {
+    const router = useRouter();
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
+    const [loginError, setloginError] = useState(false);
 
-    // const credentials = {
-    //     username: setUserName,
-    //     password: setPassword
-    // };
 
-    // React.useEffect(() => {
-    //     axios.put('http://localhost:8000/api/login/', credentials)
-    // }, []);
+    const postInfo = () => {
+        const postData = {
+            grant_type: '',
+            username: username,
+            password: password,
+            scope: '',
+            client_id: '',
+            client_secret: ''
+        };
+
+        axios.post('http://localhost:8000/login', postData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'accept': 'application/json'
+            }
+        })
+            .then(function success(response) {
+                console.log(response)
+                const token = response.data.access_token;
+                Cookies.set('gcode-session', token, { expires: 7 });
+                router.push('/Dashboard');
+            })
+            .catch(function failure(error) {
+                console.log(error);
+                setloginError(true);
+            })
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -37,8 +55,8 @@ export default function Login() {
                     <form action="" method="get" id="signIn" className={loginStyles.form}>
                         <input type="text" name="username" placeholder="Email Address" onChange={(e) => setUserName(e.target.value)} />
                         <input type="password" id="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} className={loginStyles.password} />
-                        <p className={loginStyles.forgotPassword}> Forgot Password? </p>
-                        <Button variant="primary" onClick={() => console.log(username, password)}>
+                        {loginError && <p className={loginStyles.forgotPassword}> Incorrect Username/Password <br></br>Forgot Password? </p>}
+                        <Button variant="primary" onClick={postInfo}>
                             Sign In
                         </Button>
                     </form>
