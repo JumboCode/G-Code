@@ -1,36 +1,55 @@
-import React, { useState, useRef, useMemo } from "react";
-import { Grid, Box, CssBaseline, Select } from "@mui/material";
-import HeaderNav from "../components/headernav.tsx";
-import { DRAWER_WIDTH } from "../constants";
-import { theme } from "../theme.ts";
-import {
-    List,
-    ListItem,
-    Avatar,
-    ListItemAvatar,
-    ListItemText,
-    Divider,
-    Typography,
-    Card,
-    Paper,
-    IconButton,
-    InputBase,
-    Button,
-    Modal,
-    TextField,
-    InputLabel,
-    MenuItem,
-    FormControl,
-} from "@mui/material";
-import { ThemeProvider } from '@mui/material/styles';
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState } from "react";
+
+// optimized mui imports
+import Grid from "@mui/material/Grid"
+import Box from "@mui/material/Box"
+import CssBaseline from "@mui/material/CssBaseline"
+import Select from "@mui/material/Select"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import Avatar from "@mui/material/Avatar"
+import ListItemAvatar from "@mui/material/ListItemAvatar"
+import ListItemText from "@mui/material/ListItemText"
+import Divider from "@mui/material/Divider"
+import Typography from "@mui/material/Typography"
+import Card from "@mui/material/Card"
+import Paper from "@mui/material/Paper"
+import IconButton from "@mui/material/IconButton"
+import InputBase from "@mui/material/InputBase"
+import Button from "@mui/material/Button"
+import Modal from "@mui/material/Modal"
+import TextField from "@mui/material/TextField"
+import InputLabel from "@mui/material/InputLabel"
+import MenuItem from "@mui/material/MenuItem"
+import FormControl from "@mui/material/FormControl"
+
+// components
+import HeaderNav from "../components/headernav";
 import CommunityResourcesPanel from "../components/communityResourcesPanel";
-import EastIcon from "@mui/icons-material/East";
 import CustomSelect from "../components/customSelect";
+import IsUserAuthorized from "../components/authentification";
+
+// constants
+import { DRAWER_WIDTH } from "../constants";
+
+// theme
+import { theme } from "../theme.ts";
+import { ThemeProvider } from '@mui/material/styles';
+
+// icons
+import SearchIcon from "@mui/icons-material/Search";
+import EastIcon from "@mui/icons-material/East";
+
+// requests
 import axios from "axios"
 import { useRouter } from 'next/router';
+
+// styling
 import "react-quill/dist/quill.snow.css";
+
+// other
 import dynamic from "next/dynamic";
+
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const modal_style = {
@@ -47,8 +66,19 @@ const modal_style = {
 };
 
 export default function FAQBoard() {
-    const [questions, setQuestions] = React.useState([]);
+    // authentication
+    const [user, setUser] = useState(null);
+    const get_user = curr_user => {
+        if (user == null) {
+            setUser(curr_user)
+        }
+    }
+    /* Authorize user and return user 
+     * information (ex. first name, username, ect.) */
+    IsUserAuthorized("Student", get_user)
 
+    // create and get questiosn from backend
+    const [questions, setQuestions] = React.useState([]);
     React.useEffect(() => {
         axios.get("http://localhost:8000/api/questions").then((res) => {
             setQuestions(
@@ -62,7 +92,7 @@ export default function FAQBoard() {
         });
     }, []);
 
-    // Filter data
+    // filter data
     const weeks = ["All Weeks"].concat(
         Array.from(
             new Set(questions.map((question) => `Week ${question.week}`))
@@ -83,7 +113,7 @@ export default function FAQBoard() {
     const [topic, setTopic] = React.useState<string>("All Topics");
     const [searchQuery, setSearchQuery] = React.useState<string>("");
 
-    // Filter functions
+    // filter functions
     const filterWeek = (question) => {
         return week == "All Weeks" || week == `Week ${question.week}`;
     };
@@ -99,27 +129,26 @@ export default function FAQBoard() {
         );
     };
 
-    // modal
+    // ask question modal
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [modalTitle, setModalTitle] = React.useState("");
     const [modalTopic, setModalTopic] = React.useState("General");
-    const [modalQuestion, setModalQuestion] = React.useState("");
     const [rteValue, setRteValue] = React.useState("");
 
     // add question
     const submitQuestion = () => {
-        const valid =
-            validateTitle(modalTitle) && validateQuestion(modalQuestion);
+        const valid = validateTitle(modalTitle) && validateQuestion(rteValue);
         setFormValid(valid);
+
         if (valid) {
             console.log(
-                `title: ${modalTitle}, topic: ${modalTopic}, question: ${modalQuestion}`
+                `title: ${modalTitle}, topic: ${modalTopic}, question: ${rteValue}`
             );
             setModalTitle("");
             setModalTopic("General");
-            setModalQuestion("");
+            setRteValue("");
             handleClose();
         }
     };
@@ -132,6 +161,9 @@ export default function FAQBoard() {
     // validation
     const router = useRouter();
 
+    if (!user) {
+        return <p> Loading... </p>
+    } 
     return (
         <ThemeProvider theme={theme}>
             <Modal
@@ -386,6 +418,7 @@ export default function FAQBoard() {
                                     </Button>
                                 </Box>
                             </Box>
+                            <CommunityResourcesPanel />
                         </Grid>
                     </Grid>
                 </Box>

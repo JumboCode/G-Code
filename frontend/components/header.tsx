@@ -45,8 +45,7 @@ const theme = createTheme({
   },
 });
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Login']];
+const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Logout']];
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -69,7 +68,7 @@ function Header() {
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="fixed" style={{"borderBottom": "1px #D8D8DB solid"}} elevation={0}>
+      <AppBar position="fixed" style={{ "borderBottom": "1px #D8D8DB solid" }} elevation={0}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, mr: 1 }}>
@@ -151,6 +150,7 @@ function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
+
                 {settings.map((setting) => (
                   <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
                     <Typography textAlign="center"><a href={'./' + setting[1]}>{setting[0]}</a></Typography>
