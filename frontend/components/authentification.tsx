@@ -28,7 +28,7 @@ export default function IsUserAuthorized(required_permission, save_user) {
         }
       } catch (error) {
         console.log(error)
-        // router.push('/Login');
+        router.push('/Login');
       }
     };
     validateSession();
