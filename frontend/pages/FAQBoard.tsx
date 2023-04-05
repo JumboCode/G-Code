@@ -144,7 +144,9 @@ export default function FAQBoard() {
 
         if (valid) {
             console.log(
-                `title: ${modalTitle}, topic: ${modalTopic}, question: ${rteValue}`
+                `title: ${modalTitle}, 
+                topic: ${modalTopic}, 
+                question: ${rteValue}`
             );
             setModalTitle("");
             setModalTopic("General");

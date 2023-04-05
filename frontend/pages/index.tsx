@@ -9,7 +9,6 @@ export default function Home() {
     router.push("/Dashboard")
   }, [])
   
-
   return (
     <></>
   );
