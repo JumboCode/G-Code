@@ -11,9 +11,11 @@ export default function Assignments() {
   const [assignments, setAssignments] = useState([{}])
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/students')
-      .then(res => {
+    axios.get('http://localhost:8000/api/get_student_assignments', 
+              {params: { studentid: "invalid" }
+    }) .then(res => {
         console.log(res)
+        console.log(res.data)
         setAssignments(res.data)
       })
   }, []);
@@ -21,27 +23,22 @@ export default function Assignments() {
   
   const AssignmentList = assignments.map((assignment) => {
     return (
-      <div>
-        <p>{assignment.name}</p>
-
-      </div>
+      <div key={assignment.name}> 
+        <p> TEST </p>      
+        <p>{assignment.description}</p>
+      </div>s
     )
   })
 
-
-//   const studentCards = students.map((student) => {
-//     return (
-//       <div style={{"margin": '10px', 'padding': '5px', "backgroundColor": "gray"}} key={student.id}>
-//         <p>{student.name}</p>
-//         <p>First Name: {student.firstname}</p>
-//         <p>Email: {student.email}</p>
-//         <p>Bio: {student.bio}</p>
-//       </div>
-//     );
-// });
+  // return (
+  //   <div>
+  //     <p> TEST </p>
+  //     {AssignmentList}
+  //   </div>
+  // )
 
   return (
-    <Router>
+    // <Router>
       <div className={styles.container}>
         <Sidebar currentPageTitle="Assignments" />
         <div className={assignentStyles.grid}>
@@ -49,13 +46,14 @@ export default function Assignments() {
             <p> ASSIGNMENT </p>
           </div>
 
-          <div className={assignentStyles.leftColumn}>
+          {AssignmentList}
+          {/* <div className={assignentStyles.leftColumn}>
             <div className={assignentStyles.leftCard}>
               <Link to="Assignment1">Assignment 1</Link>
             </div>
             <div className={assignentStyles.leftCard}>Assignment 2</div>
             <div className={assignentStyles.leftCard}>Assignment 3</div>
-          </div>
+          </div> */}
 
           <div className={assignentStyles.rightColumn}>
             <div className={assignentStyles.header2}> Questions? </div>
@@ -68,10 +66,10 @@ export default function Assignments() {
 
           <div></div>
         </div>
-        <Routes>
+        {/* <Routes>
           <Route path="/Assignment1" element={<Assignment />}></Route>
-        </Routes>
+        </Routes> */}
       </div>
-    </Router>
+    // </Router>
   );
 }
