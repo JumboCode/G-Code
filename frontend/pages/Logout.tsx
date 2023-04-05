@@ -5,7 +5,7 @@ const LogoutPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Clear the "session" cookie
+    // Clear the session cookie
     document.cookie = "gcode-session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
     // Redirect the user to the login page
@@ -13,9 +13,7 @@ const LogoutPage: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Logging out...</h1>
-    </div>
+    <p>Logging out...</p>
   );
 };
 
