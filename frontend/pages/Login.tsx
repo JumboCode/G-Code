@@ -14,8 +14,8 @@ import Cookies from 'js-cookie';
 
 export default function Login() {
     const router = useRouter();
-    const [username, setUserName] = useState();
-    const [password, setPassword] = useState();
+    const [username, setUserName] = useState("");
+    const [password, setPassword] = useState("");
     const [loginError, setloginError] = useState(false);
 
 

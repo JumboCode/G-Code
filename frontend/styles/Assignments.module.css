@@ -8,7 +8,7 @@
   font-size: 38.508px;
   line-height: 50px;
 
-  width: 80pc;
+  /* width: 80pc; */
   height: 5pc;
   color: #2c3a57;
 }
@@ -26,7 +26,7 @@
   flex-wrap: wrap;
   max-width: 50pc;
 
-  margin-left: 2rem;
+  /* margin-left: 2rem; */
 }
 
 .rightColumn {
@@ -45,9 +45,9 @@
   letter-spacing: 0em;
   text-align: center;
   color: rgba(110, 89, 247, 1);
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
 
-  width: 100pc;
+  /* width: 100pc; */
 }
 
 .leftCard {
@@ -88,7 +88,7 @@
   border-radius: 10px;
   background-color: #715cfa;
 
-  width: 20pc;
+  /* width: 20pc; */
 }
 
 .tutoringSessionCard {
