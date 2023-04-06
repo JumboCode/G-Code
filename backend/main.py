@@ -40,6 +40,7 @@ from database import (
     fetch_filtered_appointments
 )
 
+
 # Import functions from database.py
 from database import (
     fetch_all_students,
@@ -62,6 +63,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/api/get_student_assignments")
+async def get_student_assignments(studentid):
+   print("in main.py get assignments")
+   return get_all_student_assignments(studentid)
 
 @app.get("/login")
 def login_page():

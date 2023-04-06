@@ -28,6 +28,7 @@ appointments = database.appointments
 si = database.student_invites
 ai = database.admin_invites
 questions = database.questions
+assignments = database.assignments
 
 def fetch_all_students():
     '''
@@ -229,3 +230,16 @@ def fetch_all_questions():
     for document in cursor:
         questions_list.append(Question(**document))
     return questions_list
+
+def get_all_student_assignments(studentid):
+    '''
+    Purpose: Returns all assignments assigned to a given student
+    '''
+    cursor = assignments.find({}, 
+        {"individual_assignments": { '$elemMatch': { "studentid": studentid }},
+         "name": 1, "description": 1, "dueDate": 1, '_id': False})
+    assignment_list = []
+    for document in cursor:
+        if 'individual_assignments' in document:
+            assignment_list.append(document)
+    return assignment_list
