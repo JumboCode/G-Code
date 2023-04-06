@@ -28,6 +28,11 @@ declare module '@mui/material/styles' {
   }
 }
 
+interface Props {
+  window?: () => Window;
+  user: {firstname: string}
+}
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -47,7 +52,8 @@ const theme = createTheme({
 
 const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Logout']];
 
-function Header() {
+function Header(props: Props) {
+  // console.log("props")
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -65,6 +71,9 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const firstname = props.user.firstname
+  const lastname = props.user.lastname
 
   return (
     <ThemeProvider theme={theme}>
@@ -131,7 +140,7 @@ function Header() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar alt={firstname + " " + lastname} src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu
