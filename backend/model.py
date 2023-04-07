@@ -129,7 +129,7 @@ class Assignment(BaseModel):
     description: str = Field(...)
     completed: bool = Field(...)
     dueDate: datetime = Field(...)
-    messages: List[tuple] = Field(...)
+    messages: List[str] = Field(...)
     submissionLink: str = Field(...)
     submitted: bool = Field(...)
     studentid: str = Field(...)

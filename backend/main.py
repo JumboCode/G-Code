@@ -85,6 +85,16 @@ async def get_appointments():
     response = fetch_all("Appointments")
     return response
 
+@app.get("/api/assignments")
+async def get_assignments():
+    response = fetch_all("Assignments")
+    return response
+
+@app.get("/api/appointments3")
+async def get_3_appointments():
+    response = fetch3Appointments()
+    return response
+
 @app.get("/api/questions")
 async def get_questions():
     response = fetch_all("Questions")

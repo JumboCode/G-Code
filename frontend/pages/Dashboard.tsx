@@ -15,8 +15,10 @@ import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommunityResourcesPanel from "../components/communityResourcesPanel";
 import { useState } from 'react';
+import { useEffect } from 'react';
 import IsUserAuthorized from "../components/authentification";
 import { useRouter } from 'next/router';
+import axios from "axios";
 
 export default function Dashboard() {
 
@@ -32,16 +34,22 @@ export default function Dashboard() {
   IsUserAuthorized("Student", get_user)
 
   // make call to backend to get real data
-  const assignmentList = [
-    {
-      name: "Paired Programming Project Pt. 2",
-      dueDate: "Fri, Nov 25, 10:59 PM"
-    },
-    {
-      name: "Week 6 Module of Codecademy",
-      dueDate: "Fri, Nov 25, 10:59 PM"
-    },
-  ]
+  const [assignmentList, setAssignmentList] = useState([]);
+
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/assignments', {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      setAssignmentList(response.data)
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }, []);
 
   // make call to backend to get real data
   const eventList = [
@@ -134,7 +142,6 @@ export default function Dashboard() {
                     <img src="FAQBoardIcon.svg" onClick={() => {
                       router.push('/OfficeHours')}}/><br /> 
                     Programming Help
-                    {/* NEED TO ADD PROPER LINK: GOES TO FAQBOARD */}
                   </div>
                 </Grid>
                 <Grid item xs={6} md={12} lg={6}>
