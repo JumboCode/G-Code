@@ -72,7 +72,7 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
 
 @app.get("/api/students")
 async def get_students():
-    response = fetch_all("Students")
+    response = fetch_all("Users")
     return response
 
 @app.get("/api/admins")
