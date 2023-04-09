@@ -7,18 +7,15 @@ Authors: G-Code Jumbocode Team
 import random
 import string
 import os
-from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from hashing import Hash
-from jwttoken import create_access_token, verify_token
+from jwttoken import create_access_token
 from oauth import get_current_user
-
 from datetime import datetime, timezone, timedelta, date
-from http.client import HTTPException
+# from http.client import HTTPException
 from dotenv import load_dotenv
-import jwt
-import bcrypt
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -34,7 +31,7 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Allow access from frontend
-origins = ['http://localhost:3000']
+origins = ["http://127.0.0.1", 'http://127.0.0.1:3000']
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -53,7 +50,7 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     return user
 
 @app.post("/login")
-def login(request: OAuth2PasswordRequestForm = Depends()):    
+def login(request: OAuth2PasswordRequestForm = Depends()):   
     user = fetch_user_by_email(request.username)
 
     if not user:
