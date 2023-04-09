@@ -31,7 +31,7 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Allow access from frontend
-origins = ["http://127.0.0.1", 'http://127.0.0.1:3000']
+origins = ["http://localhost:3000", 'http://127.0.0.1:3000']
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -80,6 +80,16 @@ async def get_admins():
 @app.get("/api/appointments")
 async def get_appointments():
     response = fetch_all("Appointments")
+    return response
+
+@app.get("/api/assignments")
+async def get_assignments():
+    response = fetch_all("Assignments")
+    return response
+
+@app.get("/api/appointments3")
+async def get_3_appointments():
+    response = fetch3Appointments()
     return response
 
 @app.get("/api/questions")

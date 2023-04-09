@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Box, CssBaseline, Button } from "@mui/material";
 import HeaderNav from '../headernav';
 import { DRAWER_WIDTH } from "../../constants";
@@ -15,22 +15,28 @@ import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommunityResourcesPanel from "../communityResourcesPanel";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function Dashboard(props) {
     const user = props.user
     const router = useRouter()
 
     // make call to backend to get real data
-    const assignmentList = [
-        {
-            name: "Paired Programming Project Pt. 2",
-            dueDate: "Fri, Nov 25, 10:59 PM"
-        },
-        {
-            name: "Week 6 Module of Codecademy",
-            dueDate: "Fri, Nov 25, 10:59 PM"
-        },
-    ]
+    const [assignmentList, setAssignmentList] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/api/assignments', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => {
+                setAssignmentList(response.data)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, []);
 
     // make call to backend to get real data
     const eventList = [
@@ -68,7 +74,7 @@ export default function Dashboard(props) {
                         <Grid item xs={12} md={8}>
                             <div className={styles.header2}>Coming Up Soon</div>
                             <div className={styles.pageElement}>
-                                <TutoringCardDisplay sessions={2} />
+                                <TutoringCardDisplay />
                             </div>
                             <div className={styles.header2}>{assignmentList.length} Assignment{assignmentList.length > 1 && "s"}</div>
 

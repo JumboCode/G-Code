@@ -29,9 +29,9 @@ questions    = database.questions
 posts        = database.posts
 
 
-model_dic = {"Users": User, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
+model_dic = {"Users": User, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any, "Assignments": Assignment}
 
-db_dic = {"Users":users, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions}
+db_dic = {"Users":users, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions, "Assignments": assignments}
 
 def stringify_id(object):
     try:
@@ -79,6 +79,14 @@ def fetch_filtered(model_class: str, filters: list[tuple]):
     for document in cursor:
         result_list.append(model_dic[model_class](**document))
     
+    return result_list
+
+def fetch3Appointments():
+    db = db_dic["Appointments"]
+    result_list = []
+    cursor = db.find({}).sort("date", -1).limit(3)
+    for document in cursor:
+        result_list.append(model_dic["Appointments"](**document))
     return result_list
 
 def create_new_user(user: UserIn):
