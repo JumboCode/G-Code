@@ -3,3 +3,4 @@ frontend/package-lock.json
 node_modules
 backend/bin
 backend/lib
+frontend/node_modules
