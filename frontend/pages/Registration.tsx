@@ -13,8 +13,11 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 
 export default function Registration() {
-  const [username, setUserName] = useState();
+  const [firstName, setFirstName] = useState();
+  const [lastName, setLastName] = useState();
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [code, setCode] = useState();
 
   return (
     <ThemeProvider theme={theme}>
@@ -26,30 +29,45 @@ export default function Registration() {
             label="First name"
             variant="outlined"
             sx={{ margin: "10px", width: "13.75pc" }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setFirstName(event.target.value);
+            }}
           />
           <TextField
             id="outlined-basic"
             label="Last name"
             variant="outlined"
             sx={{ margin: "10px", width: "13.75pc" }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setLastName(event.target.value);
+            }}
           />
           <TextField
             id="outlined-basic"
             label="Email"
             variant="outlined"
             sx={{ margin: "10px", width: "28.8pc" }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setEmail(event.target.value);
+            }}
           />
           <TextField
             id="outlined-helperText"
             label="Password"
             type="password"
             sx={{ margin: "10px", width: "28.8pc" }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setPassword(event.target.value);
+            }}
           />
           <TextField
             id="outlined-basic"
             label="Class Code"
             variant="outlined"
             sx={{ margin: "10px", width: "28.8pc" }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setCode(event.target.value);
+            }}
           />
           <Button variant="primary" sx={{ margin: "10px", width: "28.8pc" }}>
             <h1 className={loginStyles.signInButton}>Create Account</h1>
