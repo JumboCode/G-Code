@@ -1,41 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Test+Founders+Grotesk&display=swap");
 
-/* .loginButton {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 7.96509px;
-    gap: 7.97px;
-    text-color: white;
-
-    position: absolute;
-    width: 367px;
-    height: 53px;
-    left: 546px;
-    top: 604px;
-
-    Purple 
-
-    background: #6A5DF9;
-    border-radius: 30px;
-  } */
-
-.inputBox {
-  box-sizing: border-box;
-
-  position: absolute;
-  height: 51px;
-  left: 0.26px;
-  right: 75.74px;
-  top: 23.24px;
-
-  background: #f5f6f7;
-  border: 1px solid rgba(52, 52, 52, 0.15);
-  border-radius: 10px;
-}
-
 .container {
   position: relative;
   width: 40pc;
@@ -115,4 +80,14 @@
   color: #6a5df9;
   font-weight: 500;
   margin-left: 0.2rem;
+}
+
+.forgotPassword {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 17px;
+  color: #6a5df9;
+  float: right;
 }
