@@ -12,6 +12,11 @@ import { theme } from "../theme.ts";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 
+// TODO:
+// 1. The background gradient
+// 2. Backend functionality.
+//    firstName, lastName, email, password, and code have all been set
+
 export default function Registration() {
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
