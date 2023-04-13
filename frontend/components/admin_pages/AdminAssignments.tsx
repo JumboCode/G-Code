@@ -15,20 +15,5 @@ import styles from '../../styles/Home.module.css'
 
 export default function AdminAssignments(props) {
     const user = props.user
-    return (
-        <ThemeProvider theme={theme}>
-            <Box className={styles.content} sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <HeaderNav user={{ firstname: user.firstname }} currentPageTitle="Dashboard Admin" />
-                <Box
-                    component="main"
-                    sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
-                >
-                    <Box style={{paddingTop: "50px"}}>
-                        Admin Assignments – not implemented
-                    </Box>
-                </Box>
-            </Box>
-        </ThemeProvider>
-    );
+    return <p> Not implemented </p>;
 }

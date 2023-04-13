@@ -156,12 +156,12 @@ export default function GeneralPeople(props) {
       </Table>
     </TableContainer>
   );
-  
+
   if (!user) {
     return <p>Loading...</p>
   }
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Modal
         open={open}
         onClose={handleClose}
@@ -303,39 +303,29 @@ export default function GeneralPeople(props) {
           </Box>
         </Box>
       </Modal>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <HeaderNav user={{firstname: user.firstname}}  currentPageTitle="People" />
-
-        <Box
-          component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
-        >
-          <Grid sx={{ paddingTop: '50px' }} container spacing={2}>
-            <Grid item md={9} xs={12}>
-              <Box sx={{ padding: "40px 0 30px 0" }}>
-                <Grid container>
-                  <Grid xs={12} md={8}>
-                    <Typography variant="h1">
-                      Spring 2023 Cohort
-                    </Typography>
-                  </Grid>
-                  <Grid xs={12} md={4}>
-                    <Button sx={{ float: 'right' }} variant='primary' onClick={handleOpen}>
-                      <AddIcon /> Invite Users
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Box>
+      <Grid container spacing={2}>
+        <Grid item md={9} xs={12}>
+          <Box sx={{ padding: "40px 0 30px 0" }}>
+            <Grid container>
+              <Grid xs={12} md={8}>
+                <Typography variant="h1">
+                  Spring 2023 Cohort
+                </Typography>
+              </Grid>
+              <Grid xs={12} md={4}>
+                <Button sx={{ float: 'right' }} variant='primary' onClick={handleOpen}>
+                  <AddIcon /> Invite Users
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={9}>
-              <Card>
-                {studentCards}
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-    </ThemeProvider>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={9}>
+          <Card>
+            {studentCards}
+          </Card>
+        </Grid>
+      </Grid>
+    </>
   );
 }

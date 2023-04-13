@@ -73,8 +73,8 @@ export default function Login() {
               }}
             />
             <text className={loginStyles.forgotPassword}>Forgot Password?</text>
-            <Button variant="primary" sx={{ margin: "10px", width: "30pc" }}>
-              <h1 className={loginStyles.signInButton}>Create Account</h1>
+            <Button variant="primary" sx={{ margin: "10px", width: "30pc" }} onClick={postInfo}>
+              <h1 className={loginStyles.signInButton}>Login </h1>
             </Button>
           </Box>
           <text className={loginStyles.haveAccount}>

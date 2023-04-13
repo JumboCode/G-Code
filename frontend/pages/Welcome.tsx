@@ -21,7 +21,7 @@ export default function Welcome() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={loginStyles.container}> Hello</div>
+      <div className={loginStyles.container}> Hello </div>
     </ThemeProvider>
   );
 }

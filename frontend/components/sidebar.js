@@ -10,31 +10,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import "@fontsource/poppins";
 import { useRouter } from 'next/router';
 import { Toolbar } from '@mui/material';
-import IsUserAuthorized from './authentification';
-
-const isAdmin = true;
-const pageTitles = ['Dashboard', 'Office Hours', 'FAQ Board', 'People', 'Assignments']
-
-function chooseSidebar() {
-  // TODO:
-  // Fix this section bc the get user is weird.
-  // also, let the default be student not admin in the if statement
-  // const get_user = (curr_user) => {
-  //   if (user == null) {
-  //     setUser(curr_user);
-  //   }
-  // };
-  if (isAdmin) {
-    return [
-      "Admin",
-      "Add Availability",
-      "Check Appointment Status",
-      "FAQ Board",
-    ];
-  } else {
-    return ["Dashboard", "Office Hours", "FAQ Board", "People", "Assignments"];
-  }
-}
 
 function SideBarElement({ text, active, setActive }) {
     const [isHover, setIsHover] = useState(false);
@@ -57,14 +32,13 @@ function SideBarElement({ text, active, setActive }) {
                     : '#949494',
       }}>
       {text === "Dashboard" && <GridViewRoundedIcon />}
-      {text === "Office Hours" && <EventRoundedIcon />}
-      {text === "FAQ Board" && <LiveHelpIcon />}
+      {text === "OfficeHours" && <EventRoundedIcon />}
+      {text === "FAQBoard" && <LiveHelpIcon />}
       {text === "People" && <PeopleIcon />}
       {text === "Assignments" && <AssignmentIcon />}
-
       {text === "Admin" && <HomeIcon />}
-      {text === "Add Availability" && <EventRoundedIcon />}
-      {text === "Check Appointment Status" && <AssignmentIcon />}
+      {text === "AddAvailability" && <EventRoundedIcon />}
+      {text === "CheckAppointmentStatus" && <AssignmentIcon />}
 
       <TextLabel text={text} active={active} />
     </div>;
@@ -76,9 +50,9 @@ function TextLabel({ text, active }) {
     </h2>;
 }
 
-export default function Sidebar({ currentPageTitle }) {
+export default function Sidebar({ availablePages, currentPageTitle }) {
   const [activePage, setActivePage] = useState(currentPageTitle);
-  const pageTitles = chooseSidebar();
+  const pageTitles = availablePages;
   const sidebarElements = pageTitles.map((title) => {
     return (
       <SideBarElement
@@ -92,7 +66,6 @@ export default function Sidebar({ currentPageTitle }) {
   return (
     <div style={styles.Sidebar}>
       <Toolbar />
-
       {sidebarElements}
     </div>
   );

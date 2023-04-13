@@ -11,6 +11,8 @@ import GeneralPeople from "../components/general_pages/GeneralPeople";
 import AdminOfficeHours from "../components/admin_pages/AdminOfficeHours";
 import StudentOfficeHours from "../components/student_pages/StudentOfficeHours";
 
+import Margin from "../components/margin";
+
 const Page = () => {
     const router = useRouter()
     const { page } = router.query
@@ -25,25 +27,49 @@ const Page = () => {
      * information (ex. first name, username, ect.) */
     IsUserAuthorized(save_user)
 
-    console.log(user)
+    const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
+    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People"]
 
-    if (user && user.type in ["admin", "student"]) {
+    if (!user) {
         return <p>not authenticated...</p>
-    } 
-    
-    switch(page) {
-        case "Dashboard":
-            return (user == "admin")? <AdminDashboard user={user}/> : <StudentDashboard user={user}/>
-        case "Assignments":
-            return (user == "admin")? <AdminAssignments user={user}/> : <StudentAssignments user={user}/>
-        case "FAQBoard":
-            return <GeneralFAQBoard user={user}/>
-        case "People":
-            return <GeneralPeople user={user}/>
-        case "OfficeHours":
-            return (user == "admin")? <AdminOfficeHours user={user}/> : <StudentOfficeHours user={user}/>
-        default:
-            return <p> page {page} not found </p>
+    }
+
+    if (user.type == "student") {
+        if (student_pages.includes(page.toString())) {
+            return (
+                <Margin
+                    user={user}
+                    availablePages={student_pages}
+                    currentPageTitle={page}
+                >
+                    {page == "Dashboard" && <StudentDashboard user={user} />}
+                    {page == "Assignments" && <StudentAssignments user={user} />}
+                    {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
+                    {page == "OfficeHours" && <StudentOfficeHours user={user} />}
+                    {page == "People" && <GeneralPeople user={user} />}
+                </Margin>
+            )
+        } else {
+            return "page not found"
+        }
+    } else {
+        if (admin_pages.includes(page.toString())) {
+            return (
+                <Margin
+                    user={user}
+                    availablePages={student_pages}
+                    currentPageTitle={page}
+                >
+                    {page == "Dashboard" && <AdminDashboard user={user} />}
+                    {page == "Assignments" && <AdminAssignments user={user} />}
+                    {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
+                    {page == "OfficeHours" && <AdminOfficeHours user={user} />}
+                    {page == "People" && <GeneralPeople user={user} />}
+                </Margin>
+            )
+        } else {
+            return "page not found"
+        }
     }
 }
 
