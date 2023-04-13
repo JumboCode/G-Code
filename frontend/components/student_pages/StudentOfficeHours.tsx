@@ -1,10 +1,5 @@
 import React from 'react';
-import styles from '../../styles/Home.module.css'
-import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '../../theme'
-import { Grid, Box, CssBaseline } from "@mui/material";
-import HeaderNav from '../headernav';
-import { DRAWER_WIDTH } from '../../constants';
+import { Grid, Box } from "@mui/material";
 import Button from '@mui/material/Button'
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -24,83 +19,71 @@ export default function StudentOfficeHours(props) {
     const user = props.user
 
     return (
-        <ThemeProvider theme={theme}>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <HeaderNav user={{ firstname: user.firstname }} currentPageTitle="Office Hours" />
-                <Box
-                    component="main"
-                    className={styles.content}
-                    sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
-                >
-                    <div style={{
-                        paddingTop: '40px'
-                    }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={8}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} md={9}>
-                                        <StudentHeading />
-                                    </Grid>
-                                    <Grid item xs={12} md={3}>
-                                        <Button variant="secondary" sx={{
-                                            marginTop: '20px'
-                                        }}>
-                                            <TuneRoundedIcon />
-                                            Filters
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                                <CalendarWeek />
-                                <p style={{
-                                    color: '#61646D',
-                                }}>
-                                    Appointments Available on Tuesday, Nov 22
-                                </p>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '10px',
-                                    width: '90%'
-                                }}>
-                                    {tutors.map((tutor) => <TutorProfile {...tutor} />)}
-                                </Box>
-                                <Button sx={{
-                                    backgroundColor: '#61646D',
-                                    width: '90%',
-                                    marginTop: '20px',
-                                    color: 'white'
-                                }}>
-                                    Continue →
-                                </Button>
-                            </Grid>
-
-                            <Grid item xs={12} md={4}>
-                                {/* <Grid container spacing={1}>
-                                        <Grid item xs={12}> */}
-                                <p>Can't find a time?</p>
-                                {/* </Grid>
-                                    </Grid> */}
-                                {/* <Grid item xs={12}> */}
-                                <Button variant="secondary">+ Suggest New Times</Button>
-                                {/* </Grid> */}
-                                {/* <Grid item xs={12}> */}
-                                <Button variant="secondary">Check FAQ Board &#8594;</Button>
-                                {/* </Grid> */}
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} md={9}>
-                                        <p>Work Together</p>
-                                    </Grid>
-                                    <Grid item xs={12} md={3}>
-                                        <Button variant="secondary">+ New</Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+        <div style={{
+            paddingTop: '40px'
+        }}>
+            <Grid container spacing={2}>
+                <Grid item xs={12} md={8}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={9}>
+                            <StudentHeading />
                         </Grid>
-                    </div>
-                </Box>
-            </Box>
-        </ThemeProvider>
+                        <Grid item xs={12} md={3}>
+                            <Button variant="secondary" sx={{
+                                marginTop: '20px'
+                            }}>
+                                <TuneRoundedIcon />
+                                Filters
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    <CalendarWeek />
+                    <p style={{
+                        color: '#61646D',
+                    }}>
+                        Appointments Available on Tuesday, Nov 22
+                    </p>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                        width: '90%'
+                    }}>
+                        {tutors.map((tutor) => <TutorProfile {...tutor} />)}
+                    </Box>
+                    <Button sx={{
+                        backgroundColor: '#61646D',
+                        width: '90%',
+                        marginTop: '20px',
+                        color: 'white'
+                    }}>
+                        Continue →
+                    </Button>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                    {/* <Grid container spacing={1}>
+                                        <Grid item xs={12}> */}
+                    <p>Can't find a time?</p>
+                    {/* </Grid>
+                                    </Grid> */}
+                    {/* <Grid item xs={12}> */}
+                    <Button variant="secondary">+ Suggest New Times</Button>
+                    {/* </Grid> */}
+                    {/* <Grid item xs={12}> */}
+                    <Button variant="secondary">Check FAQ Board &#8594;</Button>
+                    {/* </Grid> */}
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={9}>
+                            <p>Work Together</p>
+                        </Grid>
+                        <Grid item xs={12} md={3}>
+                            <Button variant="secondary">+ New</Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </div>
     )
 }
 

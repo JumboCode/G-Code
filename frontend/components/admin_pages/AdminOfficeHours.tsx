@@ -6,11 +6,6 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
-import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '../../theme'
-import { Box, CssBaseline } from "@mui/material";
-import HeaderNav from '../headernav';
-import { DRAWER_WIDTH } from '../../constants';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -37,37 +32,25 @@ export default function AdminOfficeHours(props) {
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     return (
-        <ThemeProvider theme={theme}>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <HeaderNav user={{ firstname: user.firstname }} currentPageTitle="Office Hours" />
-                <Box
-                    component="main"
-                    className={styles.content}
-                    sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}
-                >
-                    <div style={tutoring_styles.ScheduleContainer}>
-                        <PageHeading />
-                        <AvailableSessionsSection />
-                        <h2 style={{ ...tutoring_styles.SubHeading }}>
-                            Available Times for Signup
-                        </h2>
+        <div style={tutoring_styles.ScheduleContainer}>
+            <PageHeading />
+            <AvailableSessionsSection />
+            <h2 style={{ ...tutoring_styles.SubHeading }}>
+                Available Times for Signup
+            </h2>
 
-                        <TableContainer className={styles.pageElement} component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                <TableBody>
-                                    {
-                                        days.map(day => (
-                                            <DayRow dayName={day} />
-                                        ))
-                                    }
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </div>
-                </Box>
-            </Box>
-        </ThemeProvider>
+            <TableContainer className={styles.pageElement} component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableBody>
+                        {
+                            days.map(day => (
+                                <DayRow dayName={day} />
+                            ))
+                        }
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
     )
 }
 

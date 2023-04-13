@@ -151,7 +151,7 @@ export default function GeneralFAQBoard(props) {
     const router = useRouter();
 
     return (
-        <ThemeProvider theme={theme}>
+        <>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -257,158 +257,144 @@ export default function GeneralFAQBoard(props) {
                     </Grid>
                 </Box>
             </Modal>
-            <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <HeaderNav user={{firstname: user.firstname}}  currentPageTitle="FAQ Board" />
-
-                <Box
-                    component="main"
-                    sx={{
-                        flexGrow: 1,
-                        p: 3,
-                        width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
-                    }}
-                >
-                    <Grid sx={{ paddingTop: "50px" }} container spacing={2}>
-                        <Grid item md={9} xs={12}>
-                            <Box sx={{ padding: "40px 0 30px 0" }}>
-                                <Grid container>
-                                    <Grid item xs={12} md={8}>
-                                        <Typography variant="h1">
-                                            Community Forum
-                                        </Typography>
-                                        <Typography variant="subtitle1">
-                                            Ask a question or help out your
-                                            fellow classmates!
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} md={4}>
-                                        <Button
-                                            sx={{ margin: "10px" }}
-                                            variant="secondary"
-                                        >
-                                            My Questions
-                                        </Button>
-                                        <Button
-                                            onClick={handleOpen}
-                                            variant="primary"
-                                        >
-                                            Ask a Question
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                            <Box sx={{ paddingBottom: "20px" }}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} md={5}>
-                                        <Paper
-                                            component="form"
-                                            sx={{
-                                                p: "2px 4px",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                width: "100%",
-                                                borderRadius: "10px",
-                                                border: "1px solid rgba(0, 0, 0, 0.23)",
-                                                boxShadow: "0",
-                                            }}
-                                        >
-                                            <IconButton
-                                                sx={{
-                                                    p: "10px",
-                                                    color: "#6A5DF9",
-                                                }}
-                                                aria-label="menu"
-                                            >
-                                                <SearchIcon />
-                                            </IconButton>
-                                            <InputBase
-                                                sx={{ ml: 1, flex: 1 }}
-                                                placeholder="Search"
-                                                inputProps={{
-                                                    "aria-label": "search",
-                                                }}
-                                                value={searchQuery}
-                                                onChange={(event) =>
-                                                    setSearchQuery(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            />
-                                        </Paper>
-                                    </Grid>
-                                    <Grid item xs={6} md={3}>
-                                        <CustomSelect
-                                            value={week}
-                                            handleChange={(event) => {
-                                                setWeek(event.target.value);
-                                            }}
-                                            choices={weeks}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} md={4}>
-                                        <CustomSelect
-                                            value={topic}
-                                            handleChange={(event) => {
-                                                setTopic(event.target.value);
-                                            }}
-                                            choices={topics}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                        </Grid>
-                        <Grid item md={3} xs={0}>
-                            {/* Filler */}
-                        </Grid>
-                    </Grid>
-
-                    <Grid container spacing={2}>
-                        <Grid item md={9} xs={12}>
-                            <Card sx={{ borderRadius: '10px' }}>
-                                <List sx={{ padding: '0 20px 20px 20px' }}>
-                                    {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
-                                        <>
-                                            <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
-                                                <ListItemAvatar sx={{ width: '70px' }}>
-                                                    <Avatar sx={{ height: '50px', width: '50px' }}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
-                                                </ListItemAvatar>
-                                                <ListItemText style={{ cursor: 'pointer' }}>
-                                                    <Typography variant="subtitle2">
-                                                        {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
-                                                    </Typography>
-                                                    <Typography variant="h4">
-                                                        {question.title}
-                                                    </Typography>
-                                                    <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
-                                                        {question.numreplies} {question.numreplies == 1 ? "reply" : "replies"}
-                                                    </Typography>
-                                                </ListItemText>
-                                            </ListItem>
-                                            <Divider component="li" />
-                                        </>
-                                    )}
-                                </List>
-                            </Card>
-                        </Grid>
-                        <Grid item md={3} xs={12}>
-                            <Box>
-                                <Typography variant="h3">
-                                    Still Confused?
+            <Grid  container spacing={2}>
+                <Grid item md={9} xs={12}>
+                    <Box sx={{ padding: "40px 0 30px 0" }}>
+                        <Grid container>
+                            <Grid item xs={12} md={8}>
+                                <Typography variant="h1">
+                                    Community Forum
                                 </Typography>
-                                <Box sx={{ marginTop: '15px' }}>
-                                    <Button variant="secondary" onClick={() => {
-                                        router.push('/OfficeHours')
-                                    }} sx={{ "width": "100%" }}>
-                                        Go to Office Hours <EastIcon />
-                                    </Button>
-                                </Box>
-                            </Box>
-                            <CommunityResourcesPanel />
+                                <Typography variant="subtitle1">
+                                    Ask a question or help out your
+                                    fellow classmates!
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <Button
+                                    sx={{ margin: "10px" }}
+                                    variant="secondary"
+                                >
+                                    My Questions
+                                </Button>
+                                <Button
+                                    onClick={handleOpen}
+                                    variant="primary"
+                                >
+                                    Ask a Question
+                                </Button>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Box>
-            </Box>
-        </ThemeProvider>
+                    </Box>
+                    <Box sx={{ paddingBottom: "20px" }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} md={5}>
+                                <Paper
+                                    component="form"
+                                    sx={{
+                                        p: "2px 4px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        width: "100%",
+                                        borderRadius: "10px",
+                                        border: "1px solid rgba(0, 0, 0, 0.23)",
+                                        boxShadow: "0",
+                                    }}
+                                >
+                                    <IconButton
+                                        sx={{
+                                            p: "10px",
+                                            color: "#6A5DF9",
+                                        }}
+                                        aria-label="menu"
+                                    >
+                                        <SearchIcon />
+                                    </IconButton>
+                                    <InputBase
+                                        sx={{ ml: 1, flex: 1 }}
+                                        placeholder="Search"
+                                        inputProps={{
+                                            "aria-label": "search",
+                                        }}
+                                        value={searchQuery}
+                                        onChange={(event) =>
+                                            setSearchQuery(
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={6} md={3}>
+                                <CustomSelect
+                                    value={week}
+                                    handleChange={(event) => {
+                                        setWeek(event.target.value);
+                                    }}
+                                    choices={weeks}
+                                />
+                            </Grid>
+                            <Grid item xs={6} md={4}>
+                                <CustomSelect
+                                    value={topic}
+                                    handleChange={(event) => {
+                                        setTopic(event.target.value);
+                                    }}
+                                    choices={topics}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </Grid>
+                <Grid item md={3} xs={0}>
+                    {/* Filler */}
+                </Grid>
+            </Grid>
+
+            <Grid container spacing={2}>
+                <Grid item md={9} xs={12}>
+                    <Card sx={{ borderRadius: '10px' }}>
+                        <List sx={{ padding: '0 20px 20px 20px' }}>
+                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
+                                <>
+                                    <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
+                                        <ListItemAvatar sx={{ width: '70px' }}>
+                                            <Avatar sx={{ height: '50px', width: '50px' }}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText style={{ cursor: 'pointer' }}>
+                                            <Typography variant="subtitle2">
+                                                {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
+                                            </Typography>
+                                            <Typography variant="h4">
+                                                {question.title}
+                                            </Typography>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
+                                                {question.numreplies} {question.numreplies == 1 ? "reply" : "replies"}
+                                            </Typography>
+                                        </ListItemText>
+                                    </ListItem>
+                                    <Divider component="li" />
+                                </>
+                            )}
+                        </List>
+                    </Card>
+                </Grid>
+                <Grid item md={3} xs={12}>
+                    <Box>
+                        <Typography variant="h3">
+                            Still Confused?
+                        </Typography>
+                        <Box sx={{ marginTop: '15px' }}>
+                            <Button variant="secondary" onClick={() => {
+                                router.push('/OfficeHours')
+                            }} sx={{ "width": "100%" }}>
+                                Go to Office Hours <EastIcon />
+                            </Button>
+                        </Box>
+                    </Box>
+                    <CommunityResourcesPanel />
+                </Grid>
+            </Grid>
+        </>
     );
 }

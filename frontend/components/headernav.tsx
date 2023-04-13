@@ -7,13 +7,14 @@ import { DRAWER_WIDTH } from '../constants';
 
 interface Props {
   window?: () => Window;
+  availablePages: Array<string>
   currentPageTitle: string;
   user: {firstname: string}
 }
 
 export default function HeaderNav(props: Props) {
 
-  const { window, currentPageTitle } = props;
+  const { window, availablePages, currentPageTitle } = props;
   const container = window !== undefined ? () => window().document.body : undefined;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const handleDrawerToggle = () => {
@@ -48,7 +49,7 @@ export default function HeaderNav(props: Props) {
           }}
         >
           <Header user={props.user}/>
-          <Sidebar currentPageTitle={currentPageTitle} />
+          <Sidebar availablePages={availablePages} currentPageTitle={currentPageTitle} />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -59,7 +60,7 @@ export default function HeaderNav(props: Props) {
           open
         >
           <Header user={props.user} />
-          <Sidebar currentPageTitle={currentPageTitle} />
+          <Sidebar availablePages={availablePages} currentPageTitle={currentPageTitle} />
         </Drawer>
       </Box>
     </>
