@@ -74,12 +74,14 @@ export default function Login() {
             />
             <text className={loginStyles.forgotPassword}>Forgot Password?</text>
             <Button variant="primary" sx={{ margin: "10px", width: "30pc" }}>
-              <h1 className={loginStyles.signInButton}>Create Account</h1>
+              <h1 className={loginStyles.signInButton} 
+              onClick={postInfo}>Log In</h1>
             </Button>
           </Box>
           <text className={loginStyles.haveAccount}>
             New to GCode?
-            <text className={loginStyles.signIn}> Create an Account.</text>
+            <Button className={loginStyles.signIn} onClick={() => {
+            router.push('/Registration')}}> Create an Account.</Button>
           </text>
         </div>
       </ThemeProvider>
