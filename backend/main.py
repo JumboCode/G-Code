@@ -49,6 +49,16 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     del user["password"]
     return user
 
+@app.post("/api/register_student")
+def register_student(request: Depends()):
+    user = fetch_user_by_email(request.username)
+
+    if user: 
+        raise HTTPException(status_code=403, detail="User Already Exists")
+    else :
+        create_new_user(request)
+        return 'ok'
+
 @app.post("/login")
 def login(request: OAuth2PasswordRequestForm = Depends()):   
     user = fetch_user_by_email(request.username)
