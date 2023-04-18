@@ -19,11 +19,11 @@ import Cookies from "js-cookie";
 
 export default function Registration() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [code, setCode] = useState();
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [code, setCode] = useState<string>("");
 
   const postInfo = () => {
     const postData = {
@@ -33,26 +33,32 @@ export default function Registration() {
       password: password,
       code: code
     };
-    axios.post('http://localhost:8000/register_student', postData, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'accept': 'application/json'
-            }
-        })
-            .then(function success(response) {
-                console.log(response);
-                router.push('/Login');
-                // instead of logging them in, I'm just pushing them to login 
-                // for now
-            })
-            .catch(function failure(error) {
-                console.log(error);
-                // make a function to call which displays a message to user
-                // saying: "Email is already in use, please try another"
-            })
-    }
-
-
+    
+    fetch('http://localhost:8000/register_student', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      router.push('/Login');
+      // instead of logging them in, I'm just pushing them to login 
+      // for now
+    })
+    .catch(error => {
+      console.log(error);
+      // make a function to call which displays a message to user
+      // saying: "Email is already in use, please try another"
+    });
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -104,7 +110,7 @@ export default function Registration() {
               setCode(event.target.value);
             }}
           />
-          <Button variant="primary" sx={{ margin: "10px", width: "28.8pc" }}>
+          <Button variant="primary" onClick={postInfo} sx={{ margin: "10px", width: "28.8pc" }}>
             <h1 className={loginStyles.signInButton}>Create Account</h1>
           </Button>
         </Box>

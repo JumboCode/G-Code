@@ -49,14 +49,24 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     del user["password"]
     return user
 
-@app.post("/api/register_student")
-def register_student(request: Depends()):
-    user = fetch_user_by_email(request.username)
+@app.post("/register_student")
+def register_student(postData: dict):
+    email = postData.get('email')
+
+    new_user = UserIn(
+    firstname = postData.get('firstName'),
+    lastname = postData.get('lastName'),
+    email = email,
+    password = Hash.bcrypt(postData.get('password')),
+    type = "student"
+    )
+
+    user = fetch_user_by_email(email)
 
     if user: 
         raise HTTPException(status_code=403, detail="User Already Exists")
-    else :
-        create_new_user(request)
+    else:
+        create_new_user(dict(new_user))
         return 'ok'
 
 @app.post("/login")
