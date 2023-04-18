@@ -12,6 +12,9 @@ import StepContent from '@mui/material/StepContent';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 
 
 const steps = [
@@ -25,7 +28,6 @@ const steps = [
       'Would you like to reschedule?',
   },
 ];
-
 
 function TutoringCard({
   name,
@@ -161,19 +163,45 @@ function TutoringCard({
   );
 }
 
+export default function TutoringCardDisplay() {
+  const [sessions, setSessions] = useState([]);
 
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/appointments3", {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then((response) => {
+        setSessions(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-
-export default function TutoringCardDisplay({ sessions }) {
   return (
     <div>
-      {sessions
-        ? TutoringCard({
-          name: "Shark Meldon",
-          date: "Mon Oct 10",
-          time: "1:30 - 2:00 PM",
+      {sessions.length > 0 ? (
+        sessions.map((session) => {
+          const startTime = new Date(session.startTime);
+          const endTime = new Date(session.endTime);
+          const date = new Date(session.date);
+
+          const options = { year: 'numeric', month: 'long', day: 'numeric' };
+          const formattedDate = date.toLocaleDateString('en-US', options);
+
+          return (
+            <TutoringCard
+              name={session.name}
+              date={formattedDate}
+              time={`${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
+            />
+          );
         })
-        : "No upcoming tutoring sessions"}
+      ) : (
+        "No upcoming tutoring sessions"
+      )}
     </div>
   );
 }

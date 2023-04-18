@@ -1,47 +1,40 @@
 import React from "react";
-import { Grid, Box, CssBaseline, Button } from "@mui/material";
-import HeaderNav from '../components/headernav.tsx';
-import { DRAWER_WIDTH } from "../constants";
-import TutoringCardDisplay from "../components/tutoringCard";
-import styles from '../styles/Home.module.css'
-import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '../theme.ts'
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import CommunityResourcesPanel from "../components/communityResourcesPanel";
 import { useState } from 'react';
+import { useEffect } from 'react';
 import IsUserAuthorized from "../components/authentification";
 import { useRouter } from 'next/router';
+import axios from "axios";
+import AdminDashboard from "../components/admin_pages/AdminDashboard"
+import StudentDashboard from "../components/student_pages/StudentDashboard"
 
 export default function Dashboard() {
-
-  const router = useRouter();
   const [user, setUser] = useState(null);
-  const get_user = curr_user => {
+  const save_user = curr_user => {
     if (user == null){
       setUser(curr_user)
     }
   }
   /* Authorize user and return user 
    * information (ex. first name, username, ect.) */
-  IsUserAuthorized("Student", get_user)
+  IsUserAuthorized(save_user)
 
   // make call to backend to get real data
-  const assignmentList = [
-    {
-      name: "Paired Programming Project Pt. 2",
-      dueDate: "Fri, Nov 25, 10:59 PM"
-    },
-    {
-      name: "Week 6 Module of Codecademy",
-      dueDate: "Fri, Nov 25, 10:59 PM"
-    },
-  ]
+  const [assignmentList, setAssignmentList] = useState([]);
+
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/assignments', {
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      setAssignmentList(response.data)
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }, []);
 
   // make call to backend to get real data
   const eventList = [
@@ -134,7 +127,6 @@ export default function Dashboard() {
                     <img src="FAQBoardIcon.svg" onClick={() => {
                       router.push('/OfficeHours')}}/><br /> 
                     Programming Help
-                    {/* NEED TO ADD PROPER LINK: GOES TO FAQBOARD */}
                   </div>
                 </Grid>
                 <Grid item xs={6} md={12} lg={6}>

@@ -7,18 +7,15 @@ Authors: G-Code Jumbocode Team
 import random
 import string
 import os
-from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from hashing import Hash
-from jwttoken import create_access_token, verify_token
+from jwttoken import create_access_token
 from oauth import get_current_user
-
 from datetime import datetime, timezone, timedelta, date
-from http.client import HTTPException
+# from http.client import HTTPException
 from dotenv import load_dotenv
-import jwt
-import bcrypt
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -34,7 +31,7 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Allow access from frontend
-origins = ['http://localhost:3000']
+origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -52,8 +49,28 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     del user["password"]
     return user
 
+@app.post("/register_student")
+def register_student(postData: dict):
+    email = postData.get('email')
+
+    new_user = UserIn(
+    firstname = postData.get('firstName'),
+    lastname = postData.get('lastName'),
+    email = email,
+    password = Hash.bcrypt(postData.get('password')),
+    type = "student"
+    )
+
+    user = fetch_user_by_email(email)
+
+    if user: 
+        raise HTTPException(status_code=403, detail="User Already Exists")
+    else:
+        create_new_user(dict(new_user))
+        return 'ok'
+
 @app.post("/login")
-def login(request: OAuth2PasswordRequestForm = Depends()):    
+def login(request: OAuth2PasswordRequestForm = Depends()):   
     user = fetch_user_by_email(request.username)
 
     if not user:
@@ -72,7 +89,7 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
 
 @app.get("/api/students")
 async def get_students():
-    response = fetch_all("Students")
+    response = fetch_all("Users")
     return response
 
 @app.get("/api/admins")
@@ -83,6 +100,16 @@ async def get_admins():
 @app.get("/api/appointments")
 async def get_appointments():
     response = fetch_all("Appointments")
+    return response
+
+@app.get("/api/assignments")
+async def get_assignments():
+    response = fetch_all("Assignments")
+    return response
+
+@app.get("/api/appointments3")
+async def get_3_appointments():
+    response = fetch3Appointments()
     return response
 
 @app.get("/api/questions")

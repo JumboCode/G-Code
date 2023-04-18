@@ -7,15 +7,16 @@ import dashboardStyles from "../styles/Dashboard.module.css";
 import loginStyles from "../styles/Login.module.css";
 import Sidebar from "../components/sidebar";
 import logo from './public/GCodeLogo.png'
-import { Button, ThemeProvider } from "@mui/material";
-import { theme } from '../theme.ts';
+import { Button, ThemeProvider, Box, TextField } from "@mui/material";
+import { theme } from '../theme';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import Link from "next/link";
 
 export default function Login() {
     const router = useRouter();
-    const [username, setUserName] = useState();
-    const [password, setPassword] = useState();
+    const [username, setUserName] = useState("");
+    const [password, setPassword] = useState("");
     const [loginError, setloginError] = useState(false);
 
 
@@ -48,21 +49,40 @@ export default function Login() {
     }
 
     return (
-        <ThemeProvider theme={theme}>
-            <div className={loginStyles.container}>
-                <div className={loginStyles.formContainer}>
-                    <h1 className={loginStyles.signInText}> Sign In </h1>
-                    <form action="" method="get" id="signIn" className={loginStyles.form}>
-                        <input type="text" name="username" placeholder="Email Address" onChange={(e) => setUserName(e.target.value)} />
-                        <input type="password" id="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} className={loginStyles.password} />
-                        {loginError && <p className={loginStyles.forgotPassword}> Incorrect Username/Password <br></br>Forgot Password? </p>}
-                        <Button variant="primary" onClick={postInfo}>
-                            Sign In
-                        </Button>
-                    </form>
-                </div>
-            </div>
-        </ThemeProvider>
-    )
-
-}
+      <ThemeProvider theme={theme}>
+        <div className={loginStyles.container}>
+          <Box component="form" sx={{ width: "30pc", alignItems: "center" }}>
+            <h1 className={loginStyles.signInText}> Sign In </h1>
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label="Email Address"
+              variant="outlined"
+              sx={{ margin: "10px" }}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setUserName(event.target.value);
+              }}
+            />
+            <TextField
+              fullWidth
+              id="outlined-helperText"
+              label="Password"
+              type="password"
+              sx={{ margin: "10px" }}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setPassword(event.target.value);
+              }}
+            />
+            <text className={loginStyles.forgotPassword}>Forgot Password?</text>
+            <Button variant="primary" sx={{ margin: "10px", width: "30pc" }} onClick={postInfo}>
+              <h1 className={loginStyles.signInButton}>Login </h1>
+            </Button>
+          </Box>
+          <text className={loginStyles.haveAccount}>
+            New to GCode?
+            <Link href="./Registration"> <text className={loginStyles.signIn}> Create an Account.</text> </Link>
+          </text>
+        </div>
+      </ThemeProvider>
+    );
+  }
