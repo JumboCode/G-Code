@@ -18,11 +18,45 @@ import Cookies from "js-cookie";
 //    firstName, lastName, email, password, and code have all been set
 
 export default function Registration() {
+  const router = useRouter();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [code, setCode] = useState();
+  const [zoom, setZoom] = useState();   
+  const [regError, setRegError] = useState(false);
+
+  /* POST DATA */
+  const postRegInfo = () => {
+        const postRegData = {
+            firstname: firstName,
+            lastname: lastName,
+            email: email,
+            password: password,
+            code: code,
+            zoom: zoom
+        };
+
+        axios.post('http://localhost:8000/registration', postRegData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'accept': 'application/json'
+            }
+        })
+            .then(function success(response) {
+                console.log(response)
+                const token = response.data.access_token;
+                Cookies.set('gcode-session', token, { expires: 7 });
+                router.push('/Login');
+            })
+            .catch(function failure(error) {
+                console.log(error);
+                setRegError(true);
+            })
+    }
+  /* END POST DATA */
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -74,7 +108,19 @@ export default function Registration() {
               setCode(event.target.value);
             }}
           />
-          <Button variant="primary" sx={{ margin: "10px", width: "28.8pc" }}>
+
+          {/* TODO: Make only for admins */}
+          <TextField
+            id="outlined-basic"
+            label="Zoom Link"
+            variant="outlined"
+            sx={{ margin: "10px", width: "28.8pc" }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setZoom(event.target.value);
+            }}
+          />
+
+          <Button variant="primary" sx={{ margin: "10px", width: "28.8pc" }} onClick={postRegInfo}>
             <h1 className={loginStyles.signInButton}>Create Account</h1>
           </Button>
         </Box>

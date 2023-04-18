@@ -37,6 +37,7 @@ class UserIn(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
     type: str = Field(...)
+    zoom: Optional[str] = None
 
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")

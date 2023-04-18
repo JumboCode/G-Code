@@ -68,19 +68,10 @@ export default function StudentOfficeHours(props) {
                     {/* </Grid>
                                     </Grid> */}
                     {/* <Grid item xs={12}> */}
-                    <Button variant="secondary">+ Suggest New Times</Button>
+                    <Button variant="secondary">Suggest New Times</Button>
                     {/* </Grid> */}
                     {/* <Grid item xs={12}> */}
-                    <Button variant="secondary">Check FAQ Board &#8594;</Button>
                     {/* </Grid> */}
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={9}>
-                            <p>Work Together</p>
-                        </Grid>
-                        <Grid item xs={12} md={3}>
-                            <Button variant="secondary">+ New</Button>
-                        </Grid>
-                    </Grid>
                 </Grid>
             </Grid>
         </div>

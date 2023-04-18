@@ -7,6 +7,7 @@ Authors: G-Code Jumbocode Team
 import random
 import string
 import os
+import re
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
@@ -61,6 +62,25 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     
     access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/registration")
+def registration(request: UserIn):
+    # Check if email from request is in invites w/ the same first and last name
+    corr_invite = get_one_invite("Email", request["email"])
+    if not corr_invite:
+        raise HTTPException(status_code=403, detail="Email Not Invited")
+    if not corr_invite["firstname"] == request["firstname"]:
+        raise HTTPException(status_code=403, detail="First Name Does Not Match")
+    if not corr_invite["lastname"] == request["lastname"]:
+        raise HTTPException(status_code=403, detail="Last Name Does Not Match")
+    zoomlink = request["zoom"]
+    #TODO: Finish formatting regex
+    pattern = re.compile(r"zoom\.us/my/theseuslim", re.IGNORECASE)
+    if not pattern.match(zoomlink):
+       raise HTTPException(status_code=403, detail="Invalid Zoom Link") 
+    # Check that the zoom link is a valid zoom link
+    # If so, delete the user invite and create a new user w/ the details from request
+    return
 
 ############################################################################
 # Routes to Get All Of a DB Collection
@@ -135,14 +155,9 @@ async def get_one_question(field_name: str, field_value: Any):
     response = fetch_one("Questions", field_name, field_value)
     return response
 
-@app.get("/api/one_studentinvite")
-async def get_one_studentinvite(field_name: str, field_value: Any):
-    response = fetch_one("StudentInvites", field_name, field_value)
-    return response
-
-@app.get("/api/one_admininvite")
-async def get_one_admininvite(field_name: str, field_value: Any):
-    response = fetch_one("AdminInvites", field_name, field_value)
+@app.get("/api/one_invite")
+async def get_one_invite(field_name: str, field_value: Any):
+    response = fetch_one("Invites", field_name, field_value)
     return response
 ##########################################################################
 
