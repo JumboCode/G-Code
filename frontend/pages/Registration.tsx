@@ -11,6 +11,7 @@ import { Button, ThemeProvider, TextField, Box } from "@mui/material";
 import { theme } from "../theme.ts";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import Link from "next/link";
 
 // TODO:
 // 1. The background gradient
@@ -173,8 +174,7 @@ export default function Registration() {
         </Box>
         <text className={loginStyles.haveAccount}>
           Already have an account?
-          <Button className={loginStyles.signIn} onClick={() => {
-            router.push('/Login')}}>Sign in.</Button>
+          <Link href="./Login"> <text className={loginStyles.signIn}> Sign in.</text> </Link>
         </text>
       </div>
     </ThemeProvider>

@@ -150,7 +150,6 @@ function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
 const tutoring_styles = ({
     PageHeadingContainer:
     {
-        paddingTop: '50px',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
