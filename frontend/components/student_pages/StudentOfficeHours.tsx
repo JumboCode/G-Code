@@ -19,9 +19,7 @@ export default function StudentOfficeHours(props) {
     const user = props.user
 
     return (
-        <div style={{
-            paddingTop: '40px'
-        }}>
+        <div>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={8}>
                     <Grid container spacing={2}>

@@ -54,7 +54,6 @@ export default function Dashboard(props) {
         <>
             <Grid container spacing={2}>
                 <Grid className={styles.header1} item xs={12}>
-                    {/* get a firstname from backend */}
                     <p> Hey, {user["firstname"]} 🤟 </p>
                 </Grid>
                 <Grid item xs={12} md={8}>

@@ -11,6 +11,7 @@ import { Button, ThemeProvider, Box, TextField } from "@mui/material";
 import { theme } from '../theme';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import Link from "next/link";
 
 export default function Login() {
     const router = useRouter();
@@ -79,7 +80,7 @@ export default function Login() {
           </Box>
           <text className={loginStyles.haveAccount}>
             New to GCode?
-            <text className={loginStyles.signIn}> Create an Account.</text>
+            <Link href="./Registration"> <text className={loginStyles.signIn}> Create an Account.</text> </Link>
           </text>
         </div>
       </ThemeProvider>
