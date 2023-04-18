@@ -118,8 +118,6 @@ export default function Registration() {
         <text className={loginStyles.haveAccount}>
           Already have an account?
           <Link href="./Login"> <text className={loginStyles.signIn}> Sign in.</text> </Link>
-          <Button className={loginStyles.signIn} onClick={() => {
-            router.push('/Login')}}>Sign in.</Button>
         </text>
       </div>
     </ThemeProvider>
