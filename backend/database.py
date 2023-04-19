@@ -90,6 +90,14 @@ def fetch3Appointments():
         result_list.append(model_dic["Appointments"](**document))
     return result_list
 
+def create_one (model_class: str, to_add):
+    db = db_dic[model_class]
+    if isinstance(to_add, model_dic[model_class]):
+        db.insert_one(to_add.dict())
+    else:
+        raise Exception("The given object was not an instance of the given model_class")
+
+
 def create_new_user(user: UserIn):
     users.insert_one(user)
     
@@ -142,6 +150,11 @@ def remove_session(username):
     Purpose: Removes a session from the database
     '''
     sessions.delete_one({"username": username})
+
+def create_user_invite(inviteToAdd : UserInvite):
+    ui.insert_one(inviteToAdd) 
+    return inviteToAdd
+
 
 def create_student_invite(ak, em, d):
     inviteToAdd = {
@@ -228,6 +241,16 @@ def add_reply_to_question (question_title: str, reply_data: Reply):
 def create_post(post: Post):
     posts.insert_one(post)
     return post
+
+def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):
+    print("in create indiv assignment")
+    print(assignmentid)
+    assignments.update_one(
+        {"assignmentid": assignmentid},
+        { "$push": {"individual_assignments": indiv_assignment}}
+        )
+    return assignmentid
+
 
 def add_reply(post_ID: str, reply_data: Reply):
     posts.update_one(

@@ -192,6 +192,41 @@ async def get_one_invite(field_name: str, field_value: Any):
 ##########################################################################
 
 
+@app.post("/api/create_assignment")
+async def create_assignment (new_assignment: Assignment):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
+    response = create_one("Assignments", new_assignment)
+    return response
+
+@app.post("/api/assign_assignment")
+async def assign_assignment (assignment_id: str, student_emails: list[str]):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
+
+    for email in student_emails:
+        print("IN STUDENT EMAILS LOOP")
+        user = fetch_user_by_email(email)
+        if user is None:
+            error_message = ("A user with the email \"" + new_user["email"] +
+                            "\" does not exist")
+            raise HTTPException(status_code=500, detail=error_message)
+        
+        individual_assignment = {
+            'submitted': False,
+            'student_email': email,
+            'messages': []
+        }
+        create_individual_assignment(assignment_id, individual_assignment)
+
+    return "success"
+
 @app.post("/api/create_question")
 async def create_question (request: Question):
     '''
@@ -199,7 +234,6 @@ async def create_question (request: Question):
 
     Input: A question object
     '''
-
     response = add_question(request.dict())
 
     return "success"
@@ -425,6 +459,7 @@ async def student_profile_self_view (new_profile_values: dict,
 
 @app.post("/api/create_users/")
 async def create_users (new_users: list):
+    print("IN CREATE USERS")
     print(type(new_users))
     for new_user in new_users:
         print(type(new_user))
@@ -439,12 +474,18 @@ async def create_users (new_users: list):
 
         ## TODO: Student and Admin models require a lot of temporary placeholder 
         # values, should these be required?
-        create_new_user(new_user["firstName"], new_user['lastName'], new_user["email"], 
-                        new_user['accType'])
-        if new_user['accType'] == 'Student':
-            create_student_invite(access_code, new_user["email"], today)
-        elif new_user['accType'] == "Tutor":
-            create_admin_invite(access_code, new_user["email"], today)
+        create_new_user(new_user)
+
+        user_invite = {
+            "accesscode": access_code,
+            "requestdate": today,
+            "email": new_user["email"], 
+            'firstname': new_user["firstname"],
+            'lastname': new_user['lastname'],
+            'acctype': new_user['acctype']
+        }
+        
+        create_user_invite(user_invite)
 
 def sent_invite_email(to_contact: User):
     student_id = fetch_student_by_username(to_contact.username)['_id']
