@@ -20,7 +20,6 @@ import Link from "next/link";
 
 export default function Registration() {
   const router = useRouter();
-<<<<<<< HEAD
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [email, setEmail] = useState();
@@ -59,48 +58,6 @@ export default function Registration() {
     }
   /* END POST DATA */
 
-=======
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [code, setCode] = useState<string>("");
-
-  const postInfo = () => {
-    const postData = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-      code: code
-    };
-    
-    fetch('http://localhost:8000/register_student', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postData)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data);
-      router.push('/Login');
-      // instead of logging them in, I'm just pushing them to login 
-      // for now
-    })
-    .catch(error => {
-      console.log(error);
-      // make a function to call which displays a message to user
-      // saying: "Email is already in use, please try another"
-    });
-  }
->>>>>>> a83a657c6a1d49af76567d931302451ead78a092
 
   return (
     <ThemeProvider theme={theme}>
@@ -152,7 +109,6 @@ export default function Registration() {
               setCode(event.target.value);
             }}
           />
-<<<<<<< HEAD
 
           {/* TODO: Make only for admins */}
           <TextField
@@ -166,9 +122,6 @@ export default function Registration() {
           />
 
           <Button variant="primary" sx={{ margin: "10px", width: "28.8pc" }} onClick={postRegInfo}>
-=======
-          <Button variant="primary" onClick={postInfo} sx={{ margin: "10px", width: "28.8pc" }}>
->>>>>>> a83a657c6a1d49af76567d931302451ead78a092
             <h1 className={loginStyles.signInButton}>Create Account</h1>
           </Button>
         </Box>
