@@ -40,7 +40,7 @@ export default function Registration() {
             zoom: zoom
         };
 
-        axios.post('http://localhost:8000/registration', postRegData, {
+        axios.put('http://localhost:8000/registration', postRegData, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'accept': 'application/json'

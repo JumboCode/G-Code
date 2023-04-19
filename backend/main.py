@@ -32,7 +32,8 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Allow access from frontend
-origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+# origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -135,7 +136,13 @@ async def get_3_appointments():
 @app.get("/api/questions")
 async def get_questions():
     response = fetch_all("Questions")
+    # response = []
     return response
+
+# @app.get("/api/questions_two")
+# async def get_question_two():
+#     response = fetch_all("Questions")
+#     return response
 
 @app.get("/api/studentinvites")
 async def get_studentinvites():
@@ -183,6 +190,34 @@ async def get_one_invite(field_name: str, field_value: Any):
 
 
 ##########################################################################
+
+
+@app.post("/api/create_question")
+async def create_question (request: Question):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
+
+    response = add_question(request.dict())
+
+    return "success"
+
+@app.post("/api/respond_to_question")
+async def respond_to_question (question_reply: QuestionReply):
+# async def respond_to_question (question_title : str, reply: Reply):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
+
+    question_title = question_reply.question_name
+    reply = question_reply.reply
+    response = add_reply_to_question(question_title, reply.dict())
+    return "success"
+
 # Routes to Get All Items From a DB Collection With Multiple Filters
 @app.get("/api/filter_students")
 async def get_filtered_students(filters: list[tuple]):

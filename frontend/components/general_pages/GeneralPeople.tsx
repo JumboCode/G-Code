@@ -20,6 +20,8 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 
+import Link from 'next/link'
+
 // icons
 import AddIcon from '@mui/icons-material/Add';
 
@@ -32,6 +34,23 @@ import axios from "axios";
 // constants
 import { DRAWER_WIDTH } from '../../constants';
 import { theme } from '../../theme'
+
+
+function QuestionList({ questions }) {
+  return (
+    <div>
+      {questions.map(question => (
+        <div key={question.title}>
+          <h2>{question.title}</h2>
+          <Link href={`/question/${question.title}`}>
+            <a>See details</a>
+          </Link>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 
 export default function GeneralPeople(props) {
   const user = props.user
