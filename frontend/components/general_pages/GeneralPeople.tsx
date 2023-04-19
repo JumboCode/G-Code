@@ -37,6 +37,7 @@ export default function GeneralPeople(props) {
   const user = props.user
 
   const [students, setStudents] = useState([]);
+  const [invites, setInvites] = useState([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -93,8 +94,27 @@ export default function GeneralPeople(props) {
     async function fetchData() {
       try {
         const response = await axios.get('http://localhost:8000/api/students');
-        console.log(response)
-        setStudents(response.data);
+        const invite_response = await axios.get('http://localhost:8000/api/studentinvites');
+        let student_list = response.data
+  
+        const invite_dict = {}
+        invite_response.data.forEach((invite) => {
+          const dictKey = invite["email"]
+          invite_dict[dictKey] = invite
+        })
+
+        // sorted so students with pending invites appear first
+        let sorted_students = []
+        student_list.forEach((student) => {
+          if (student["email"] in invite_dict) {
+            student["invite_status"] = "Pending"
+            sorted_students.unshift(student)
+          } else {
+            student["invite_status"] = "Accepted"
+            sorted_students.push(student)
+          }
+        })
+        setStudents(sorted_students);
       } catch (error) {
         console.error(error);
       }
@@ -118,6 +138,12 @@ export default function GeneralPeople(props) {
                 Email
               </Typography>
             </TableCell>
+            <TableCell align='left'>
+              <Typography variant='h4' sx={{fontSize: '16px'}}>
+                Invite Status
+              </Typography>
+            </TableCell>
+
             <TableCell></TableCell>
           </TableRow>
           {students.map(student => {
@@ -142,6 +168,11 @@ export default function GeneralPeople(props) {
                 <TableCell component="th" scope="row">
                   <Typography>
                     {student.email}
+                  </Typography>
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  <Typography>
+                    {student.invite_status == "Pending" ? "Pending" : ""} 
                   </Typography>
                 </TableCell>
                 <TableCell component="th" scope="row">

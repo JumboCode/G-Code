@@ -24,14 +24,15 @@ sessions     = database.sessions
 assignments  = database.assignments
 si           = database.student_invites
 ai           = database.admin_invites
+ui           = database.user_invites
 classes      = database.classes
 questions    = database.questions
 posts        = database.posts
 
 
-model_dic = {"Users": User, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any, "Assignments": Assignment}
+model_dic = {"Users": UserIn, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any, "Assignments": Assignment}
 
-db_dic = {"Users":users, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions, "Assignments": assignments}
+db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions, "Assignments": assignments}
 
 def stringify_id(object):
     try:
