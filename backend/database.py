@@ -24,14 +24,15 @@ sessions     = database.sessions
 assignments  = database.assignments
 si           = database.student_invites
 ai           = database.admin_invites
+ui           = database.user_invites
 classes      = database.classes
 questions    = database.questions
 posts        = database.posts
 
 
-model_dic = {"Users": users, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
+model_dic = {"Users": UserIn, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
 
-db_dic = {"Users":users, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions}
+db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions}
 
 
 #TODO: Make all fetch_all be able to go through the base one (could have a helper function for filters but I don't think there needs to be one?)

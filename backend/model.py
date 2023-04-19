@@ -106,7 +106,7 @@ class UserInvite(BaseModel):
     lastname: str = Field(...)
     acctype: str = Field(...)
     email: EmailStr = Field(...)
-    requestdate: datetime = Field(...)
+    date: datetime = Field(...)
     accesscode: str = Field(...)
 
 class Class(BaseModel):

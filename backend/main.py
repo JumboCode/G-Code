@@ -72,7 +72,7 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
 
 @app.get("/api/students")
 async def get_students():
-    response = fetch_all("Students")
+    response = fetch_filtered("Users",[("type", "student")] )
     return response
 
 @app.get("/api/admins")
@@ -92,7 +92,7 @@ async def get_questions():
 
 @app.get("/api/studentinvites")
 async def get_studentinvites():
-    response = fetch_all("StudentInvites")
+    response = fetch_filtered("UserInvites", [("acctype", "Student")])
     return response
 
 @app.get("/api/admininvites")
