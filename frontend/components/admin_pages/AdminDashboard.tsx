@@ -48,6 +48,85 @@ export default function Dashboard(props) {
             <TutoringCardDisplay />
           </div>
 
+          <Grid container columnSpacing={2} padding={1}>
+            <Grid item xs={6} md={12} lg={4}>
+              <div className={styles.question}>
+                <img
+                  src="FAQBoardIcon.svg"
+                  onClick={() => {
+                    router.push("/FAQBoard");
+                  }}
+                />
+                <br />
+                View Students
+              </div>
+            </Grid>
+
+            <Grid item xs={6} md={12} lg={4}>
+              <div className={styles.question}>
+                <img
+                  src="FAQBoardIcon.svg"
+                  onClick={() => {
+                    router.push("/FAQBoard");
+                  }}
+                />
+                <br />
+                View Instructors
+              </div>
+            </Grid>
+
+            <Grid item xs={6} md={12} lg={4}>
+              <div className={styles.question}>
+                <img
+                  src="FAQBoardIcon.svg"
+                  onClick={() => {
+                    router.push("/FAQBoard");
+                  }}
+                />
+                <br />
+                View Classes
+              </div>
+            </Grid>
+
+            <Grid item xs={6} md={12} lg={4}>
+              <div className={styles.question}>
+                <img
+                  src="FAQBoardIcon.svg"
+                  onClick={() => {
+                    router.push("/FAQBoard");
+                  }}
+                />
+                <br />
+                Add Class
+              </div>
+            </Grid>
+
+            <Grid item xs={6} md={12} lg={4}>
+              <div className={styles.question}>
+                <img
+                  src="FAQBoardIcon.svg"
+                  onClick={() => {
+                    router.push("/FAQBoard");
+                  }}
+                />
+                <br />
+                Add Student
+              </div>
+            </Grid>
+            <Grid item xs={6} md={12} lg={4}>
+              <div className={styles.question}>
+                <img
+                  src="FAQBoardIcon.svg"
+                  onClick={() => {
+                    router.push("/FAQBoard");
+                  }}
+                />
+                <br />
+                Add Assignment
+              </div>
+            </Grid>
+          </Grid>
+
           {assignmentList.length > 0 && (
             <>
               <div className={styles.header2}>
@@ -76,7 +155,7 @@ export default function Dashboard(props) {
                   >
                     <ListItemAvatar>
                       <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
-                        {/* <img src="./AssignmentIcon.svg" /> */}
+                        <img src="./AssignmentIcon.svg" />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
@@ -95,12 +174,12 @@ export default function Dashboard(props) {
           <Grid container spacing={2}>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                {/* <img
+                <img
                   src="FAQBoardIcon.svg"
                   onClick={() => {
                     router.push("/OfficeHours");
                   }}
-                /> */}
+                />
                 <br />
                 FAQ Board
                 {/* NEED TO ADD PROPER LINK: GOES TO FAQBOARD */}
@@ -108,12 +187,12 @@ export default function Dashboard(props) {
             </Grid>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                {/* <img
+                <img
                   src="FAQBoardIcon.svg"
                   onClick={() => {
                     router.push("/FAQBoard");
                   }}
-                /> */}
+                />
                 <br />
                 FAQ Board
               </div>
