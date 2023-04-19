@@ -46,6 +46,7 @@ import "react-quill/dist/quill.snow.css";
 // other
 import dynamic from "next/dynamic";
 import { useRouter } from 'next/router';
+import Link from 'next/link'
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
@@ -61,6 +62,22 @@ const modal_style = {
     boxShadow: 24,
     p: 4,
 };
+
+// function QuestionList({ questions } : []) {
+//     return (
+//       <div>
+//         {questions.map(question => (
+//           <div key={question.title}>
+//             <h2>{question.title}</h2>
+//             <Link href={`/question/${question.title}`}>
+//               <a>See details</a>
+//             </Link>
+//           </div>
+//         ))}
+//       </div>
+//     )
+//   }
+
 
 export default function GeneralFAQBoard(props) {
     const user = props.user
@@ -135,6 +152,18 @@ export default function GeneralFAQBoard(props) {
                 topic: ${modalTopic}, 
                 question: ${rteValue}`
             );
+
+            const question_info = {
+                title: modalTitle, 
+                question: rteValue,
+                author: user.firstname + " " + user.lastname,
+                date: new Date(),
+                topics: [modalTopic],
+                replies: []
+              };
+              console.log("BEFORE POST 2")
+              axios.post('http://localhost:8000/api/create_question', question_info)
+
             setModalTitle("");
             setModalTopic("General");
             setRteValue("");
@@ -354,7 +383,48 @@ export default function GeneralFAQBoard(props) {
             <Grid container spacing={2}>
                 <Grid item md={9} xs={12}>
                     <Card sx={{ borderRadius: '10px' }}>
-                        <List sx={{ padding: '0 20px 20px 20px' }}>
+                           
+                           {/* <div>
+                                {questions.map(question => (
+                                <div key={question.title}>
+                                    <h2>{question.title}</h2>
+                                    <Link href={`/question/${question.title}`}>
+                                    See details
+                                    </Link>
+                                </div>
+                                ))}
+                            </div> */}
+
+
+
+                         <List sx={{ padding: '0 20px 20px 20px' }}>
+                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
+                                <>
+                                    <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
+                                        <ListItemAvatar sx={{ width: '70px' }}>
+                                            <Avatar sx={{ height: '50px', width: '50px' }}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText style={{ cursor: 'pointer' }}>
+                                            <Typography variant="subtitle2">
+                                                {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
+                                            </Typography>
+                                            <Typography variant="h4">
+                                                <Link href={`/question/${question.title}`}>
+                                                    {question.title}
+                                                </Link>
+                                            </Typography>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
+                                                {question.replies.length} {question.replies.length == 1 ? "reply" : "replies"}
+                                            </Typography>
+                                        </ListItemText>
+                                    </ListItem>
+                                    <Divider component="li" />
+                                </>
+                            )}
+                        </List>
+
+
+                        {/* <List sx={{ padding: '0 20px 20px 20px' }}>
                             {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
                                 <>
                                     <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
@@ -369,14 +439,14 @@ export default function GeneralFAQBoard(props) {
                                                 {question.title}
                                             </Typography>
                                             <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
-                                                {question.numreplies} {question.numreplies == 1 ? "reply" : "replies"}
+                                                {question.replies.length} {question.replies.length == 1 ? "reply" : "replies"}
                                             </Typography>
                                         </ListItemText>
                                     </ListItem>
                                     <Divider component="li" />
                                 </>
                             )}
-                        </List>
+                        </List> */}
                     </Card>
                 </Grid>
                 <Grid item md={3} xs={12}>

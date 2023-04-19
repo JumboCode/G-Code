@@ -214,6 +214,17 @@ def fetch_all_posts():
         posts_list.append(PostID(**document))
     return posts_list
 
+def add_question(question: Question):
+    questions.insert_one(question)
+    return question
+
+def add_reply_to_question (question_title: str, reply_data: Reply):
+    questions.update_one(
+        {"title": question_title},
+        { "$push": {"replies": reply_data}}
+        )
+    return question_title
+
 def create_post(post: Post):
     posts.insert_one(post)
     return post

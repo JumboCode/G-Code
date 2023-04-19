@@ -89,23 +89,37 @@ class Assignment(BaseModel):
     submitted: bool = Field(...)
     studentid: str = Field(...)
 
+class Reply(BaseModel):
+    author_id: str = Field(...)
+    body: str = Field(...)
+    date: datetime = Field(...)
+
+class QuestionReply(BaseModel):
+    reply: Reply = Field(...)
+    question_name: str = Field(...)
+
 class Question(BaseModel):
     title: str = Field(...)
     question: str = Field(...)
     author: str = Field(...)
     date: datetime = Field(...)
-    numreplies: str = Field(...)
+    ##numreplies: str = Field(...)
+    replies: List[Reply] = Field(...)
     topics: List[str] = Field(...)
+
+class Test (BaseModel):
+    title: str = Field(...)
+    question: str = Field(...)
+    # author: str = Field(...)
+    # date: datetime = Field(...)
+    # ##numreplies: str = Field(...)
+    # replies: List[Reply] = Field(...)
+    # topics: List[str] = Field(...)
 
 
 class LoginInfo(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
-
-class Reply(BaseModel):
-    author_id: str = Field(...)
-    body: str = Field(...)
-    date: datetime = Field(...)
 
 class Post(BaseModel):
     title: str = Field(...)

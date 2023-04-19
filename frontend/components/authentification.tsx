@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, Component, ComponentType, FC } from 'react';
+import { useEffect,  Component, ComponentType, FC  } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 
