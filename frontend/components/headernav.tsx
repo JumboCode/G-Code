@@ -7,11 +7,14 @@ import { DRAWER_WIDTH } from '../constants';
 
 interface Props {
   window?: () => Window;
+  availablePages: Array<string>
   currentPageTitle: string;
+  user: {firstname: string}
 }
 
 export default function HeaderNav(props: Props) {
-  const { window, currentPageTitle } = props;
+
+  const { window, availablePages, currentPageTitle } = props;
   const container = window !== undefined ? () => window().document.body : undefined;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const handleDrawerToggle = () => {
@@ -25,7 +28,7 @@ export default function HeaderNav(props: Props) {
           }
         `}
       </style>
-      <Header />
+      <Header user={props.user} />
       <Box
         component="nav"
         sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
@@ -45,8 +48,8 @@ export default function HeaderNav(props: Props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
           }}
         >
-          <Header />
-          <Sidebar currentPageTitle={currentPageTitle} />
+          <Header user={props.user}/>
+          <Sidebar availablePages={availablePages} currentPageTitle={currentPageTitle} />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -56,8 +59,8 @@ export default function HeaderNav(props: Props) {
           }}
           open
         >
-          <Header />
-          <Sidebar currentPageTitle={currentPageTitle} />
+          <Header user={props.user} />
+          <Sidebar availablePages={availablePages} currentPageTitle={currentPageTitle} />
         </Drawer>
       </Box>
     </>
