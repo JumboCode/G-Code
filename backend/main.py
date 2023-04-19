@@ -7,18 +7,16 @@ Authors: G-Code Jumbocode Team
 import random
 import string
 import os
-from fastapi import FastAPI, Response, Request, Form, HTTPException, Depends
+import re
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from hashing import Hash
-from jwttoken import create_access_token, verify_token
+from jwttoken import create_access_token
 from oauth import get_current_user
-
 from datetime import datetime, timezone, timedelta, date
-from http.client import HTTPException
+# from http.client import HTTPException
 from dotenv import load_dotenv
-import jwt
-import bcrypt
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -34,7 +32,7 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Allow access from frontend
-origins = ['http://localhost:3000']
+origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -52,8 +50,28 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     del user["password"]
     return user
 
+@app.post("/register_student")
+def register_student(postData: dict):
+    email = postData.get('email')
+
+    new_user = UserIn(
+    firstname = postData.get('firstName'),
+    lastname = postData.get('lastName'),
+    email = email,
+    password = Hash.bcrypt(postData.get('password')),
+    type = "student"
+    )
+
+    user = fetch_user_by_email(email)
+
+    if user: 
+        raise HTTPException(status_code=403, detail="User Already Exists")
+    else:
+        create_new_user(dict(new_user))
+        return 'ok'
+
 @app.post("/login")
-def login(request: OAuth2PasswordRequestForm = Depends()):    
+def login(request: OAuth2PasswordRequestForm = Depends()):   
     user = fetch_user_by_email(request.username)
 
     if not user:
@@ -64,6 +82,25 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     
     access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/registration")
+def registration(request: UserIn):
+    # Check if email from request is in invites w/ the same first and last name
+    corr_invite = get_one_invite("Email", request["email"])
+    if not corr_invite:
+        raise HTTPException(status_code=403, detail="Email Not Invited")
+    if not corr_invite["firstname"] == request["firstname"]:
+        raise HTTPException(status_code=403, detail="First Name Does Not Match")
+    if not corr_invite["lastname"] == request["lastname"]:
+        raise HTTPException(status_code=403, detail="Last Name Does Not Match")
+    zoomlink = request["zoom"]
+    #TODO: Finish formatting regex
+    pattern = re.compile(r"zoom\.us/my/theseuslim", re.IGNORECASE)
+    if not pattern.match(zoomlink):
+       raise HTTPException(status_code=403, detail="Invalid Zoom Link") 
+    # Check that the zoom link is a valid zoom link
+    # If so, delete the user invite and create a new user w/ the details from request
+    return
 
 ############################################################################
 # Routes to Get All Of a DB Collection
@@ -83,6 +120,16 @@ async def get_admins():
 @app.get("/api/appointments")
 async def get_appointments():
     response = fetch_all("Appointments")
+    return response
+
+@app.get("/api/assignments")
+async def get_assignments():
+    response = fetch_all("Assignments")
+    return response
+
+@app.get("/api/appointments3")
+async def get_3_appointments():
+    response = fetch3Appointments()
     return response
 
 @app.get("/api/questions")
@@ -128,14 +175,9 @@ async def get_one_question(field_name: str, field_value: Any):
     response = fetch_one("Questions", field_name, field_value)
     return response
 
-@app.get("/api/one_studentinvite")
-async def get_one_studentinvite(field_name: str, field_value: Any):
-    response = fetch_one("StudentInvites", field_name, field_value)
-    return response
-
-@app.get("/api/one_admininvite")
-async def get_one_admininvite(field_name: str, field_value: Any):
-    response = fetch_one("AdminInvites", field_name, field_value)
+@app.get("/api/one_invite")
+async def get_one_invite(field_name: str, field_value: Any):
+    response = fetch_one("Invites", field_name, field_value)
     return response
 ##########################################################################
 

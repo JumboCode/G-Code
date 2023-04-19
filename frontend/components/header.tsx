@@ -28,6 +28,11 @@ declare module '@mui/material/styles' {
   }
 }
 
+interface Props {
+  window?: () => Window;
+  user: {firstname: string}
+}
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -45,10 +50,10 @@ const theme = createTheme({
   },
 });
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Login']];
+const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Logout']];
 
-function Header() {
+function Header(props: Props) {
+  // console.log("props")
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -67,9 +72,12 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  const firstname = props.user.firstname
+  const lastname = props.user.lastname
+
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="fixed" style={{"borderBottom": "1px #D8D8DB solid"}} elevation={0}>
+      <AppBar position="fixed" style={{ "borderBottom": "1px #D8D8DB solid" }} elevation={0}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, mr: 1 }}>
@@ -132,7 +140,7 @@ function Header() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar alt={firstname + " " + lastname} src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -151,6 +159,7 @@ function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
+
                 {settings.map((setting) => (
                   <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
                     <Typography textAlign="center"><a href={'./' + setting[1]}>{setting[0]}</a></Typography>

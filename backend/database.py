@@ -32,8 +32,14 @@ posts        = database.posts
 
 model_dic = {"Users": UserIn, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any}
 
-db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions}
+db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions, "Assignments": assignments}
 
+def stringify_id(object):
+    try:
+        object.id = str(object.id)
+    except:
+        pass
+    return object
 
 #TODO: Make all fetch_all be able to go through the base one (could have a helper function for filters but I don't think there needs to be one?)
 #TODO: Maybe have two more where it's like return 1 and return filtered/all list and then if there's more than 1 that it finds throw an error
@@ -43,7 +49,7 @@ def fetch_all(model_class):
     db = db_dic[model_class]
     cursor = db.find({})
     for document in cursor:
-        result_list.append(model_dic[model_class](**document))
+        result_list.append(stringify_id(model_dic[model_class](**document)))
     return result_list
 
 def fetch_one(model_class: str, field_name: str, field_value: Any):
@@ -74,6 +80,14 @@ def fetch_filtered(model_class: str, filters: list[tuple]):
     for document in cursor:
         result_list.append(model_dic[model_class](**document))
     
+    return result_list
+
+def fetch3Appointments():
+    db = db_dic["Appointments"]
+    result_list = []
+    cursor = db.find({}).sort("date", -1).limit(3)
+    for document in cursor:
+        result_list.append(model_dic["Appointments"](**document))
     return result_list
 
 def create_new_user(user: UserIn):
@@ -199,7 +213,6 @@ def fetch_all_posts():
         document['id'] = str(document['_id'])
         posts_list.append(PostID(**document))
     return posts_list
-
 
 def create_post(post: Post):
     posts.insert_one(post)
