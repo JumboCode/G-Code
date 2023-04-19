@@ -122,6 +122,23 @@ def fetch_user_by_email(email):
 #         user = admins.find_one({"email": email})
 #     return user
 
+def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):
+    print(assignmentid)
+    assignments.update_one(
+        {"assignmentid": assignmentid},
+        { "$push": {"individual_assignments": indiv_assignment}}
+        )
+    return assignmentid
+
+def get_all_student_assignments(student_email):
+    cursor = assignments.find({},
+        {"individual_assignments": { '$elemMatch': { "student_email": student_email }},
+         "name": 1, "description": 1, "dueDate": 1, "_id": False})
+    assignment_list = []
+    for document in cursor:
+        if "individual_assignments" in document:
+            assignment_list.append(document)
+    return assignment_list
 
 def add_session(username, permission_level, curr_time):
     '''

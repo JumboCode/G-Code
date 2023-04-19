@@ -10,6 +10,9 @@ import GeneralFAQBoard from "../components/general_pages/GeneralFAQBoard";
 import GeneralPeople from "../components/general_pages/GeneralPeople";
 import AdminOfficeHours from "../components/admin_pages/AdminOfficeHours";
 import StudentOfficeHours from "../components/student_pages/StudentOfficeHours";
+import StudentProfile from "../components/student_pages/StudentProfile";
+import AdminProfile from "../components/admin_pages/AdminProfile";
+import Box from "@mui/material/Box";
 
 import Margin from "../components/margin";
 
@@ -27,11 +30,28 @@ const Page = () => {
      * information (ex. first name, username, ect.) */
     IsUserAuthorized(save_user)
 
-    const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
-    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People"]
+    const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People", "Profile"]
+    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People", "Profile"]
 
     if (!user) {
-        return <p>not authenticated...</p>
+        // return (
+        //   <>
+        //   <Box sx = {{ mt: 20 }}>
+        //     <p style={{textAlign: 'center', fontWeight: 'bold', fontSize: '54px'}}>Loading</p>
+        //   </Box>
+        //   </>
+        // )
+
+        return <p style={{textAlign: "center", fontSize: "20px"}}>
+        Not Authenticated
+      <br></br>
+      <button style={{fontSize: "18px", backgroundColor: "lightgray"}}
+      onClick={() => {
+      router.push('/Login')
+    }}> 
+    Return to Login Page 
+    </button>
+    </p>
     }
 
     if (user.type == "student") {
@@ -47,6 +67,7 @@ const Page = () => {
                     {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
                     {page == "OfficeHours" && <StudentOfficeHours user={user} />}
                     {page == "People" && <GeneralPeople user={user} />}
+                    {page == "Profile" && <StudentProfile user={user}/>}
                 </Margin>
             )
         } else {
@@ -65,6 +86,7 @@ const Page = () => {
                     {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
                     {page == "OfficeHours" && <AdminOfficeHours user={user} />}
                     {page == "People" && <GeneralPeople user={user} />}
+                    {page == "Profile" && <AdminProfile user={user}/>}
                 </Margin>
             )
         } else {
