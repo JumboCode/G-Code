@@ -1,6 +1,11 @@
+// react imports
+import React, { useState, useEffect } from 'react';
+
+// mui imports
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import React, { useState } from 'react';
-import { Grid, Box } from "@mui/material";
-import Button from '@mui/material/Button'
 import { TimeMenu } from '../../components/menus'
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -18,6 +23,13 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 
+// axios
+import axios from 'axios';
+import { Avatar } from '@mui/material';
+
+// constants
+import { formatAMPM } from '../../constants'
+
 const tutors = [{
     name: 'Michelle Minns',
     imageUrl: 'NyraRobinson.png',
@@ -30,6 +42,47 @@ const tutors = [{
 
 export default function StudentOfficeHours(props) {
     const user = props.user
+    const [tutors, setTutors] = useState([])
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/api/appointments', {
+            headers: {
+                Accept: 'application/json'
+            }
+        })
+            .then(response => {
+                // handle success
+                console.log(response)
+                const appointments = response.data
+
+                let tutor_dictionary = {}
+
+                // build tutor dictionary
+                for (const appointment in appointments) {
+                    const tutor_name = appointments[appointment].tutorName
+                    if (!(tutor_name in tutor_dictionary)) {
+                        tutor_dictionary[tutor_name] = []
+                    }
+                    tutor_dictionary[tutor_name].push(appointments[appointment].startTime)
+                }
+
+                let appointment_array = []
+                for (const tutor in tutor_dictionary) {
+                    appointment_array.push({
+                        name: tutor,
+                        times: tutor_dictionary[tutor]
+                    })
+                }
+
+                setTutors(appointment_array)
+
+            })
+            .catch(error => {
+                // handle error
+                console.log(error)
+            })
+
+    }, [])
 
     // handle opening filter modal
     const [filterModalOpen, setFilterModalOpen] = useState(false);
@@ -317,14 +370,14 @@ function TutorProfile({ name, imageUrl, times }) {
         padding: '10px',
     }}>
         <Grid container spacing={2}>
-            <Grid item xs={12} md={3.5}>
+            <Grid item xs={12} md={4}>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
                     <p>{name}</p>
-                    <img src={imageUrl} />
+                    <Avatar>{name[0]}</Avatar>
                     <Button sx={{
                         color: '#29395B',
                         backgroundColor: '#F6F6F6',
@@ -335,7 +388,14 @@ function TutorProfile({ name, imageUrl, times }) {
                     </Button>
                 </Box>
             </Grid>
-            <Grid item xs={12} md={2.5}>
+            {times.map(time => {
+                return (
+                <Grid item xs={12} md={3.33}>
+                    <TimeBox time={formatAMPM(time)} />
+                </Grid>)
+            })}
+
+            {/* <Grid item xs={12} md={2.5}>
                 <TimeBox time={times[0]} />
                 <TimeBox time={times[3]} />
             </Grid>
@@ -346,7 +406,7 @@ function TutorProfile({ name, imageUrl, times }) {
             <Grid item xs={12} md={2.5}>
                 <TimeBox time={times[2]} />
                 <TimeBox time={times[5]} />
-            </Grid>
+            </Grid> */}
         </Grid>
     </Box>
 }
