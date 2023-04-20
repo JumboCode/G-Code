@@ -116,6 +116,7 @@ export default function GeneralFAQBoard(props) {
     );
     const [topic, setTopic] = React.useState<string>("All Topics");
     const [searchQuery, setSearchQuery] = React.useState<string>("");
+    const [onlyMyQuestions, setOnlyMyQuestions] = React.useState(false);
 
     // filter functions
     const filterWeek = (question) => {
@@ -132,6 +133,10 @@ export default function GeneralFAQBoard(props) {
                 .includes(searchQuery.toUpperCase())
         );
     };
+
+    const filterAuthor = (question) => {
+      return !onlyMyQuestions || question["author"] == (props.user["firstname"] + " " + props.user["lastname"]);
+    }
 
     // ask question modal
     const [open, setOpen] = React.useState(false);
@@ -303,8 +308,10 @@ export default function GeneralFAQBoard(props) {
                                 <Button
                                     sx={{ margin: "10px" }}
                                     variant="secondary"
+                                    onClick = {() => setOnlyMyQuestions(!onlyMyQuestions)}
                                 >
-                                    My Questions
+                                  {onlyMyQuestions ? "All Questions" : "My Questions"}
+                  
                                 </Button>
                                 <Button
                                     onClick={handleOpen}
@@ -398,7 +405,7 @@ export default function GeneralFAQBoard(props) {
 
 
                          <List sx={{ padding: '0 20px 20px 20px' }}>
-                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
+                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).filter(filterAuthor).map(question =>
                                 <>
                                     <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
                                         <ListItemAvatar sx={{ width: '70px' }}>

@@ -64,7 +64,7 @@ export default function GeneralPeople(props) {
   const handleSubmit = (_) => {
     const valid = peopleToAdd.reduceRight((acc, person) => { return (acc && validate_person(person)) }, true)
     if (valid) {
-      axios.put('http://localhost:8000/api/request_users/', peopleToAdd)
+      axios.put('http://localhost:8000/api/create_invites/', peopleToAdd)
       setPeopleToAdd([{ ...defaultRow }])
       setPeopleToAddValid(true)
       handleClose()

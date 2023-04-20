@@ -95,12 +95,11 @@ def registration(request: UserIn):
     if not corr_invite["lastname"] == request["lastname"]:
         raise HTTPException(status_code=403, detail="Last Name Does Not Match")
     zoomlink = request["zoom"]
-    #TODO: Finish formatting regex
-    pattern = re.compile(r"zoom\.us/my/theseuslim", re.IGNORECASE)
+    pattern = re.compile(r'^https?:\/\/(?:www\.)?(?:zoom\.us|zoomgov\.com)\/(?:j|my)\/([a-zA-Z0-9-_]{10,})$', re.IGNORECASE)
     if not pattern.match(zoomlink):
        raise HTTPException(status_code=403, detail="Invalid Zoom Link") 
-    # Check that the zoom link is a valid zoom link
-    # If so, delete the user invite and create a new user w/ the details from request
+    remove_student_invite(request.accesscode)
+    create_new_user(request.dict())
     return
 
 ############################################################################
@@ -166,6 +165,41 @@ async def get_admininvites():
 async def get_one_student(field_name: str, field_value: Any):
     response = fetch_one("Students", field_name, field_value)
     return response
+
+def create_one (model_class: str, to_add):
+    db = db_dic[model_class]
+    if isinstance(to_add, model_dic[model_class]):
+        db.insert_one(to_add.dict())
+    else:
+        raise Exception("The given object was not an instance of the given model_class")
+
+@app.post("/api/create_assignment")
+async def create_assignment (new_assignment: Assignment):
+    if (new_assignment.indivdualAssignments == None):
+        new_assignment.individualAssignments = []
+    response = create_one("Assignments", new_assignment)
+    return response
+
+@app.post("/api/assign_assignment")
+async def assign_assignment (assignment_id: str, student_emails: list[str]):
+    for email in student_emails:
+        print("IN STUDENT EMAILS LOOP")
+        user = fetch_user_by_email(email)
+        if user is None:
+            error_message = ("A user with the email \"" + new_user["email"] +
+                            "\" does not exist")
+            raise HTTPException(status_code=500, detail=error_message)
+        individual_assignment = {
+            'submitted': False,
+            'student_email': email,
+            'messages': []
+        }
+        create_individual_assignment(assignment_id, individual_assignment)
+    return "success"
+
+@app.get("/api/get_student_assignments")
+async def get_student_assignments(student_email : str):
+   return get_all_student_assignments(student_email)
 
 @app.get("/api/one_admin")
 async def get_one_admin(field_name: str, field_value: Any):
@@ -423,7 +457,7 @@ async def student_profile_self_view (new_profile_values: dict,
         update_profile_field(username, user["permission_level"], 
                              field, new_profile_values[field])
 
-@app.post("/api/create_users/")
+@app.post("/api/create_invites/")
 async def create_users (new_users: list):
     print(type(new_users))
     for new_user in new_users:
@@ -439,12 +473,16 @@ async def create_users (new_users: list):
 
         ## TODO: Student and Admin models require a lot of temporary placeholder 
         # values, should these be required?
-        create_new_user(new_user["firstName"], new_user['lastName'], new_user["email"], 
-                        new_user['accType'])
-        if new_user['accType'] == 'Student':
-            create_student_invite(access_code, new_user["email"], today)
-        elif new_user['accType'] == "Tutor":
-            create_admin_invite(access_code, new_user["email"], today)
+        user_invite = {
+            "accesscode": access_code,
+            "requestdate": today,
+            "email": new_user["email"],
+            "firstname": new_user["firstname"],
+            "lastname": new_user["lastname"],
+            "acctype": new_user["acctype"]
+        }
+        create_user_invite(user_invite)
+
 
 def sent_invite_email(to_contact: User):
     student_id = fetch_student_by_username(to_contact.username)['_id']
