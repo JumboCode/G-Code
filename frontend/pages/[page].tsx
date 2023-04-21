@@ -45,7 +45,7 @@ const Page = () => {
         return <p style={{textAlign: "center", fontSize: "20px"}}>
         Not Authenticated
       <br></br>
-      <button style={{fontSize: "18px", backgroundColor: "lightgray"}}
+      <button style={{fontSize: "20px", backgroundColor: "blue"}}
       onClick={() => {
       router.push('/Login')
     }}> 
@@ -57,6 +57,7 @@ const Page = () => {
     if (user.type == "student") {
         if (student_pages.includes(page.toString())) {
             return (
+              <>
                 <Margin
                     user={user}
                     availablePages={student_pages}
@@ -69,13 +70,21 @@ const Page = () => {
                     {page == "People" && <GeneralPeople user={user} />}
                     {page == "Profile" && <StudentProfile user={user}/>}
                 </Margin>
+                </>
             )
         } else {
-            return "page not found"
+             return (
+                <>
+                <Box sx = {{ mt: 20 }}>
+                  <p style={{textAlign: 'center', fontWeight: 'bold', fontSize: '54px'}}>Page Not Found</p>
+                </Box>
+                </>
+              )
         }
     } else {
         if (admin_pages.includes(page.toString())) {
             return (
+              <>
                 <Margin
                     user={user}
                     availablePages={student_pages}
@@ -88,9 +97,16 @@ const Page = () => {
                     {page == "People" && <GeneralPeople user={user} />}
                     {page == "Profile" && <AdminProfile user={user}/>}
                 </Margin>
+              </>
             )
         } else {
-            return "page not found"
+          return (
+            <>
+            <Box sx = {{ mt: 20 }}>
+              <p style={{textAlign: 'center', fontWeight: 'bold', fontSize: '54px'}}>Page Not Found</p>
+            </Box>
+            </>
+          )
         }
     }
 }
