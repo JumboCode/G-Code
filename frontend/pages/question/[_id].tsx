@@ -87,24 +87,41 @@ function QuestionDetails({ question }) {
     const res = await axios.get("http://localhost:8000/api/questions")
     console.log("IN Get Static Paths")
     const questions = await res.data
-    console.log(questions)
+    // console.log(questions)
     const paths = questions.map(question => ({
-      params: { title: question.title }
+      // params: { title: question.title }
+      params: { _id: question._id }
     }))
   
     return { paths, fallback: false }
   }
   
   export async function getStaticProps({ params }) {
-    const res = await axios.get("http://localhost:8000/api/one_question", {
+    console.log("ID is")
+    console.log(params)
+    console.log("ID Finished")
+    // const res = await axios.get("http://localhost:8000/api/one_question", {
+    //     params: {
+    //       field_name: '_id',
+    //       field_value: params._id,
+    //     },
+    //   });
+
+
+
+      const res = await axios.get("http://localhost:8000/api/get_question_by_id", {
         params: {
-          field_name: 'title',
-          field_value: params.title,
+          id_string: params._id
         },
       });
 
+      //  const res = await axios.get("http://localhost:8000/api/get_question_by_id", "6440140f3ecfbf9e89d2e9b1");
+
 
     const question = await res.data
+    console.log("RESULT\n\n")
+    console.log(question)
+    console.log("Title: " + question.title)
   
     return { props: { question } }
   }

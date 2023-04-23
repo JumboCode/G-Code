@@ -20,6 +20,10 @@ from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+# Mark
+from bson import json_util, ObjectId
+import json
+
 from model import *
 from database import *
 
@@ -136,6 +140,9 @@ async def get_3_appointments():
 @app.get("/api/questions")
 async def get_questions():
     response = fetch_all("Questions")
+
+
+    print(response)
     # response = []
     return response
 
@@ -179,7 +186,16 @@ async def get_one_appointment(field_name: str, field_value: Any):
 
 @app.get("/api/one_question")
 async def get_one_question(field_name: str, field_value: Any):
-    response = fetch_one("Questions", field_name, field_value)
+    response = fetch_one("Questions", field_name, field_value).dict()
+    # Prevents TypeError("'ObjectId' object is not iterable")
+    response['id'] = str(response['id'])
+    return response
+
+@app.get("/api/get_question_by_id")
+async def get_question_by_id (id_string: str):
+    response = fetch_one("Questions", "_id", ObjectId(id_string)).dict()
+    # Prevents TypeError("'ObjectId' object is not iterable")
+    response['id'] = str(response['id'])
     return response
 
 @app.get("/api/one_invite")
@@ -191,6 +207,10 @@ async def get_one_invite(field_name: str, field_value: Any):
 
 ##########################################################################
 
+
+@app.get("/api/get_student_assignments")
+async def get_student_assignments(student_email : str):
+   return get_all_student_assignments(student_email)
 
 @app.post("/api/create_assignment")
 async def create_assignment (new_assignment: Assignment):
@@ -228,7 +248,7 @@ async def assign_assignment (assignment_id: str, student_emails: list[str]):
     return "success"
 
 @app.post("/api/create_question")
-async def create_question (request: Question):
+async def create_question (request: QuestionIn):
     '''
     Purpose: Add a question to the database
 

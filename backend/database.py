@@ -101,21 +101,6 @@ def create_one (model_class: str, to_add):
 def create_new_user(user: UserIn):
     users.insert_one(user)
     
-    # newUser = {
-    #     'firstname': firstname,
-    #     'lastname': lastname,
-    #     "email": email,
-    #     "emailverified": False,
-    # }
-    # if (account_type == "Student"):
-    #     students.insert_one(newUser)
-    # elif (account_type == "Tutor"):
-    #     admins.insert_one(newUser)
-
-# def create_student(Student):
-#     studToAdd = Student
-#     result = students.insert_one(studToAdd)
-#     return studToAdd
 
 def fetch_user_by_email(email):
     user = users.find_one({"email": email}, {'_id': 0})
@@ -227,7 +212,7 @@ def fetch_all_posts():
         posts_list.append(PostID(**document))
     return posts_list
 
-def add_question(question: Question):
+def add_question(question: QuestionIn):
     questions.insert_one(question)
     return question
 
@@ -258,3 +243,16 @@ def add_reply(post_ID: str, reply_data: Reply):
         { "$push": {"replies": reply_data}}
         )
     return post_ID
+
+def get_all_student_assignments(student_email):
+    '''
+    Purpose: Returns all assignments assigned to a given student
+    '''
+    cursor = assignments.find({}, 
+        {"individual_assignments": { '$elemMatch': { "student_email": student_email }},
+         "name": 1, "description": 1, "dueDate": 1, '_id': False})
+    assignment_list = []
+    for document in cursor:
+        if 'individual_assignments' in document:
+            assignment_list.append(document)
+    return assignment_list

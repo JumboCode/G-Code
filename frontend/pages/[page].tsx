@@ -31,7 +31,7 @@ const Page = () => {
     const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People"]
 
     if (!user) {
-        return <p>not authenticated...</p>
+        return <p>Loading...</p>
     }
 
     if (user.type == "student") {

@@ -87,6 +87,7 @@ export default function GeneralFAQBoard(props) {
         axios.get("http://localhost:8000/api/questions").then((res) => {
             setQuestions(
                 res.data.map((question) => {
+                    console.log(question._id)
                     return {
                         ...question,
                         date: new Date(Date.parse(question.date)),
@@ -409,7 +410,7 @@ export default function GeneralFAQBoard(props) {
                                                 {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
                                             </Typography>
                                             <Typography variant="h4">
-                                                <Link href={`/question/${question.title}`}>
+                                                <Link href={`/question/${question._id}`}>
                                                     {question.title}
                                                 </Link>
                                             </Typography>

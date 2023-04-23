@@ -112,14 +112,16 @@ class QuestionReply(BaseModel):
     reply: Reply = Field(...)
     question_name: str = Field(...)
 
-class Question(BaseModel):
+class QuestionIn(BaseModel):
     title: str = Field(...)
     question: str = Field(...)
     author: str = Field(...)
     date: datetime = Field(...)
-    ##numreplies: str = Field(...)
     replies: List[Reply] = Field(...)
     topics: List[str] = Field(...)
+
+class Question(QuestionIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
 class Test (BaseModel):
     title: str = Field(...)
