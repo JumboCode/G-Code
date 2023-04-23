@@ -30,8 +30,8 @@ const Page = () => {
      * information (ex. first name, username, ect.) */
     IsUserAuthorized(save_user)
 
-    const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People", "Profile"]
-    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People", "Profile"]
+    const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
+    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People"]
 
     if (!user) {
         // return (
