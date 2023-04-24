@@ -10,9 +10,7 @@ import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import Modal from "@mui/material/Modal"
-import FormControl from "@mui/material/FormControl"
 import Select, { SelectChangeEvent } from "@mui/material/Select"
-import InputLabel from "@mui/material/InputLabel"
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 
@@ -28,16 +26,6 @@ import { Avatar } from '@mui/material';
 
 // constants
 import { formatAMPM } from '../../constants'
-
-const tutors = [{
-    name: 'Michelle Minns',
-    imageUrl: 'NyraRobinson.png',
-    times: ['10:30 AM', '11 AM', '11:30 AM', '8 PM', '8:30 PM', '9 PM']
-}, {
-    name: 'Laena Tyler',
-    imageUrl: 'LaenaTyler.png',
-    times: ['7 PM', '7:30 PM', '8 PM', '9 PM', '9:30 PM', '10 PM']
-}]
 
 export default function StudentOfficeHours(props) {
     const user = props.user
@@ -450,17 +438,21 @@ function TimeBox({ time }) {
         >
             <Box sx={booking_modal}>
                 <Grid container spacing={2}>
-                    <Grid item xs={8}>
-                        <p>Confirm booking for { time }?</p>
+                    <Grid item xs={12}>
+                        <p style={{textAlign: 'center'}}>Confirm booking for { time }?</p>
                     </Grid>
-                    <Grid>
+                    <Grid item xs={6}>
                         <Button
+                            fullWidth
                             variant="secondary"
                             onClick={handleClose}
                         >
                             Cancel
                         </Button>
+                    </Grid>
+                    <Grid item xs={6}>
                         <Button
+                            fullWidth
                             variant="primary"
                             onClick={handleClose}
                         >

@@ -31,27 +31,10 @@ const Page = () => {
     IsUserAuthorized(save_user)
 
     const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
-    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People"]
+    const admin_pages = ["Dashboard", "FAQBoard", "OfficeHours", "People"]
 
     if (!user) {
-        // return (
-        //   <>
-        //   <Box sx = {{ mt: 20 }}>
-        //     <p style={{textAlign: 'center', fontWeight: 'bold', fontSize: '54px'}}>Loading</p>
-        //   </Box>
-        //   </>
-        // )
-
-        return <p style={{textAlign: "center", fontSize: "20px"}}>
-        Not Authenticated
-      <br></br>
-      <button style={{fontSize: "20px", backgroundColor: "blue"}}
-      onClick={() => {
-      router.push('/Login')
-    }}> 
-    Return to Login Page 
-    </button>
-    </p>
+        return <></>
     }
 
     if (user.type == "student") {
@@ -87,11 +70,11 @@ const Page = () => {
               <>
                 <Margin
                     user={user}
-                    availablePages={student_pages}
+                    availablePages={admin_pages}
                     currentPageTitle={page}
                 >
                     {page == "Dashboard" && <AdminDashboard user={user} />}
-                    {page == "Assignments" && <AdminAssignments user={user} />}
+                    {/* {page == "Assignments" && <AdminAssignments user={user} />} */}
                     {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
                     {page == "OfficeHours" && <AdminOfficeHours user={user} />}
                     {page == "People" && <GeneralPeople user={user} />}
