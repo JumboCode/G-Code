@@ -63,84 +63,77 @@ export default function Registration() {
   return (
     <ThemeProvider theme={theme}>
       <div className={loginStyles.container}>
-        <Box component="form" sx={{
-          width: "40pc",
-          alignItems: "center",
-          backgroundColor: '#fefefe',
-          borderRadius: '12px',
-          padding: '40px 80px',
-        }}
-
-        >
-          <h1 className={loginStyles.signInText}> Create an Account </h1>
-          <Grid container spacing={2}>
-            <Grid item xs="6">
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="First name"
-                variant="outlined"
-                sx={{ margin: "10px" }}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setFirstName(event.target.value);
-                }}
-              />
+        <div className={loginStyles.formContainer}>
+          <Box component="form">
+            <h1 className={loginStyles.signInText}> Create an Account </h1>
+            <Grid container spacing={2}>
+              <Grid item md="6" xs="12">
+                <TextField
+                  fullWidth
+                  id="outlined-basic"
+                  label="First name"
+                  variant="outlined"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setFirstName(event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item md="6" xs="12">
+                <TextField
+                  fullWidth
+                  id="outlined-basic"
+                  label="Email"
+                  variant="outlined"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setEmail(event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs="12">
+                <TextField
+                  fullWidth
+                  id="outlined-helperText"
+                  label="Password"
+                  type="password"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setPassword(event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs="12">
+                <TextField
+                  fullWidth
+                  id="outlined-basic"
+                  label="Class Code"
+                  variant="outlined"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setCode(event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs="12">
+                <TextField
+                  fullWidth
+                  id="outlined-basic"
+                  label="Zoom Link"
+                  variant="outlined"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setZoom(event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs="12">
+                <Button fullWidth variant="primary" onClick={postRegInfo}>
+                  <h1 className={loginStyles.signInButton}>Create Account</h1>
+                </Button>
+                <text className={loginStyles.haveAccount}>
+                  Already have an account?
+                  <Link href="./Login"> <text className={loginStyles.signIn}> Sign in.</text> </Link>
+                </text>
+              </Grid>
             </Grid>
-            <Grid item xs="6">
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Email"
-                variant="outlined"
-                sx={{ margin: "10px" }}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setEmail(event.target.value);
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <TextField
-            fullWidth
-            id="outlined-helperText"
-            label="Password"
-            type="password"
-            sx={{ margin: "10px" }}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setPassword(event.target.value);
-            }}
-          />
-          <TextField
-            fullWidth
-            id="outlined-basic"
-            label="Class Code"
-            variant="outlined"
-            sx={{ margin: "10px" }}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setCode(event.target.value);
-            }}
-          />
-
-          {/* TODO: Make only for admins */}
-          <TextField
-            fullWidth
-            id="outlined-basic"
-            label="Zoom Link"
-            variant="outlined"
-            sx={{ margin: "10px" }}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setZoom(event.target.value);
-            }}
-          />
-
-          <Button fullWidth variant="primary" sx={{ margin: "10px" }} onClick={postRegInfo}>
-            <h1 className={loginStyles.signInButton}>Create Account</h1>
-          </Button>
-          <text className={loginStyles.haveAccount}>
-            Already have an account?
-            <Link href="./Login"> <text className={loginStyles.signIn}> Sign in.</text> </Link>
-          </text>
-        </Box>
+          </Box>
+        </div>
       </div>
     </ThemeProvider>
   );

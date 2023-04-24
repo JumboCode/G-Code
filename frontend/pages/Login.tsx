@@ -51,15 +51,8 @@ export default function Login() {
   return (
     <ThemeProvider theme={theme}>
       <div className={loginStyles.container}>
-        <div
-          style={{
-            padding: '80px',
-            background: '#fefefe',
-            boxShadow: '0px 4px 24px rgba(0, 0, 0, 0.25)',
-            borderRadius: '12px',
-          }}
-        >
-        <Box component="form" sx={{ width: "30pc", alignItems: "center" }}>
+        <div className={loginStyles.formContainer}>
+        <Box component="form" >
           <h1 className={loginStyles.signInText}> Sign In </h1>
           <TextField
             fullWidth
