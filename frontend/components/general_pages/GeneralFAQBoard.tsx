@@ -23,7 +23,6 @@ import MenuItem from "@mui/material/MenuItem"
 import FormControl from "@mui/material/FormControl"
 
 // components
-import CommunityResourcesPanel from "../communityResourcesPanel";
 import CustomSelect from "../customSelect";
 
 // icons
@@ -446,11 +445,10 @@ export default function GeneralFAQBoard(props) {
                             <Button variant="secondary" onClick={() => {
                                 router.push('/OfficeHours')
                             }} sx={{ "width": "100%" }}>
-                                Go to Office Hours <EastIcon />
+                                Sign Up For Office Hours <EastIcon />
                             </Button>
                         </Box>
                     </Box>
-                    <CommunityResourcesPanel />
                 </Grid>
             </Grid>
         </>
