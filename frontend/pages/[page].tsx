@@ -55,7 +55,25 @@ const Page = () => {
     }
 
     if (user.type == "student") {
-        if (student_pages.includes(page.toString())) {
+      if (!page) {
+        return (
+          <>
+          <Margin
+                    user={user}
+                    availablePages={student_pages}
+                    currentPageTitle={"Dashboard"}
+                >
+                    {page == "Dashboard" && <StudentDashboard user={user} />}
+                    {page == "Assignments" && <StudentAssignments user={user} />}
+                    {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
+                    {page == "OfficeHours" && <StudentOfficeHours user={user} />}
+                    {page == "People" && <GeneralPeople user={user} />}
+                    {page == "Profile" && <StudentProfile user={user}/>}
+                </Margin>
+          </>
+        )
+      }
+        else if (student_pages.includes(page.toString())) {
             return (
               <>
                 <Margin
@@ -82,12 +100,30 @@ const Page = () => {
               )
         }
     } else {
+      if (!page) {
+        return (
+          <>
+          <Margin
+                    user={user}
+                    availablePages={admin_pages}
+                    currentPageTitle={"Dashboard"}
+                >
+                    {page == "Dashboard" && <AdminDashboard user={user} />}
+                    {page == "Assignments" && <AdminAssignments user={user} />}
+                    {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
+                    {page == "OfficeHours" && <AdminOfficeHours user={user} />}
+                    {page == "People" && <GeneralPeople user={user} />}
+                    {page == "Profile" && <AdminProfile user={user}/>}
+                </Margin>
+          </>
+        )
+      }
         if (admin_pages.includes(page.toString())) {
             return (
               <>
                 <Margin
                     user={user}
-                    availablePages={student_pages}
+                    availablePages={admin_pages}
                     currentPageTitle={page}
                 >
                     {page == "Dashboard" && <AdminDashboard user={user} />}

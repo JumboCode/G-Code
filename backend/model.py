@@ -38,6 +38,13 @@ class UserIn(BaseModel):
     password: str = Field(...)
     type: str = Field(...)
     zoom: Optional[str] = None
+    timezone: Optional[str] = None
+    maxsessions: int = Field(...)
+    times: List[datetime] = Field(...)
+    linkedin: Optional[str] = None
+    pronouns: Optional[str] = None
+    bio: Optional[str] = None
+    github: Optional[str] = None
 
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")

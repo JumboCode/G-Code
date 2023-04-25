@@ -1,11 +1,9 @@
 // react imports
 import React, { useState, useEffect } from 'react';
-
 // mui imports
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import React, { useState } from 'react';
 import { TimeMenu } from '../../components/menus'
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -246,7 +244,6 @@ export default function StudentOfficeHours(props) {
                     {/* </Grid>
                                     </Grid> */}
                     {/* <Grid item xs={12}> */}
-                    <Button variant="secondary">Suggest New Times</Button>
                     {/* </Grid> */}
                     {/* <Grid item xs={12}> */}
                     {/* </Grid> */}

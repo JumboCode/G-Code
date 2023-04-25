@@ -92,26 +92,29 @@ def fetch3Appointments():
 
 def create_new_user(user: UserIn):
     users.insert_one(user)
-    
-    # newUser = {
-    #     'firstname': firstname,
-    #     'lastname': lastname,
-    #     "email": email,
-    #     "emailverified": False,
-    # }
-    # if (account_type == "Student"):
-    #     students.insert_one(newUser)
-    # elif (account_type == "Tutor"):
-    #     admins.insert_one(newUser)
-
-# def create_student(Student):
-#     studToAdd = Student
-#     result = students.insert_one(studToAdd)
-#     return studToAdd
 
 def fetch_user_by_email(email):
     user = users.find_one({"email": email}, {'_id': 0})
     return user
+
+def set_schedule(data: dict):
+    user = fetch_user_by_email(data.get("email"))
+    if (user == None):
+        return "User not found"
+    if (user["type"] != "Admin" and user["type"] != "admin"):
+        return "User is not admin"
+    
+    filter = { 'email' : user["email"] }
+    default = data.get('default')
+    data.pop('default')
+    data.pop('email')
+    print(data)
+    users.update_one( 
+        {"email": user["email"]},
+        { "$set": data}
+    );
+
+
 
 # def fetch_user_by_email(email):
 #     '''

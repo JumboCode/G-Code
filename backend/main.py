@@ -107,6 +107,13 @@ def registration(request: UserIn):
 # TODO: For students/admins, filter out passwords / other sensitive info
 # TODO: Add HTTP Error checking
 
+@app.post("/api/save_schedule")
+def save_schedule(data: dict):
+    email = data.get('email')
+    user = fetch_user_by_email(email)
+    set_schedule(data)
+    return user
+
 @app.get("/api/students")
 async def get_students():
     response = fetch_filtered("Users",[("type", "student")] )
