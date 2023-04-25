@@ -226,7 +226,6 @@ export default function Dashboard(props) {
                 />
                 <br />
                 FAQ Board
-                {/* NEED TO ADD PROPER LINK: GOES TO FAQBOARD */}
               </div>
             </Grid>
             <Grid item xs={6} md={12} lg={6}>
