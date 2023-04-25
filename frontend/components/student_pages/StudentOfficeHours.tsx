@@ -25,11 +25,13 @@ import axios from 'axios';
 import { Avatar } from '@mui/material';
 
 // constants
-import { formatAMPM } from '../../constants'
+import { formatAMPM, weekDays } from '../../constants'
 
 export default function StudentOfficeHours(props) {
     const user = props.user
     const [tutors, setTutors] = useState([])
+    const [currentWeekStart, setCurrentWeekStart] = useState(new Date()) 
+    const [currentDay, setCurrentDay] = useState(new Date()) 
 
     useEffect(() => {
         axios.get('http://localhost:8000/api/appointments', {
@@ -202,7 +204,14 @@ export default function StudentOfficeHours(props) {
                             </Button>
                         </Grid>
                     </Grid>
-                    <CalendarWeek />
+
+                    <CalendarWeek 
+                        currentWeekStart={currentWeekStart}
+                        setCurrentWeekStart={setCurrentWeekStart}
+                        currentDay={currentDay}
+                        setCurrentDay={setCurrentDay}
+                    />
+
                     <p style={{
                         color: '#61646D',
                     }}>
@@ -300,7 +309,20 @@ function StudentHeading() {
     }}>Got questions? Ask us!</h2>
 }
 
-function CalendarWeek() {
+function CalendarWeek({ currentWeekStart, setCurrentWeekStart, currentDay, setCurrentDay }) {
+    let days = []
+    let date = new Date(currentWeekStart)
+    for (let i = 0; i < 7; i++) {
+        let date_copy = new Date(date.getTime())
+        days.push(<CalendarDay 
+            dayName={weekDays[date.getDay()]} 
+            dayNum={date.getDate()} 
+            selected={currentDay.getTime() === date.getTime()}
+            setCurrentDay={() => {setCurrentDay(date_copy)}}
+        />)
+        date.setDate(date.getDate() + 1) 
+    }
+
     return <Box sx={{
         backgroundColor: 'white',
         width: '90%',
@@ -310,30 +332,34 @@ function CalendarWeek() {
         justifyContent: 'space-around',
         alignItems: 'center',
     }}>
-        <ArrowLeftIcon />
-        <CalendarDay dayName="Mon" dayNum={21} selected={false} />
-        <CalendarDay dayName="Tues" dayNum={22} selected />
-        <CalendarDay dayName="Wed" dayNum={23} selected={false} />
-        <CalendarDay dayName="Thur" dayNum={24} selected={false} />
-        <CalendarDay dayName="Fri" dayNum={25} selected={false} />
-        <CalendarDay dayName="Sat" dayNum={26} selected={false} />
-        <CalendarDay dayName="Sun" dayNum={27} selected={false} />
-        <ArrowRightIcon />
+        <ArrowLeftIcon 
+            sx={{cursor: 'pointer'}}
+            onClick={() => {setCurrentWeekStart(date => new Date(date.getTime() - 7 * 86400000))}}
+        />
+        {days}
+        <ArrowRightIcon 
+            sx={{cursor: 'pointer'}}
+            onClick={() => {setCurrentWeekStart(date => new Date(date.getTime() + 7 * 86400000))}}
+        />
     </Box>
 }
 
-function CalendarDay({ dayName, dayNum, selected }) {
-    return <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        border: selected ? '2px solid #6A5DF9' : '',
-        backgroundColor: selected ? '#F0EFFE' : 'white',
-        borderRadius: '10px',
-        padding: '0 20px',
-        margin: '8px 0'
-    }}>
+function CalendarDay({ dayName, dayNum, selected, setCurrentDay }) {
+    return <Box 
+        sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            border: selected ? '2px solid #6A5DF9' : '',
+            backgroundColor: selected ? '#F0EFFE' : 'white',
+            borderRadius: '10px',
+            padding: '0 20px',
+            margin: '8px 0',
+            cursor: 'pointer'
+        }}
+        onClick={setCurrentDay}
+    >
         <p style={{
             color: selected ? '#6A5DF9' : '#29395B',
             fontSize: '14px'

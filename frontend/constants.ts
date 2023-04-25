@@ -11,3 +11,5 @@ export const formatAMPM = (date_string : string) => {
     var strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
 }
+
+export const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
