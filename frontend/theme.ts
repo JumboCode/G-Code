@@ -146,7 +146,7 @@ export const theme = createTheme({
           props: { variant: 'h1' },
           style: {
             fontSize: '36px',
-            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            fontFamily: '"IBM Plex Sans", sans-serif',
             lineHeight: '42.48px',
             fontWeight: '600',
             color: "#29395B"
@@ -166,7 +166,7 @@ export const theme = createTheme({
           props: { variant: 'h4' },
           style: {
             fontSize: '19px',
-            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            fontFamily: '"IBM Plex Sans", sans-serif',
             lineHeight: '22.99px',
             fontWeight: '500',
             color: "#29395B"
@@ -176,7 +176,7 @@ export const theme = createTheme({
           props: { variant: 'subtitle1' },
           style: {
             fontSize: '16px',
-            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            fontFamily: '"IBM Plex Sans", sans-serif',
             lineHeight: '19.36px',
             fontWeight: '500',
             color: "#949494"
@@ -186,7 +186,7 @@ export const theme = createTheme({
           props: { variant: 'subtitle2' },
           style: {
             fontSize: '14px',
-            fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+            fontFamily: '"IBM Plex Sans", sans-serif',
             lineHeight: '22.05px',
             fontWeight: '500',
             color: "#949494"

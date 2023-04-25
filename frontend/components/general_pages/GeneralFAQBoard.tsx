@@ -3,7 +3,6 @@ import React, { useState } from "react";
 // optimized mui imports
 import Grid from "@mui/material/Grid"
 import Box from "@mui/material/Box"
-import CssBaseline from "@mui/material/CssBaseline"
 import Select from "@mui/material/Select"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -22,16 +21,10 @@ import TextField from "@mui/material/TextField"
 import InputLabel from "@mui/material/InputLabel"
 import MenuItem from "@mui/material/MenuItem"
 import FormControl from "@mui/material/FormControl"
-import { ThemeProvider } from '@mui/material/styles';
 
 // components
-import HeaderNav from "../headernav";
 import CommunityResourcesPanel from "../communityResourcesPanel";
 import CustomSelect from "../customSelect";
-
-// constants
-import { DRAWER_WIDTH } from "../../constants";
-import { theme } from "../../theme";
 
 // icons
 import SearchIcon from "@mui/icons-material/Search";
@@ -42,6 +35,7 @@ import axios from "axios"
 
 // styling
 import "react-quill/dist/quill.snow.css";
+import styles from "../../styles/Home.module.css";
 
 // other
 import dynamic from "next/dynamic";
@@ -116,6 +110,7 @@ export default function GeneralFAQBoard(props) {
     );
     const [topic, setTopic] = React.useState<string>("All Topics");
     const [searchQuery, setSearchQuery] = React.useState<string>("");
+    const [onlyMyQuestions, setOnlyMyQuestions] = React.useState(false);
 
     // filter functions
     const filterWeek = (question) => {
@@ -132,6 +127,10 @@ export default function GeneralFAQBoard(props) {
                 .includes(searchQuery.toUpperCase())
         );
     };
+
+    const filterAuthor = (question) => {
+      return !onlyMyQuestions || question["author"] == (props.user["firstname"] + " " + props.user["lastname"]);
+    }
 
     // ask question modal
     const [open, setOpen] = React.useState(false);
@@ -303,8 +302,10 @@ export default function GeneralFAQBoard(props) {
                                 <Button
                                     sx={{ margin: "10px" }}
                                     variant="secondary"
+                                    onClick = {() => setOnlyMyQuestions(!onlyMyQuestions)}
                                 >
-                                    My Questions
+                                  {onlyMyQuestions ? "All Questions" : "My Questions"}
+                  
                                 </Button>
                                 <Button
                                     onClick={handleOpen}
@@ -383,22 +384,9 @@ export default function GeneralFAQBoard(props) {
             <Grid container spacing={2}>
                 <Grid item md={9} xs={12}>
                     <Card sx={{ borderRadius: '10px' }}>
-                           
-                           {/* <div>
-                                {questions.map(question => (
-                                <div key={question.title}>
-                                    <h2>{question.title}</h2>
-                                    <Link href={`/question/${question.title}`}>
-                                    See details
-                                    </Link>
-                                </div>
-                                ))}
-                            </div> */}
-
-
 
                          <List sx={{ padding: '0 20px 20px 20px' }}>
-                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
+                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).filter(filterAuthor).map(question =>
                                 <>
                                     <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
                                         <ListItemAvatar sx={{ width: '70px' }}>

@@ -80,16 +80,29 @@ class Appointment(BaseModel):
     studentEmail: str = Field(...)
     tutorId: str = Field(...)
 
+# class Assignment(BaseModel):
+#     assignmentid: str = Field(...)
+#     name: str = Field(...)
+#     description: str = Field(...)
+#     completed: bool = Field(...)
+#     dueDate: datetime = Field(...)
+#     messages: List[str] = Field(...)
+#     submissionLink: str = Field(...)
+#     submitted: bool = Field(...)
+#     studentid: str = Field(...)
+
+class IndividualAssignment(BaseModel):
+    submitted: bool = Field(...)
+    submissionLink: str = Field(...)
+    student_email: EmailStr = Field(...)
+    messages: List[str] = Field(...)
+
 class Assignment(BaseModel):
     assignmentid: str = Field(...)
     name: str = Field(...)
     description: str = Field(...)
-    completed: bool = Field(...)
     dueDate: datetime = Field(...)
-    messages: List[str] = Field(...)
-    submissionLink: str = Field(...)
-    submitted: bool = Field(...)
-    studentid: str = Field(...)
+    individualAssignments: List[IndividualAssignment] = None
 
 class Reply(BaseModel):
     author_id: str = Field(...)

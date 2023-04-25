@@ -10,6 +10,9 @@ import GeneralFAQBoard from "../components/general_pages/GeneralFAQBoard";
 import GeneralPeople from "../components/general_pages/GeneralPeople";
 import AdminOfficeHours from "../components/admin_pages/AdminOfficeHours";
 import StudentOfficeHours from "../components/student_pages/StudentOfficeHours";
+import StudentProfile from "../components/student_pages/StudentProfile";
+import AdminProfile from "../components/admin_pages/AdminProfile";
+import Box from "@mui/material/Box";
 
 import Margin from "../components/margin";
 
@@ -28,15 +31,16 @@ const Page = () => {
     IsUserAuthorized(save_user)
 
     const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
-    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "CheckAvailability", "People"]
+    const admin_pages = ["Dashboard", "FAQBoard", "OfficeHours", "People"]
 
     if (!user) {
-        return <p>not authenticated...</p>
+        return <></>
     }
 
     if (user.type == "student") {
         if (student_pages.includes(page.toString())) {
             return (
+              <>
                 <Margin
                     user={user}
                     availablePages={student_pages}
@@ -47,28 +51,45 @@ const Page = () => {
                     {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
                     {page == "OfficeHours" && <StudentOfficeHours user={user} />}
                     {page == "People" && <GeneralPeople user={user} />}
+                    {page == "Profile" && <StudentProfile user={user}/>}
                 </Margin>
+                </>
             )
         } else {
-            return "page not found"
+             return (
+                <>
+                <Box sx = {{ mt: 20 }}>
+                  <p style={{textAlign: 'center', fontWeight: 'bold', fontSize: '54px'}}>Page Not Found</p>
+                </Box>
+                </>
+              )
         }
     } else {
         if (admin_pages.includes(page.toString())) {
             return (
+              <>
                 <Margin
                     user={user}
-                    availablePages={student_pages}
+                    availablePages={admin_pages}
                     currentPageTitle={page}
                 >
                     {page == "Dashboard" && <AdminDashboard user={user} />}
-                    {page == "Assignments" && <AdminAssignments user={user} />}
+                    {/* {page == "Assignments" && <AdminAssignments user={user} />} */}
                     {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
                     {page == "OfficeHours" && <AdminOfficeHours user={user} />}
                     {page == "People" && <GeneralPeople user={user} />}
+                    {page == "Profile" && <AdminProfile user={user}/>}
                 </Margin>
+              </>
             )
         } else {
-            return "page not found"
+          return (
+            <>
+            <Box sx = {{ mt: 20 }}>
+              <p style={{textAlign: 'center', fontWeight: 'bold', fontSize: '54px'}}>Page Not Found</p>
+            </Box>
+            </>
+          )
         }
     }
 }
