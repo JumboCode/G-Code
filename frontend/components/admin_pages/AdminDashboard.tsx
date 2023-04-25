@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Grid,
   Box,
-  CssBaseline,
-  Button,
   Modal,
   Typography,
   TextField,
@@ -23,6 +21,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CommunityResourcesPanel from "../communityResourcesPanel";
 import { useRouter } from "next/router";
 import axios from "axios";
+
 const modalStyle = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -34,6 +33,7 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
+
 export default function Dashboard(props) {
   const user = props.user;
   const router = useRouter();
@@ -226,7 +226,6 @@ export default function Dashboard(props) {
                 />
                 <br />
                 FAQ Board
-                {/* NEED TO ADD PROPER LINK: GOES TO FAQBOARD */}
               </div>
             </Grid>
             <Grid item xs={6} md={12} lg={6}>

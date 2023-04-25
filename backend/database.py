@@ -82,12 +82,12 @@ def fetch_filtered(model_class: str, filters: list[tuple]):
     
     return result_list
 
-def fetch3Appointments():
-    db = db_dic["Appointments"]
+def fetch3Appointments(studentEmail):
     result_list = []
-    cursor = db.find({}).sort("date", -1).limit(3)
+    print("email: " + studentEmail)
+    cursor = appointments.find({"studentEmail" : studentEmail}).sort("date", -1).limit(3)
     for document in cursor:
-        result_list.append(model_dic["Appointments"](**document))
+        result_list.append(stringify_id(Appointment(**document)))
     return result_list
 
 def create_new_user(user: UserIn):
@@ -201,8 +201,8 @@ def cancel_appointment(appointmentID):
     Purpose: If there are more than 24 before the appointment, cancel and unmark as reserved
     '''
     appointmentDoc = appointments.find_one({"_id": ObjectId(appointmentID)})
-    if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
-        appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": "", "reserved": False } })
+    # if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
+    appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentName": "", "reserved": False , "studentEmail":""} })
     return appointmentID
 
 def remove_student_invite(ak):

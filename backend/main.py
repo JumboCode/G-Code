@@ -135,8 +135,9 @@ async def get_assignments():
     return response
 
 @app.get("/api/appointments3")
-async def get_3_appointments():
-    response = fetch3Appointments()
+async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
+    print("Printing Current User Email: " + currentUser.email)
+    response = fetch3Appointments(currentUser.email)
     return response
 
 @app.get("/api/questions")
@@ -276,6 +277,13 @@ async def get_filtered_appointments(filter: list[tuple]):
     '''
     response = fetch_filtered("Appointments", filter)
     return response
+
+@app.put("/api/cancel-appointment")
+async def cancel_appointment_by_id(id: str, current_user: UserIn = 
+                            Depends(get_current_user)):
+    cancel_appointment(id)
+    return "ok"
+
 
 # Send request for new user
 @app.put("/api/request_student")
