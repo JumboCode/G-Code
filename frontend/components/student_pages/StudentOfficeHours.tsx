@@ -25,7 +25,7 @@ import axios from 'axios';
 import { Avatar } from '@mui/material';
 
 // constants
-import { formatAMPM, weekDays } from '../../constants'
+import { numberToAMPM, weekDays, months } from '../../constants'
 
 export default function StudentOfficeHours(props) {
     const user = props.user
@@ -33,45 +33,65 @@ export default function StudentOfficeHours(props) {
     const [currentWeekStart, setCurrentWeekStart] = useState(new Date()) 
     const [currentDay, setCurrentDay] = useState(new Date()) 
 
-    useEffect(() => {
-        axios.get('http://localhost:8000/api/appointments', {
-            headers: {
-                Accept: 'application/json'
-            }
-        })
-            .then(response => {
-                // handle success
-                console.log(response)
-                const appointments = response.data
-
-                let tutor_dictionary = {}
-
-                // build tutor dictionary
-                for (const appointment in appointments) {
-                    const tutor_name = appointments[appointment].tutorName
-                    if (!(tutor_name in tutor_dictionary)) {
-                        tutor_dictionary[tutor_name] = []
+    const setCurrentDayTutors = (date : Date) => {
+        setCurrentDay(date)
+        const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+        console.log(dateString)
+        axios.get("http://localhost:8000/api/get_available_appointments?date=" + dateString).then(
+            (res) => {
+                let tutor_list = []
+                for (let tutor_name in res.data) {
+                    if (res.data[tutor_name].length > 0) {
+                        tutor_list.push({
+                            name: tutor_name,
+                            times: res.data[tutor_name]
+                        })
                     }
-                    tutor_dictionary[tutor_name].push(appointments[appointment].startTime)
                 }
+                setTutors(tutor_list)
+            }
+        )
+    }
 
-                let appointment_array = []
-                for (const tutor in tutor_dictionary) {
-                    appointment_array.push({
-                        name: tutor,
-                        times: tutor_dictionary[tutor]
-                    })
-                }
+    // useEffect(() => {
+    //     axios.get('http://localhost:8000/api/appointments', {
+    //         headers: {
+    //             Accept: 'application/json'
+    //         }
+    //     })
+    //         .then(response => {
+    //             // handle success
+    //             console.log(response)
+    //             const appointments = response.data
 
-                setTutors(appointment_array)
+    //             let tutor_dictionary = {}
 
-            })
-            .catch(error => {
-                // handle error
-                console.log(error)
-            })
+    //             // build tutor dictionary
+    //             for (const appointment in appointments) {
+    //                 const tutor_name = appointments[appointment].tutorName
+    //                 if (!(tutor_name in tutor_dictionary)) {
+    //                     tutor_dictionary[tutor_name] = []
+    //                 }
+    //                 tutor_dictionary[tutor_name].push(appointments[appointment].startTime)
+    //             }
 
-    }, [])
+    //             let appointment_array = []
+    //             for (const tutor in tutor_dictionary) {
+    //                 appointment_array.push({
+    //                     name: tutor,
+    //                     times: tutor_dictionary[tutor]
+    //                 })
+    //             }
+
+    //             setTutors(appointment_array)
+
+    //         })
+    //         .catch(error => {
+    //             // handle error
+    //             console.log(error)
+    //         })
+
+    // }, [])
 
     // handle opening filter modal
     const [filterModalOpen, setFilterModalOpen] = useState(false);
@@ -209,13 +229,13 @@ export default function StudentOfficeHours(props) {
                         currentWeekStart={currentWeekStart}
                         setCurrentWeekStart={setCurrentWeekStart}
                         currentDay={currentDay}
-                        setCurrentDay={setCurrentDay}
+                        setCurrentDay={setCurrentDayTutors}
                     />
 
                     <p style={{
                         color: '#61646D',
                     }}>
-                        Appointments Available on Tuesday, Nov 22
+                        Appointments Available on {weekDays[currentDay.getDay()]}, {months[currentDay.getMonth()]} {currentDay.getDate()}
                     </p>
                     <Box sx={{
                         display: 'flex',
@@ -375,13 +395,16 @@ function CalendarDay({ dayName, dayNum, selected, setCurrentDay }) {
     </Box>
 }
 
-function TutorProfile({ name, imageUrl, times }) {
-    return <Box sx={{
-        backgroundColor: 'white',
-        boxShadow: '2px 2px 15px rgba(194, 194, 194, 0.2)',
-        borderRadius: '10px',
-        padding: '10px',
-    }}>
+function TutorProfile({ name, times }) {
+    return <Box 
+        sx={{
+            backgroundColor: 'white',
+            boxShadow: '2px 2px 15px rgba(194, 194, 194, 0.2)',
+            borderRadius: '10px',
+            padding: '10px',
+        }}
+        key={name}
+    >
         <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
                 <Box sx={{
@@ -404,7 +427,7 @@ function TutorProfile({ name, imageUrl, times }) {
             {times.map(time => {
                 return (
                 <Grid item xs={12} md={3.33}>
-                    <TimeBox time={formatAMPM(time)} />
+                    <TimeBox time={numberToAMPM(time.start_time) + ' - ' + numberToAMPM(time.end_time)} />
                 </Grid>)
             })}
 

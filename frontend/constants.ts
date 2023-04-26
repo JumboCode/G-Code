@@ -12,4 +12,22 @@ export const formatAMPM = (date_string : string) => {
     return strTime;
 }
 
+export const numberToAMPM = (num : number) => {
+    console.log(num)
+    var hours = Math.floor(num);
+    var minutes = Math.round((num - hours) * 60);
+    var amPm = (hours < 12) ? "AM" : "PM";
+    
+    if (hours == 0) {
+      hours = 12;
+    } else if (hours > 12) {
+      hours -= 12;
+    }
+    
+    return hours + ":" + (minutes < 10 ? "0" + minutes : minutes) + " " + amPm;
+  }
+
 export const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
+
+export const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

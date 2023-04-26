@@ -31,6 +31,11 @@ class Language(BaseModel):
     language: str = Field(...)
     level: str = Field(...)
 
+class AppointmentSlot(BaseModel):
+    weekday: str = Field(...)
+    start_time: float = Field(...)
+    end_time: float = Field(...)
+
 class UserIn(BaseModel):
     firstname: str = Field(...)
     lastname: str = Field(...)
@@ -38,6 +43,7 @@ class UserIn(BaseModel):
     password: str = Field(...)
     type: str = Field(...)
     zoom: Optional[str] = None
+    appointment_slots: Optional[List[AppointmentSlot]] = None
 
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")

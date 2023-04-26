@@ -14,7 +14,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from hashing import Hash
 from jwttoken import create_access_token
 from oauth import get_current_user
-from datetime import datetime, timezone, timedelta, date
+from datetime import datetime, timezone, timedelta, date, time
 # from http.client import HTTPException
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
@@ -32,7 +32,6 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Allow access from frontend
-# origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -42,95 +41,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def read_root(current_user: UserIn = Depends(get_current_user)):
-    '''
-    Purpose: Demo route to test if database is running.
-    '''
-    user = fetch_user_by_email(current_user.email)
-    del user["password"]
-    return user
-
-@app.post("/register_student")
-def register_student(postData: dict):
-    email = postData.get('email')
-
-    new_user = UserIn(
-    firstname = postData.get('firstName'),
-    lastname = postData.get('lastName'),
-    email = email,
-    password = Hash.bcrypt(postData.get('password')),
-    type = "student"
-    )
-
-    user = fetch_user_by_email(email)
-
-    if user: 
-        raise HTTPException(status_code=403, detail="User Already Exists")
-    else:
-        create_new_user(dict(new_user))
-        return 'ok'
-
-@app.post("/login")
-def login(request: OAuth2PasswordRequestForm = Depends()):   
-    user = fetch_user_by_email(request.username)
-
-    if not user:
-        raise HTTPException(status_code=403, detail="Invalid Username")
-
-    if not Hash.verify(user["password"], request.password):
-        raise HTTPException(status_code=404, detail="wrong username or password")
-    
-    access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
-    return {"access_token": access_token, "token_type": "bearer"}
-
-@app.post("/registration")
-def registration(request: UserIn):
-    # Check if email from request is in invites w/ the same first and last name
-    corr_invite = get_one_invite("Email", request["email"])
-    if not corr_invite:
-        raise HTTPException(status_code=403, detail="Email Not Invited")
-    if not corr_invite["firstname"] == request["firstname"]:
-        raise HTTPException(status_code=403, detail="First Name Does Not Match")
-    if not corr_invite["lastname"] == request["lastname"]:
-        raise HTTPException(status_code=403, detail="Last Name Does Not Match")
-    zoomlink = request["zoom"]
-    pattern = re.compile(r'^https?:\/\/(?:www\.)?(?:zoom\.us|zoomgov\.com)\/(?:j|my)\/([a-zA-Z0-9-_]{10,})$', re.IGNORECASE)
-    if not pattern.match(zoomlink):
-       raise HTTPException(status_code=403, detail="Invalid Zoom Link") 
-    remove_student_invite(request.accesscode)
-    create_new_user(request.dict())
-    return
-
-############################################################################
-# Routes to Get All Of a DB Collection
-# TODO: For students/admins, filter out passwords / other sensitive info
-# TODO: Add HTTP Error checking
-
-@app.get("/api/students")
-async def get_students():
-    response = fetch_filtered("Users",[("type", "student")] )
-    return response
-
-@app.get("/api/admins")
-async def get_admins():
-    response = fetch_all("Admins")
-    return response
-
-@app.get("/api/appointments")
-async def get_appointments():
-    response = fetch_all("Appointments")
-    return response
-
 @app.get("/api/assignments")
 async def get_assignments():
     response = fetch_all("Assignments")
-    return response
-
-@app.get("/api/appointments3")
-async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
-    print("Printing Current User Email: " + currentUser.email)
-    response = fetch3Appointments(currentUser.email)
     return response
 
 @app.get("/api/questions")
@@ -207,11 +120,6 @@ async def get_one_admin(field_name: str, field_value: Any):
     response = fetch_one("Admins", field_name, field_value)
     return response
 
-@app.get("/api/one_appointment")
-async def get_one_appointment(field_name: str, field_value: Any):
-    response = fetch_one("Appointments", field_name, field_value)
-    return response
-
 @app.get("/api/one_question")
 async def get_one_question(field_name: str, field_value: Any):
     response = fetch_one("Questions", field_name, field_value)
@@ -271,13 +179,6 @@ async def get_filtered_appointments(filter: list[tuple]):
     response = fetch_filtered("Appointments", filter)
     return response
 
-@app.put("/api/cancel-appointment")
-async def cancel_appointment_by_id(id: str, current_user: UserIn = 
-                            Depends(get_current_user)):
-    cancel_appointment(id)
-    return "ok"
-
-
 # Send request for new user
 @app.put("/api/request_student")
 async def put_student_request(email: str):
@@ -314,36 +215,6 @@ async def put_student_join(access_token: str, student_data: User):
         return s
     else:
         return HTTPException("Student was not created")
-
-# Add new appt to database
-@app.put("/api/put_appointment/")
-async def put_appointment(appointment_data: Appointment):
-    response = create_appointment(appointment_data.dict())
-    return response 
-
-@app.put("/api/assign_student_to_appoint/")
-async def assign_student_to_appointment(appointmentID: str , studentID : str):
-    '''
-    Purpose: updates an appointment by linking it to the student reserving the appointment, 
-             and marks as reserved 
-    
-    Input: The appointment ID, and the ID of the student registering 
-    '''
-    response = reserve_appointment(appointmentID, studentID)   
-    return response 
-
-@app.put("/api/remove_student_from_appoint/")
-async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
-    '''
-    Purpose: If there are more than 24 before the appointment, update the apppointment 
-            by removing the student cancel and unmark as reserved
-
-    Input: the appointment ID to mark as unreserved 
-    '''
-    if user.type != 'admin':
-        raise HTTPException(status_code=403, detail="must be an admin to remove student")
-    response = cancel_appointment(appointmentID)
-    return response 
 
 @app.put("/api/assign_student_to_class/")
 async def assign_student_to_class (username : str, class_name : str, 
@@ -534,3 +405,144 @@ async def put_reply(post_ID: str, reply_data: Reply):
     '''
     response = add_reply(post_ID, reply_data.dict())
     return response
+
+
+# User routes
+
+@app.get("/")
+async def read_root(current_user: UserIn = Depends(get_current_user)):
+    '''
+    Purpose: Demo route to test if database is running.
+    '''
+    user = fetch_user_by_email(current_user.email)
+    del user["password"]
+    return user
+
+# todo: work needed – implement invite code, also which registration do we use lol
+@app.post("/register_student")
+def register_student(postData: dict):
+    email = postData.get('email')
+
+    new_user = UserIn(
+        firstname = postData.get('firstName'),
+        lastname = postData.get('lastName'),
+        email = email,
+        password = Hash.bcrypt(postData.get('password')),
+        type = "student"
+    )
+    user = fetch_user_by_email(email)
+    if user: 
+        raise HTTPException(status_code=403, detail="User Already Exists")
+    else:
+        create_new_user(dict(new_user))
+        return 'ok'
+@app.post("/registration")
+def registration(request: UserIn):
+    # Check if email from request is in invites w/ the same first and last name
+    corr_invite = get_one_invite("Email", request["email"])
+    if not corr_invite:
+        raise HTTPException(status_code=403, detail="Email Not Invited")
+    if not corr_invite["firstname"] == request["firstname"]:
+        raise HTTPException(status_code=403, detail="First Name Does Not Match")
+    if not corr_invite["lastname"] == request["lastname"]:
+        raise HTTPException(status_code=403, detail="Last Name Does Not Match")
+    zoomlink = request["zoom"]
+    pattern = re.compile(r'^https?:\/\/(?:www\.)?(?:zoom\.us|zoomgov\.com)\/(?:j|my)\/([a-zA-Z0-9-_]{10,})$', re.IGNORECASE)
+    if not pattern.match(zoomlink):
+       raise HTTPException(status_code=403, detail="Invalid Zoom Link") 
+    remove_student_invite(request.accesscode)
+    create_new_user(request.dict())
+    return
+
+@app.post("/login")
+def login(request: OAuth2PasswordRequestForm = Depends()):   
+    user = fetch_user_by_email(request.username)
+
+    if not user:
+        raise HTTPException(status_code=403, detail="Invalid Username")
+
+    if not Hash.verify(user["password"], request.password):
+        raise HTTPException(status_code=404, detail="wrong username or password")
+    
+    access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/api/students")
+async def get_students():
+    response = fetch_filtered("Users",[("type", "student")] )
+    return response
+
+@app.get("/api/admins")
+async def get_admins():
+    response = fetch_filtered("Users",[("type", "admin")] )
+    return response
+
+# Appointment routes
+
+# @app.get("/api/appointments")
+# async def get_appointments():
+#     response = fetch_all("Appointments")
+#     return response
+
+# @app.get("/api/one_appointment")
+# async def get_one_appointment(field_name: str, field_value: Any):
+#     response = fetch_one("Appointments", field_name, field_value)
+#     return response
+
+# TODO: don't limit to 3
+@app.get("/api/appointments3")
+async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
+    response = fetch3Appointments(currentUser.email)
+    return response
+
+# done
+@app.put("/api/cancel-appointment")
+async def cancel_appointment_by_id(id: str, current_user: UserIn = 
+                            Depends(get_current_user)):
+    cancel_appointment(id)
+    return "ok"
+
+
+@app.put("/api/put_appointment/")
+async def put_appointment(appointment_data: Appointment):
+    response = create_appointment(appointment_data.dict())
+    return response 
+
+@app.put("/api/assign_student_to_appoint/")
+async def assign_student_to_appointment(appointmentID: str , studentID : str):
+    response = reserve_appointment(appointmentID, studentID)   
+    return response 
+
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to remove student")
+    response = cancel_appointment(appointmentID)
+    return response 
+
+@app.get("/api/get_available_appointments")
+async def get_available_appointments(date: date):
+    appointments_by_admin = dict()
+
+    weekday = date.strftime('%A')
+    
+    print(str(date) + " is a " + str(weekday))
+
+    admins = fetch_filtered("Users",[("type", "admin")])
+
+    for admin in admins:
+        appointments_by_admin[admin.email] = []
+        if admin.appointment_slots:
+            for appointment_slot in admin.appointment_slots:
+                if appointment_slot.weekday == weekday:
+                    appointments_by_admin[admin.email].append(appointment_slot)
+
+    # cross check with booked appointments
+    # for each appointment, search for appointment by admin ID and time slot
+        # if booking exists, remove from response
+
+    return appointments_by_admin
+
+# Assignment routes
+
+# Post routes
