@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Box, CssBaseline, Button } from "@mui/material";
+import { Grid, Box, Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar, IconButton } from "@mui/material"; 
+import Image from "next/image";
 import TutoringCardDisplay from "../tutoringCard";
 import styles from '../../styles/Home.module.css'
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useRouter } from "next/router";
 import axios from "axios";
+import FAQIcon from "../../public/questionmark.png";
+import CalendarIcon from "../../public/calendar.jpg";
+import GreenCircle from "../../public/green.png";
 
 export default function Dashboard(props) {
   const user = props.user
@@ -65,7 +63,7 @@ export default function Dashboard(props) {
                   >
                     <ListItemAvatar>
                       <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
-                        <img src="./AssignmentIcon.svg" />
+                        <Image src={GreenCircle} alt="Assignment Icon" />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
@@ -85,15 +83,15 @@ export default function Dashboard(props) {
           <Grid container spacing={2}>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                <img src="FAQBoardIcon.svg" onClick={() => {
-                  router.push('/FAQBoard')
+                <Image src={CalendarIcon} alt="OfficeHours" onClick={() => {
+                  router.push('/OfficeHours')
                 }} /><br />
                 Office Hours
               </div>
             </Grid>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                <img src="FAQBoardIcon.svg" onClick={() => {
+                <Image src={FAQIcon} alt="FAQ" onClick={() => {
                   router.push('/FAQBoard')
                 }} /><br />
                 FAQ Board

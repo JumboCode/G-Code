@@ -194,8 +194,7 @@ async def assign_assignment (assignment_id: str, student_emails: list[str]):
         print("IN STUDENT EMAILS LOOP")
         user = fetch_user_by_email(email)
         if user is None:
-            error_message = ("A user with the email \"" + new_user["email"] +
-                            "\" does not exist")
+            error_message = ("A user with the email \"" + email + "\" does not exist")
             raise HTTPException(status_code=500, detail=error_message)
         individual_assignment = {
             'submitted': False,

@@ -31,7 +31,7 @@ const Page = () => {
     IsUserAuthorized(save_user)
 
     const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
-    const admin_pages = ["Dashboard", "FAQBoard", "OfficeHours", "People"]
+    const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
 
     if (!user) {
         return <></>

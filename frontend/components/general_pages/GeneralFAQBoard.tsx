@@ -1,26 +1,5 @@
 import React, { useState } from "react";
-
-// optimized mui imports
-import Grid from "@mui/material/Grid"
-import Box from "@mui/material/Box"
-import Select from "@mui/material/Select"
-import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import Avatar from "@mui/material/Avatar"
-import ListItemAvatar from "@mui/material/ListItemAvatar"
-import ListItemText from "@mui/material/ListItemText"
-import Divider from "@mui/material/Divider"
-import Typography from "@mui/material/Typography"
-import Card from "@mui/material/Card"
-import Paper from "@mui/material/Paper"
-import IconButton from "@mui/material/IconButton"
-import InputBase from "@mui/material/InputBase"
-import Button from "@mui/material/Button"
-import Modal from "@mui/material/Modal"
-import TextField from "@mui/material/TextField"
-import InputLabel from "@mui/material/InputLabel"
-import MenuItem from "@mui/material/MenuItem"
-import FormControl from "@mui/material/FormControl"
+import { Grid, Box, Select, List, ListItem, Avatar, ListItemAvatar, ListItemText, Divider, Typography, Card, Paper, IconButton, InputBase, Button, Modal, TextField, InputLabel, MenuItem, FormControl} from "@mui/material"
 
 // components
 import CustomSelect from "../customSelect";
