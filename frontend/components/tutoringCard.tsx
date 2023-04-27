@@ -14,6 +14,8 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import { useEffect } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
+
 
 
 const steps = [
@@ -32,10 +34,12 @@ function TutoringCard({
   name,
   date,
   time,
+  id,
 }: {
   name: string;
   date: string;
   time: string;
+  id: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -45,6 +49,26 @@ function TutoringCard({
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  function handleCancel(id : string) {
+
+    const token = Cookies.get('gcode-session');
+    console.log("Cancel Appointment" + id)
+
+    axios.put('http://localhost:8000/api/cancel-appointment?id=' + id, null, {
+      headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    })
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+      handleBack();
   };
 
   const handleBack = () => {
@@ -104,9 +128,7 @@ function TutoringCard({
                           </Button>
                         }
                         <Button
-                          onClick={handleBack}
-                          sx={{ mt: 1, mr: 1 }}
-                        >
+                           onClick={() => handleCancel(id)} sx={{ mt: 1, mr: 1 }}>
                           No
                         </Button>
                       </div>
@@ -166,9 +188,11 @@ export default function TutoringCardDisplay() {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
+    const token = Cookies.get('gcode-session');
     axios.get("http://localhost:8000/api/appointments3", {
         headers: {
           Accept: "application/json",
+          Authorization: 'Bearer ' + token
         },
       })
       .then((response) => {
@@ -187,6 +211,9 @@ export default function TutoringCardDisplay() {
           const endTime = new Date(session.endTime);
           const date = new Date(session.date);
 
+          console.log("session:")
+          console.log(session);
+
           const options = { year: 'numeric', month: 'long', day: 'numeric' };
           const formattedDate = date.toLocaleDateString('en-US', options);
 
@@ -195,6 +222,7 @@ export default function TutoringCardDisplay() {
               name={session.name}
               date={formattedDate}
               time={`${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
+              id={session._id}
             />
           );
         })

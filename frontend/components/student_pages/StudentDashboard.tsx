@@ -9,7 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import CommunityResourcesPanel from "../communityResourcesPanel";
 import { useRouter } from "next/router";
 import axios from "axios";
 
@@ -81,16 +80,15 @@ export default function Dashboard(props) {
 
         </Grid>
         <Grid item xs={12} md={4}>
-          <div className={styles.header2}> Schedule OH </div>
+          <div className={styles.header2}> Resources </div>
 
           <Grid container spacing={2}>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
                 <img src="FAQBoardIcon.svg" onClick={() => {
-                  router.push('/OfficeHours')
+                  router.push('/FAQBoard')
                 }} /><br />
-                FAQ Board
-                {/* NEED TO ADD PROPER LINK: GOES TO FAQBOARD */}
+                Office Hours
               </div>
             </Grid>
             <Grid item xs={6} md={12} lg={6}>
@@ -102,8 +100,6 @@ export default function Dashboard(props) {
               </div>
             </Grid>
           </Grid>
-
-          <CommunityResourcesPanel />
         </Grid>
       </Grid>
     </>
