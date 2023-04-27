@@ -72,8 +72,8 @@ function Header(props: Props) {
     setAnchorElUser(null);
   };
 
-  const firstname = props.user.firstname
-  const lastname = props.user.lastname
+  const firstname = props.user.firstname;
+  const lastname = props.user.lastname;
 
   return (
     <ThemeProvider theme={theme}>
