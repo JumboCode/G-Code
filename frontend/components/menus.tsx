@@ -13,6 +13,7 @@ function DropDownMenu({ options, width }) {
   }}>
     <Select
       value={val}
+      displayEmpty
       onChange={(event) => setVal(event.target.value)}
       sx={{
         height: '30px',

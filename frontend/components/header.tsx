@@ -98,7 +98,7 @@ function Header(props: Props) {
                 textDecoration: 'none',
               }}
             >
-              {"{"}G{"}"}Code
+              Code
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
@@ -132,7 +132,7 @@ function Header(props: Props) {
                 textDecoration: 'none',
               }}
             >
-              {"{"}G{"}"}Code
+              Code
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
             </Box>

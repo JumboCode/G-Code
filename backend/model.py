@@ -38,6 +38,13 @@ class UserIn(BaseModel):
     password: str = Field(...)
     type: str = Field(...)
     zoom: Optional[str] = None
+    timezone: Optional[str] = None
+    maxsessions: int = Field(...)
+    times: List[datetime] = Field(...)
+    linkedin: Optional[str] = None
+    pronouns: Optional[str] = None
+    bio: Optional[str] = None
+    github: Optional[str] = None
 
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -68,6 +75,7 @@ class Class(BaseModel):
     name: str = Field(...)
 
 class Appointment(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     reserved: bool = Field(...)
     tutorName: str = Field(...)
     topics: List[str] = Field(...)
@@ -76,18 +84,32 @@ class Appointment(BaseModel):
     date: datetime = Field(...)
     dayOfWeek: str = Field(...)
     studentName: str = Field(...)
+    studentEmail: str = Field(...)
     tutorId: str = Field(...)
+
+# class Assignment(BaseModel):
+#     assignmentid: str = Field(...)
+#     name: str = Field(...)
+#     description: str = Field(...)
+#     completed: bool = Field(...)
+#     dueDate: datetime = Field(...)
+#     messages: List[str] = Field(...)
+#     submissionLink: str = Field(...)
+#     submitted: bool = Field(...)
+#     studentid: str = Field(...)
+
+class IndividualAssignment(BaseModel):
+    submitted: bool = Field(...)
+    submissionLink: str = Field(...)
+    student_email: EmailStr = Field(...)
+    messages: List[str] = Field(...)
 
 class Assignment(BaseModel):
     assignmentid: str = Field(...)
     name: str = Field(...)
     description: str = Field(...)
-    completed: bool = Field(...)
     dueDate: datetime = Field(...)
-    messages: List[str] = Field(...)
-    submissionLink: str = Field(...)
-    submitted: bool = Field(...)
-    studentid: str = Field(...)
+    individualAssignments: List[IndividualAssignment] = None
 
 class Reply(BaseModel):
     author_id: str = Field(...)

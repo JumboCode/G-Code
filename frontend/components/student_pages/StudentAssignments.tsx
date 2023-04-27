@@ -13,7 +13,7 @@ export default function StudentAssignments(props) {
     <Grid container>
       <Grid item xs={12}>
         <div className={assignentStyles.header1}>
-          <p> ASSIGNMENTS </p>
+          <p> Assignments </p>
         </div>
       </Grid>
       <Grid item xs={12} md={9}>

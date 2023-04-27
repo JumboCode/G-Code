@@ -82,36 +82,39 @@ def fetch_filtered(model_class: str, filters: list[tuple]):
     
     return result_list
 
-def fetch3Appointments():
-    db = db_dic["Appointments"]
+def fetch3Appointments(studentEmail):
     result_list = []
-    cursor = db.find({}).sort("date", -1).limit(3)
+    print("email: " + studentEmail)
+    cursor = appointments.find({"studentEmail" : studentEmail}).sort("date", -1).limit(3)
     for document in cursor:
-        result_list.append(model_dic["Appointments"](**document))
+        result_list.append(stringify_id(Appointment(**document)))
     return result_list
 
 def create_new_user(user: UserIn):
     users.insert_one(user)
-    
-    # newUser = {
-    #     'firstname': firstname,
-    #     'lastname': lastname,
-    #     "email": email,
-    #     "emailverified": False,
-    # }
-    # if (account_type == "Student"):
-    #     students.insert_one(newUser)
-    # elif (account_type == "Tutor"):
-    #     admins.insert_one(newUser)
-
-# def create_student(Student):
-#     studToAdd = Student
-#     result = students.insert_one(studToAdd)
-#     return studToAdd
 
 def fetch_user_by_email(email):
     user = users.find_one({"email": email}, {'_id': 0})
     return user
+
+def set_schedule(data: dict):
+    user = fetch_user_by_email(data.get("email"))
+    if (user == None):
+        return "User not found"
+    if (user["type"] != "Admin" and user["type"] != "admin"):
+        return "User is not admin"
+    
+    filter = { 'email' : user["email"] }
+    default = data.get('default')
+    data.pop('default')
+    data.pop('email')
+    print(data)
+    users.update_one( 
+        {"email": user["email"]},
+        { "$set": data}
+    );
+
+
 
 # def fetch_user_by_email(email):
 #     '''
@@ -122,6 +125,23 @@ def fetch_user_by_email(email):
 #         user = admins.find_one({"email": email})
 #     return user
 
+def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):
+    print(assignmentid)
+    assignments.update_one(
+        {"assignmentid": assignmentid},
+        { "$push": {"individual_assignments": indiv_assignment}}
+        )
+    return assignmentid
+
+def get_all_student_assignments(student_email):
+    cursor = assignments.find({},
+        {"individual_assignments": { '$elemMatch': { "student_email": student_email }},
+         "name": 1, "description": 1, "dueDate": 1, "_id": False})
+    assignment_list = []
+    for document in cursor:
+        if "individual_assignments" in document:
+            assignment_list.append(document)
+    return assignment_list
 
 def add_session(username, permission_level, curr_time):
     '''
@@ -181,8 +201,8 @@ def cancel_appointment(appointmentID):
     Purpose: If there are more than 24 before the appointment, cancel and unmark as reserved
     '''
     appointmentDoc = appointments.find_one({"_id": ObjectId(appointmentID)})
-    if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
-        appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentId": "", "reserved": False } })
+    # if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
+    appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentName": "", "reserved": False , "studentEmail":""} })
     return appointmentID
 
 def remove_student_invite(ak):
