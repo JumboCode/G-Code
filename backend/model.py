@@ -153,3 +153,9 @@ class Post(BaseModel):
 class PostID(Post):
     id: str = Field(...)
 
+class AppointmentBooking(BaseModel):
+    admin_id: str = Field(...)
+    time_slot: TimeSlot = Field(...)
+    reservation_date: datetime = Field(...)
+    # student_id: str = Field(...)
+

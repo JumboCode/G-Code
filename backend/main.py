@@ -503,22 +503,30 @@ async def cancel_appointment_by_id(id: str, current_user: UserIn =
     return "ok"
 
 
-@app.put("/api/put_appointment/")
-async def put_appointment(appointment_data: Appointment):
-    response = create_appointment(appointment_data.dict())
-    return response 
+# @app.put("/api/put_appointment/")
+# async def put_appointment(appointment_data: Appointment):
+#     response = create_appointment(appointment_data.dict())
+#     return response 
 
-@app.put("/api/assign_student_to_appoint/")
-async def assign_student_to_appointment(appointmentID: str , studentID : str):
-    response = reserve_appointment(appointmentID, studentID)   
-    return response 
+# @app.put("/api/assign_student_to_appoint/")
+# async def assign_student_to_appointment(appointmentID: str , studentID : str):
+#     response = reserve_appointment(appointmentID, studentID)   
+#     return response 
 
-@app.put("/api/remove_student_from_appoint/")
-async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
-    if user.type != 'admin':
-        raise HTTPException(status_code=403, detail="must be an admin to remove student")
-    response = cancel_appointment(appointmentID)
-    return response 
+# @app.put("/api/remove_student_from_appoint/")
+# async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
+#     if user.type != 'admin':
+#         raise HTTPException(status_code=403, detail="must be an admin to remove student")
+#     response = cancel_appointment(appointmentID)
+#     return response 
+
+@app.put("/api/reserve_appointment")
+async def reserve_appointment(appointment_data: AppointmentBooking,
+                              current_user=Depends(get_current_user)):
+    data_dict = appointment_data.dict()
+    student_id = fetch_one("Users", "email", current_user.email).id
+    data_dict["student_id"] = student_id
+    create_appointment(data_dict)
 
 @app.get("/api/get_available_appointments")
 async def get_available_appointments(date: date):

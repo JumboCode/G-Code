@@ -53,46 +53,6 @@ export default function StudentOfficeHours(props) {
         )
     }
 
-    // useEffect(() => {
-    //     axios.get('http://localhost:8000/api/appointments', {
-    //         headers: {
-    //             Accept: 'application/json'
-    //         }
-    //     })
-    //         .then(response => {
-    //             // handle success
-    //             console.log(response)
-    //             const appointments = response.data
-
-    //             let tutor_dictionary = {}
-
-    //             // build tutor dictionary
-    //             for (const appointment in appointments) {
-    //                 const tutor_name = appointments[appointment].tutorName
-    //                 if (!(tutor_name in tutor_dictionary)) {
-    //                     tutor_dictionary[tutor_name] = []
-    //                 }
-    //                 tutor_dictionary[tutor_name].push(appointments[appointment].startTime)
-    //             }
-
-    //             let appointment_array = []
-    //             for (const tutor in tutor_dictionary) {
-    //                 appointment_array.push({
-    //                     name: tutor,
-    //                     times: tutor_dictionary[tutor]
-    //                 })
-    //             }
-
-    //             setTutors(appointment_array)
-
-    //         })
-    //         .catch(error => {
-    //             // handle error
-    //             console.log(error)
-    //         })
-
-    // }, [])
-
     // handle opening filter modal
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
@@ -395,7 +355,7 @@ function CalendarDay({ dayName, dayNum, selected, setCurrentDay }) {
     </Box>
 }
 
-function TutorProfile({ name, times }) {
+function TutorProfile({ name, email, times, date }) {
     return <Box 
         sx={{
             backgroundColor: 'white',
@@ -427,7 +387,12 @@ function TutorProfile({ name, times }) {
             {times.map(time => {
                 return (
                 <Grid item xs={12} md={3.33}>
-                    <TimeBox time={numberToAMPM(time.start_time) + ' - ' + numberToAMPM(time.end_time)} />
+                    <TimeBox 
+                        start_time={time.start_time} 
+                        end_time={time.end_time}
+                        admin_email={email}
+                        date={date}
+                    />
                 </Grid>)
             })}
 
@@ -447,7 +412,8 @@ function TutorProfile({ name, times }) {
     </Box>
 }
 
-function TimeBox({ time }) {
+// start time, end time, admin email, date
+function TimeBox({ start_time, end_time, admin_email, date }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -476,7 +442,7 @@ function TimeBox({ time }) {
             onClick={handleOpen}
         >
             <p style={{ color: '#29395B', textAlign: 'center' }}>
-                {time}
+                {numberToAMPM(start_time)}-{numberToAMPM(end_time)}
             </p>
         </Button>
         <Modal
