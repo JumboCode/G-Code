@@ -101,6 +101,11 @@ def create_one (model_class: str, to_add):
 def create_new_user(user: UserIn):
     users.insert_one(user)
     
+def update_profile_field(email: str, field: str, val):
+    users.update_one( 
+        {"email": email},
+        { "$set": {field:val}}
+    )
 
 def fetch_user_by_email(email):
     result_list = []

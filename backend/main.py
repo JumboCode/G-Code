@@ -56,7 +56,7 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     user = fetch_user_by_email(current_user.email)
     if user == None:
         raise HTTPException(status_code=403, detail="User Not Found")
-    del user["password"]
+    del user.password
     return user
 
 @app.post("/register_student")
@@ -86,10 +86,10 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     if not user:
         raise HTTPException(status_code=403, detail="Invalid Username")
 
-    if not Hash.verify(user["password"], request.password):
+    if not Hash.verify(user.password, request.password):
         raise HTTPException(status_code=404, detail="wrong username or password")
     
-    access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
+    access_token = create_access_token(data={"email": user.email, "type": user.type})
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/send_appt_reminder")
@@ -305,7 +305,7 @@ async def assign_assignment (assignment_id: str, student_emails: list[str]):
         print("IN STUDENT EMAILS LOOP")
         user = fetch_user_by_email(email)
         if user is None:
-            error_message = ("A user with the email \"" + new_user["email"] +
+            error_message = ("A user with the email \"" + email +
                             "\" does not exist")
             raise HTTPException(status_code=500, detail=error_message)
         
@@ -507,39 +507,29 @@ async def view_students_in_class (class_name : str,
     # if returned directly
     return  str(get_all_students_in_class(class_name))
 
-@app.get("/api/view_instructors_in_class/")
-async def view_instructors_in_class (class_name : str, 
-                                     user: dict = Depends(get_current_user)):
-    return str(get_all_instructors_in_class(class_name))
+# @app.get("/api/view_instructors_in_class/")
+# async def view_instructors_in_class (class_name : str, 
+#                                      user: dict = Depends(get_current_user)):
+#     return str(get_all_instructors_in_class(class_name))
 
 @app.post("/api/edit_user_profile")
 async def edit_user_profile (username: str, new_profile_values: dict, 
                              admin_user: dict = Depends(get_current_user)):
-    student = fetch_student_by_username(username)
-    admin = fetch_admin_by_username(username)   
-
-    # TODO - automatically insert permission level when fetching all users, 
-    #        will simplify code
-    if student != None:
-        user = student
-        user["permission_level"] = "Student"
-        editable_fields = ["firstname", "lastname", "email", "mentorid"]
-    elif admin != None:
-        user = admin
+    user = fetch_user_by_email(username)
+    if user == None: 
+        raise HTTPException(status_code=403, detail="Invalid Username")
+    elif user.type == "admin":
         user["permission_level"] = "Admin"
-        editable_fields = ["classes", "mentees"]
+        editable_fields = ["firstname", "lastname", "email", "password", "timzone", "linkedin", "pronouns", "bio", "github", "zoom", "maxsessions"]
     else:
-        raise HTTPException(
-            status_code=403, detail="Invalid Username"
-        )
-    
+        user["permission_level"] = "Student"
+        editable_fields = ["firstname", "lastname", "email", "password", "timzone", "linkedin", "pronouns", "bio", "github"]
+
     for field in new_profile_values:
         if field not in editable_fields:
-            raise HTTPException(status_code=500, 
-                            detail =  ("The " + field 
-                                       + " cannot be edited"))
-        update_profile_field(username, user["permission_level"], 
-                             field, new_profile_values[field])
+            raise HTTPException(status_code=500, detail =  ("The field " + field + " cannot be edited"))
+        else:
+            update_profile_field(user.email, field, new_profile_values[field])
 
 
 @app.post("/api/edit_own_profile")
