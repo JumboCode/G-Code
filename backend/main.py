@@ -15,6 +15,7 @@ from hashing import Hash
 from jwttoken import create_access_token
 from oauth import get_current_user
 from datetime import datetime, timezone, timedelta, date
+import datetime, time
 # from http.client import HTTPException
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
@@ -22,6 +23,7 @@ from sendgrid.helpers.mail import Mail
 
 from model import *
 from database import *
+from email_module import *
 
 # Create app
 app = FastAPI()
@@ -83,6 +85,32 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     
     access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/send_appt_reminder")
+def send_appt_reminder(appt: Appointment):
+    if (appt == None):
+        raise HTTPException(status_code=403, detail="Appointment is null")
+    
+    tutor: UserIn = fetch_user_by_email(appt.tutorEmail)
+    student: UserIn = fetch_user_by_email(appt.studentEmail)
+    start: datetime = appt.startTime
+
+    if (tutor == None):
+        raise HTTPException(status_code=403, detail="Tutor email doesn't match existing user")
+    if (student == None):
+        raise HTTPException(status_code=403, detail="Student email doesn't match existing user")
+
+    tutor_msg = format_appt_reminder(tutor.firstname, start)
+    student_msg = format_appt_reminder(student.firstname, start)
+    
+    send_email(tutor_msg, "{G}Code Appointment Reminder", tutor.email)
+    send_email(student_msg, "{G}Code Appointment Reminder", student.email)
+
+
+@app.post("/call_send_appt")
+def call_send_appt():
+    appt: Appointment = fetch_one("Appointments", "tutorEmail", "theseus.lim@gmail.com")
+    send_appt_reminder(appt)
 
 @app.post("/registration")
 def registration(request: UserIn):

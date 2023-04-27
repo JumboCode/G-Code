@@ -39,8 +39,8 @@ class UserIn(BaseModel):
     type: str = Field(...)
     zoom: Optional[str] = None
     timezone: Optional[str] = None
-    maxsessions: int = Field(...)
-    times: List[datetime] = Field(...)
+    maxsessions: Optional[int] = None
+    times: Optional[List[List[str]]] = None
     linkedin: Optional[str] = None
     pronouns: Optional[str] = None
     bio: Optional[str] = None
@@ -76,16 +76,10 @@ class Class(BaseModel):
 
 class Appointment(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    reserved: bool = Field(...)
-    tutorName: str = Field(...)
-    topics: List[str] = Field(...)
-    startTime: datetime = Field(...)
-    endTime: datetime = Field(...)
-    date: datetime = Field(...)
-    dayOfWeek: str = Field(...)
-    studentName: str = Field(...)
+    tutorEmail: str = Field(...)
     studentEmail: str = Field(...)
-    tutorId: str = Field(...)
+    startTime: datetime = Field(...)
+    
 
 # class Assignment(BaseModel):
 #     assignmentid: str = Field(...)

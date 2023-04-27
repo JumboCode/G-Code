@@ -94,6 +94,16 @@ def create_new_user(user: UserIn):
     users.insert_one(user)
 
 def fetch_user_by_email(email):
+    result_list = []
+    cursor = users.find({"email": email})
+    for document in cursor:
+        result_list.append(model_dic["Users"](**document))
+    if len(result_list) == 0:
+        return "No Result Found"
+    elif len(result_list) > 1:
+        return "Multiple Instances Found"
+    return result_list[0]
+
     user = users.find_one({"email": email}, {'_id': 0})
     return user
 
