@@ -54,6 +54,8 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     Purpose: Demo route to test if database is running.
     '''
     user = fetch_user_by_email(current_user.email)
+    if user == None:
+        raise HTTPException(status_code=403, detail="User Not Found")
     del user["password"]
     return user
 
