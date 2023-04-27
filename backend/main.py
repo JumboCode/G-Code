@@ -21,6 +21,10 @@ from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+# Mark
+from bson import json_util, ObjectId
+import json
+
 from model import *
 from database import *
 from email_module import *
@@ -171,6 +175,9 @@ async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
 @app.get("/api/questions")
 async def get_questions():
     response = fetch_all("Questions")
+
+
+    print(response)
     # response = []
     return response
 
@@ -248,7 +255,16 @@ async def get_one_appointment(field_name: str, field_value: Any):
 
 @app.get("/api/one_question")
 async def get_one_question(field_name: str, field_value: Any):
-    response = fetch_one("Questions", field_name, field_value)
+    response = fetch_one("Questions", field_name, field_value).dict()
+    # Prevents TypeError("'ObjectId' object is not iterable")
+    response['id'] = str(response['id'])
+    return response
+
+@app.get("/api/get_question_by_id")
+async def get_question_by_id (id_string: str):
+    response = fetch_one("Questions", "_id", ObjectId(id_string)).dict()
+    # Prevents TypeError("'ObjectId' object is not iterable")
+    response['id'] = str(response['id'])
     return response
 
 @app.get("/api/one_invite")
@@ -261,14 +277,52 @@ async def get_one_invite(field_name: str, field_value: Any):
 ##########################################################################
 
 
-@app.post("/api/create_question")
-async def create_question (request: Question):
+@app.get("/api/get_student_assignments")
+async def get_student_assignments(student_email : str):
+   return get_all_student_assignments(student_email)
+
+@app.post("/api/create_assignment")
+async def create_assignment (new_assignment: Assignment):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
+    response = create_one("Assignments", new_assignment)
+    return response
+
+@app.post("/api/assign_assignment")
+async def assign_assignment (assignment_id: str, student_emails: list[str]):
     '''
     Purpose: Add a question to the database
 
     Input: A question object
     '''
 
+    for email in student_emails:
+        print("IN STUDENT EMAILS LOOP")
+        user = fetch_user_by_email(email)
+        if user is None:
+            error_message = ("A user with the email \"" + new_user["email"] +
+                            "\" does not exist")
+            raise HTTPException(status_code=500, detail=error_message)
+        
+        individual_assignment = {
+            'submitted': False,
+            'student_email': email,
+            'messages': []
+        }
+        create_individual_assignment(assignment_id, individual_assignment)
+
+    return "success"
+
+@app.post("/api/create_question")
+async def create_question (request: QuestionIn):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
     response = add_question(request.dict())
 
     return "success"
@@ -501,6 +555,7 @@ async def student_profile_self_view (new_profile_values: dict,
 
 @app.post("/api/create_invites/")
 async def create_users (new_users: list):
+    print("IN CREATE USERS")
     print(type(new_users))
     for new_user in new_users:
         print(type(new_user))

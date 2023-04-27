@@ -90,8 +90,17 @@ def fetch3Appointments(studentEmail):
         result_list.append(stringify_id(Appointment(**document)))
     return result_list
 
+def create_one (model_class: str, to_add):
+    db = db_dic[model_class]
+    if isinstance(to_add, model_dic[model_class]):
+        db.insert_one(to_add.dict())
+    else:
+        raise Exception("The given object was not an instance of the given model_class")
+
+
 def create_new_user(user: UserIn):
     users.insert_one(user)
+    
 
 def fetch_user_by_email(email):
     result_list = []
@@ -173,6 +182,11 @@ def remove_session(username):
     '''
     sessions.delete_one({"username": username})
 
+def create_user_invite(inviteToAdd : UserInvite):
+    ui.insert_one(inviteToAdd) 
+    return inviteToAdd
+
+
 def create_student_invite(ak, em, d):
     inviteToAdd = {
         "accesscode": ak,
@@ -244,7 +258,7 @@ def fetch_all_posts():
         posts_list.append(PostID(**document))
     return posts_list
 
-def add_question(question: Question):
+def add_question(question: QuestionIn):
     questions.insert_one(question)
     return question
 
@@ -259,9 +273,32 @@ def create_post(post: Post):
     posts.insert_one(post)
     return post
 
+def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):
+    print("in create indiv assignment")
+    print(assignmentid)
+    assignments.update_one(
+        {"assignmentid": assignmentid},
+        { "$push": {"individual_assignments": indiv_assignment}}
+        )
+    return assignmentid
+
+
 def add_reply(post_ID: str, reply_data: Reply):
     posts.update_one(
         {"_id": post_ID},
         { "$push": {"replies": reply_data}}
         )
     return post_ID
+
+def get_all_student_assignments(student_email):
+    '''
+    Purpose: Returns all assignments assigned to a given student
+    '''
+    cursor = assignments.find({}, 
+        {"individual_assignments": { '$elemMatch': { "student_email": student_email }},
+         "name": 1, "description": 1, "dueDate": 1, '_id': False})
+    assignment_list = []
+    for document in cursor:
+        if 'individual_assignments' in document:
+            assignment_list.append(document)
+    return assignment_list
