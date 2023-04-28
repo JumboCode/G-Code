@@ -13,30 +13,29 @@ import Modal from "@mui/material/Modal"
 import Select, { SelectChangeEvent } from "@mui/material/Select"
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
+import { Avatar } from '@mui/material';
 
 // filter icons
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
-
 // axios
 import axios from 'axios';
-import { Avatar } from '@mui/material';
+import Cookies from 'js-cookie';
 
 // constants
-import { numberToAMPM, weekDays, months } from '../../constants'
+import { numberToAMPM, weekDays, months, dateToString } from '../../constants'
 
 export default function StudentOfficeHours(props) {
     const user = props.user
-    const [tutors, setTutors] = useState([])
-    const [currentWeekStart, setCurrentWeekStart] = useState(new Date()) 
-    const [currentDay, setCurrentDay] = useState(new Date()) 
+    const [tutorProfiles, setTutorProfiles] = useState([])
+    const [currentWeekStart, setCurrentWeekStart] = useState(new Date())
+    const [currentDay, setCurrentDay] = useState(new Date())
 
-    const setCurrentDayTutors = (date : Date) => {
+    const setCurrentDayTutors = (date: Date) => {
         setCurrentDay(date)
-        const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-        console.log(dateString)
+        const dateString = dateToString(date)
         axios.get("http://localhost:8000/api/get_available_appointments?date=" + dateString).then(
             (res) => {
                 let tutor_list = []
@@ -44,11 +43,13 @@ export default function StudentOfficeHours(props) {
                     if (res.data[tutor_name].length > 0) {
                         tutor_list.push({
                             name: tutor_name,
+                            email: tutor_name, // TODO: change to email
+                            date: date,
                             times: res.data[tutor_name]
                         })
                     }
                 }
-                setTutors(tutor_list)
+                setTutorProfiles(tutor_list)
             }
         )
     }
@@ -125,7 +126,7 @@ export default function StudentOfficeHours(props) {
                             renderValue={(selected) => (
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {selected.map((value) => (
-                                        <Chip 
+                                        <Chip
                                             key={value}
                                             label={value}
                                             variant='outlined'
@@ -176,7 +177,7 @@ export default function StudentOfficeHours(props) {
                         <Grid item xs={12} md={3}>
                             <Button variant="secondary" sx={{
                                 marginTop: '20px',
-                                }}
+                            }}
                                 onClick={openFilterModal}
                             >
                                 <TuneRoundedIcon />
@@ -185,7 +186,7 @@ export default function StudentOfficeHours(props) {
                         </Grid>
                     </Grid>
 
-                    <CalendarWeek 
+                    <CalendarWeek
                         currentWeekStart={currentWeekStart}
                         setCurrentWeekStart={setCurrentWeekStart}
                         currentDay={currentDay}
@@ -203,7 +204,7 @@ export default function StudentOfficeHours(props) {
                         gap: '10px',
                         width: '90%'
                     }}>
-                        {tutors.map((tutor) => <TutorProfile {...tutor} />)}
+                        {tutorProfiles.map((tutorProfile) => <TutorProfile {...tutorProfile} />)}
                     </Box>
                     <Button sx={{
                         backgroundColor: '#61646D',
@@ -216,16 +217,8 @@ export default function StudentOfficeHours(props) {
                 </Grid>
 
                 <Grid item xs={12} md={4}>
-                    {/* <Grid container spacing={1}>
-                                        <Grid item xs={12}> */}
                     <p>Can&apos;t find a time?</p>
-                    {/* </Grid>
-                                    </Grid> */}
-                    {/* <Grid item xs={12}> */}
                     <Button variant="secondary">Suggest New Times</Button>
-                    {/* </Grid> */}
-                    {/* <Grid item xs={12}> */}
-                    {/* </Grid> */}
                 </Grid>
             </Grid>
         </div>
@@ -294,13 +287,13 @@ function CalendarWeek({ currentWeekStart, setCurrentWeekStart, currentDay, setCu
     let date = new Date(currentWeekStart)
     for (let i = 0; i < 7; i++) {
         let date_copy = new Date(date.getTime())
-        days.push(<CalendarDay 
-            dayName={weekDays[date.getDay()]} 
-            dayNum={date.getDate()} 
+        days.push(<CalendarDay
+            dayName={weekDays[date.getDay()]}
+            dayNum={date.getDate()}
             selected={currentDay.getTime() === date.getTime()}
-            setCurrentDay={() => {setCurrentDay(date_copy)}}
+            setCurrentDay={() => { setCurrentDay(date_copy) }}
         />)
-        date.setDate(date.getDate() + 1) 
+        date.setDate(date.getDate() + 1)
     }
 
     return <Box sx={{
@@ -312,20 +305,20 @@ function CalendarWeek({ currentWeekStart, setCurrentWeekStart, currentDay, setCu
         justifyContent: 'space-around',
         alignItems: 'center',
     }}>
-        <ArrowLeftIcon 
-            sx={{cursor: 'pointer'}}
-            onClick={() => {setCurrentWeekStart(date => new Date(date.getTime() - 7 * 86400000))}}
+        <ArrowLeftIcon
+            sx={{ cursor: 'pointer' }}
+            onClick={() => { setCurrentWeekStart(date => new Date(date.getTime() - 7 * 86400000)) }}
         />
         {days}
-        <ArrowRightIcon 
-            sx={{cursor: 'pointer'}}
-            onClick={() => {setCurrentWeekStart(date => new Date(date.getTime() + 7 * 86400000))}}
+        <ArrowRightIcon
+            sx={{ cursor: 'pointer' }}
+            onClick={() => { setCurrentWeekStart(date => new Date(date.getTime() + 7 * 86400000)) }}
         />
     </Box>
 }
 
 function CalendarDay({ dayName, dayNum, selected, setCurrentDay }) {
-    return <Box 
+    return <Box
         sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -355,8 +348,8 @@ function CalendarDay({ dayName, dayNum, selected, setCurrentDay }) {
     </Box>
 }
 
-function TutorProfile({ name, email, times, date }) {
-    return <Box 
+function TutorProfile({ name, email, date, times }) {
+    return <Box
         sx={{
             backgroundColor: 'white',
             boxShadow: '2px 2px 15px rgba(194, 194, 194, 0.2)',
@@ -386,28 +379,15 @@ function TutorProfile({ name, email, times, date }) {
             </Grid>
             {times.map(time => {
                 return (
-                <Grid item xs={12} md={3.33}>
-                    <TimeBox 
-                        start_time={time.start_time} 
-                        end_time={time.end_time}
-                        admin_email={email}
-                        date={date}
-                    />
-                </Grid>)
+                    <Grid item xs={12} md={3.33}>
+                        <TimeBox
+                            start_time={time.start_time}
+                            end_time={time.end_time}
+                            admin_email={email}
+                            date={date}
+                        />
+                    </Grid>)
             })}
-
-            {/* <Grid item xs={12} md={2.5}>
-                <TimeBox time={times[0]} />
-                <TimeBox time={times[3]} />
-            </Grid>
-            <Grid item xs={12} md={2.5}>
-                <TimeBox time={times[1]} />
-                <TimeBox time={times[4]} />
-            </Grid>
-            <Grid item xs={12} md={2.5}>
-                <TimeBox time={times[2]} />
-                <TimeBox time={times[5]} />
-            </Grid> */}
         </Grid>
     </Box>
 }
@@ -431,6 +411,34 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
         p: 4,
     };
 
+    const bookAppointment = () => {
+        const token = Cookies.get('gcode-session');
+        const config = {
+            headers: {
+                'accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const requestBody = {
+            "admin_email": admin_email,
+            "time_slot": {
+                "starttime": start_time,
+                "endtime": end_time
+            },
+            "reservation_date": date
+        };
+
+        axios.put('http://localhost:8000/api/reserve_appointment', requestBody, config)
+            .then(response => {
+                alert("appointment booked!")
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
 
     return <Box>
         <Button sx={{
@@ -438,7 +446,7 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
             borderRadius: '12px',
             marginTop: '20px',
             width: '90%',
-            }}
+        }}
             onClick={handleOpen}
         >
             <p style={{ color: '#29395B', textAlign: 'center' }}>
@@ -454,7 +462,7 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
             <Box sx={booking_modal}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <p style={{textAlign: 'center'}}>Confirm booking for { time }?</p>
+                        <p style={{ textAlign: 'center' }}>Confirm booking with {admin_email} for {numberToAMPM(start_time)}-{numberToAMPM(end_time)} on {dateToString(date)}?</p>
                     </Grid>
                     <Grid item xs={6}>
                         <Button
@@ -469,7 +477,10 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
                         <Button
                             fullWidth
                             variant="primary"
-                            onClick={handleClose}
+                            onClick={() => {
+                                bookAppointment()
+                                handleClose()
+                            }}
                         >
                             Confirm
                         </Button>

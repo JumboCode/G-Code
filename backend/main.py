@@ -548,6 +548,19 @@ async def get_available_appointments(date: date):
     # cross check with booked appointments
     # for each appointment, search for appointment by admin ID and time slot
         # if booking exists, remove from response
+    appointments = fetch_all("Appointments")
+    print(appointments)
+
+    def does_appointment_exist(appointment, admin_email):
+        for existing_appointment in appointments:
+            if (existing_appointment.admin_email == admin_email and 
+                existing_appointment.reservation_date == date and 
+                existing_appointment.start_time == appointment.start_time):
+                return True
+        return False
+
+    for admin in appointments_by_admin:
+        filter(does_appointment_exist, appointments_by_admin[admin])
 
     return appointments_by_admin
 
