@@ -14,6 +14,7 @@ import { theme } from '../theme'
 import styles from '../styles/Home.module.css'
 
 export default function Margin({ user, availablePages, currentPageTitle, children }) {
+
     return (
         <ThemeProvider theme={theme}>
             <Box className={styles.content} sx={{ display: 'flex' }}>
