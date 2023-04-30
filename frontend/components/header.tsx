@@ -8,10 +8,8 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-// import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-// import AdbIcon from '@mui/icons-material/Adb';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
@@ -72,8 +70,8 @@ function Header(props: Props) {
     setAnchorElUser(null);
   };
 
-  const firstname = props.user.firstname
-  const lastname = props.user.lastname
+  const firstname = props.user.firstname;
+  const lastname = props.user.lastname;
 
   return (
     <ThemeProvider theme={theme}>

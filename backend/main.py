@@ -15,13 +15,19 @@ from hashing import Hash
 from jwttoken import create_access_token
 from oauth import get_current_user
 from datetime import datetime, timezone, timedelta, date
+import datetime, time
 # from http.client import HTTPException
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+# Mark
+from bson import json_util, ObjectId
+import json
+
 from model import *
 from database import *
+from email_module import *
 
 # Create app
 app = FastAPI()
@@ -48,7 +54,9 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
     Purpose: Demo route to test if database is running.
     '''
     user = fetch_user_by_email(current_user.email)
-    del user["password"]
+    if user == None:
+        raise HTTPException(status_code=403, detail="User Not Found")
+    del user.password
     return user
 
 @app.post("/register_student")
@@ -78,11 +86,37 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     if not user:
         raise HTTPException(status_code=403, detail="Invalid Username")
 
-    if not Hash.verify(user["password"], request.password):
+    if not Hash.verify(user.password, request.password):
         raise HTTPException(status_code=404, detail="wrong username or password")
     
-    access_token = create_access_token(data={"email": user["email"], "type": user["type"]})
+    access_token = create_access_token(data={"email": user.email, "type": user.type})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/send_appt_reminder")
+def send_appt_reminder(appt: Appointment):
+    if (appt == None):
+        raise HTTPException(status_code=403, detail="Appointment is null")
+    
+    tutor: UserIn = fetch_user_by_email(appt.tutorEmail)
+    student: UserIn = fetch_user_by_email(appt.studentEmail)
+    start: datetime = appt.startTime
+
+    if (tutor == None):
+        raise HTTPException(status_code=403, detail="Tutor email doesn't match existing user")
+    if (student == None):
+        raise HTTPException(status_code=403, detail="Student email doesn't match existing user")
+
+    tutor_msg = format_appt_reminder(tutor.firstname, start)
+    student_msg = format_appt_reminder(student.firstname, start)
+    
+    send_email(tutor_msg, "{G}Code Appointment Reminder", tutor.email)
+    send_email(student_msg, "{G}Code Appointment Reminder", student.email)
+
+
+@app.post("/call_send_appt")
+def call_send_appt():
+    appt: Appointment = fetch_one("Appointments", "tutorEmail", "theseus.lim@gmail.com")
+    send_appt_reminder(appt)
 
 @app.post("/registration")
 def registration(request: UserIn):
@@ -143,6 +177,9 @@ async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
 @app.get("/api/questions")
 async def get_questions():
     response = fetch_all("Questions")
+
+
+    print(response)
     # response = []
     return response
 
@@ -194,8 +231,7 @@ async def assign_assignment (assignment_id: str, student_emails: list[str]):
         print("IN STUDENT EMAILS LOOP")
         user = fetch_user_by_email(email)
         if user is None:
-            error_message = ("A user with the email \"" + new_user["email"] +
-                            "\" does not exist")
+            error_message = ("A user with the email \"" + email + "\" does not exist")
             raise HTTPException(status_code=500, detail=error_message)
         individual_assignment = {
             'submitted': False,
@@ -221,7 +257,16 @@ async def get_one_appointment(field_name: str, field_value: Any):
 
 @app.get("/api/one_question")
 async def get_one_question(field_name: str, field_value: Any):
-    response = fetch_one("Questions", field_name, field_value)
+    response = fetch_one("Questions", field_name, field_value).dict()
+    # Prevents TypeError("'ObjectId' object is not iterable")
+    response['id'] = str(response['id'])
+    return response
+
+@app.get("/api/get_question_by_id")
+async def get_question_by_id (id_string: str):
+    response = fetch_one("Questions", "_id", ObjectId(id_string)).dict()
+    # Prevents TypeError("'ObjectId' object is not iterable")
+    response['id'] = str(response['id'])
     return response
 
 @app.get("/api/one_invite")
@@ -234,14 +279,52 @@ async def get_one_invite(field_name: str, field_value: Any):
 ##########################################################################
 
 
-@app.post("/api/create_question")
-async def create_question (request: Question):
+@app.get("/api/get_student_assignments")
+async def get_student_assignments(student_email : str):
+   return get_all_student_assignments(student_email)
+
+@app.post("/api/create_assignment")
+async def create_assignment (new_assignment: Assignment):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
+    response = create_one("Assignments", new_assignment)
+    return response
+
+@app.post("/api/assign_assignment")
+async def assign_assignment (assignment_id: str, student_emails: list[str]):
     '''
     Purpose: Add a question to the database
 
     Input: A question object
     '''
 
+    for email in student_emails:
+        print("IN STUDENT EMAILS LOOP")
+        user = fetch_user_by_email(email)
+        if user is None:
+            error_message = ("A user with the email \"" + email +
+                            "\" does not exist")
+            raise HTTPException(status_code=500, detail=error_message)
+        
+        individual_assignment = {
+            'submitted': False,
+            'student_email': email,
+            'messages': []
+        }
+        create_individual_assignment(assignment_id, individual_assignment)
+
+    return "success"
+
+@app.post("/api/create_question")
+async def create_question (request: QuestionIn):
+    '''
+    Purpose: Add a question to the database
+
+    Input: A question object
+    '''
     response = add_question(request.dict())
 
     return "success"
@@ -424,39 +507,29 @@ async def view_students_in_class (class_name : str,
     # if returned directly
     return  str(get_all_students_in_class(class_name))
 
-@app.get("/api/view_instructors_in_class/")
-async def view_instructors_in_class (class_name : str, 
-                                     user: dict = Depends(get_current_user)):
-    return str(get_all_instructors_in_class(class_name))
+# @app.get("/api/view_instructors_in_class/")
+# async def view_instructors_in_class (class_name : str, 
+#                                      user: dict = Depends(get_current_user)):
+#     return str(get_all_instructors_in_class(class_name))
 
 @app.post("/api/edit_user_profile")
 async def edit_user_profile (username: str, new_profile_values: dict, 
                              admin_user: dict = Depends(get_current_user)):
-    student = fetch_student_by_username(username)
-    admin = fetch_admin_by_username(username)   
-
-    # TODO - automatically insert permission level when fetching all users, 
-    #        will simplify code
-    if student != None:
-        user = student
-        user["permission_level"] = "Student"
-        editable_fields = ["firstname", "lastname", "email", "mentorid"]
-    elif admin != None:
-        user = admin
+    user = fetch_user_by_email(username)
+    if user == None: 
+        raise HTTPException(status_code=403, detail="Invalid Username")
+    elif user.type == "admin":
         user["permission_level"] = "Admin"
-        editable_fields = ["classes", "mentees"]
+        editable_fields = ["firstname", "lastname", "email", "password", "timzone", "linkedin", "pronouns", "bio", "github", "zoom", "maxsessions"]
     else:
-        raise HTTPException(
-            status_code=403, detail="Invalid Username"
-        )
-    
+        user["permission_level"] = "Student"
+        editable_fields = ["firstname", "lastname", "email", "password", "timzone", "linkedin", "pronouns", "bio", "github"]
+
     for field in new_profile_values:
         if field not in editable_fields:
-            raise HTTPException(status_code=500, 
-                            detail =  ("The " + field 
-                                       + " cannot be edited"))
-        update_profile_field(username, user["permission_level"], 
-                             field, new_profile_values[field])
+            raise HTTPException(status_code=500, detail =  ("The field " + field + " cannot be edited"))
+        else:
+            update_profile_field(user.email, field, new_profile_values[field])
 
 
 @app.post("/api/edit_own_profile")
@@ -474,6 +547,7 @@ async def student_profile_self_view (new_profile_values: dict,
 
 @app.post("/api/create_invites/")
 async def create_users (new_users: list):
+    print("IN CREATE USERS")
     print(type(new_users))
     for new_user in new_users:
         print(type(new_user))

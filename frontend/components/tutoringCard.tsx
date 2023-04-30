@@ -223,11 +223,18 @@ export default function TutoringCardDisplay() {
               date={formattedDate}
               time={`${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
               id={session._id}
+              key={session.name}
             />
           );
         })
       ) : (
-        "No upcoming tutoring sessions"
+        <>
+        <Box sx={{ height: "10%" }}>
+          <Typography>
+            No upcoming tutoring sessions
+          </Typography>
+        </Box>
+        </>
       )}
     </div>
   );

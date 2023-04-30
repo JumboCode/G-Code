@@ -1,27 +1,9 @@
 import React, { useState } from 'react';
 import styles from '../../styles/Home.module.css'
-import { DropDownMenu, TimeMenu } from '../menus'
-import Switch from '@mui/material/Switch';
+import { Box, Grid, Typography, Button, Switch, IconButton, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Select, FormControl, MenuItem} from "@mui/material"
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import {Box, Grid, Typography, Button} from '@mui/material';
 import axios from "axios"
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Select, { SelectChangeEvent } from "@mui/material/Select"
-import FormControl from "@mui/material/FormControl"
-import MenuItem from '@mui/material/MenuItem';
 
 const button_style = { color: '#3D495C' };
 const sessions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];

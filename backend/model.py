@@ -35,12 +35,12 @@ class UserIn(BaseModel):
     firstname: str = Field(...)
     lastname: str = Field(...)
     email: str = Field(...)
-    password: str = Field(...)
+    password: Optional[str] = Field(...) # Optional? MARK
     type: str = Field(...)
     zoom: Optional[str] = None
     timezone: Optional[str] = None
-    maxsessions: int = Field(...)
-    times: List[datetime] = Field(...)
+    maxsessions: Optional[int] = None
+    times: Optional[List[List[str]]] = None
     linkedin: Optional[str] = None
     pronouns: Optional[str] = None
     bio: Optional[str] = None
@@ -76,16 +76,10 @@ class Class(BaseModel):
 
 class Appointment(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    reserved: bool = Field(...)
-    tutorName: str = Field(...)
-    topics: List[str] = Field(...)
-    startTime: datetime = Field(...)
-    endTime: datetime = Field(...)
-    date: datetime = Field(...)
-    dayOfWeek: str = Field(...)
-    studentName: str = Field(...)
+    tutorEmail: str = Field(...)
     studentEmail: str = Field(...)
-    tutorId: str = Field(...)
+    startTime: datetime = Field(...)
+    
 
 # class Assignment(BaseModel):
 #     assignmentid: str = Field(...)
@@ -100,7 +94,7 @@ class Appointment(BaseModel):
 
 class IndividualAssignment(BaseModel):
     submitted: bool = Field(...)
-    submissionLink: str = Field(...)
+    submissionLink: Optional[str] = Field(...)
     student_email: EmailStr = Field(...)
     messages: List[str] = Field(...)
 
@@ -109,7 +103,8 @@ class Assignment(BaseModel):
     name: str = Field(...)
     description: str = Field(...)
     dueDate: datetime = Field(...)
-    individualAssignments: List[IndividualAssignment] = None
+    indivdualAssignments: List[IndividualAssignment] = Field(...)
+
 
 class Reply(BaseModel):
     author_id: str = Field(...)
@@ -120,14 +115,16 @@ class QuestionReply(BaseModel):
     reply: Reply = Field(...)
     question_name: str = Field(...)
 
-class Question(BaseModel):
+class QuestionIn(BaseModel):
     title: str = Field(...)
     question: str = Field(...)
     author: str = Field(...)
     date: datetime = Field(...)
-    ##numreplies: str = Field(...)
     replies: List[Reply] = Field(...)
     topics: List[str] = Field(...)
+
+class Question(QuestionIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
 class Test (BaseModel):
     title: str = Field(...)
