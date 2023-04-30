@@ -27,5 +27,5 @@ def format_appt_reminder(firstname: str, date_obj: datetime):
     day_str = date_obj.strftime("%A %B %d")
     time_str = date_obj.strftime("%I:%M %p")
 
-    message = "Hi " + firstname + ",\n\n" + "   This is reminder that you have an office hours appointment on " + day_str + " at " + time_str +  ".\n\n" + "Best,\n{G}Code"
+    message = "Hi " + firstname + ",\n\n" + "This is reminder that you have an office hours appointment on " + day_str + " at " + time_str +  ".\n\n" + "Best,\n{G}Code"
     return message
