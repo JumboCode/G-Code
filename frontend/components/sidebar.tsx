@@ -11,13 +11,12 @@ import "@fontsource/poppins";
 import { useRouter } from 'next/router';
 import { Toolbar } from '@mui/material';
 
-function SideBarElement({ text, active, setActive }) {
+function SideBarElement({ text, active }) {
     const [isHover, setIsHover] = useState(false);
     const router = useRouter();
     return <div
         key={text}
         onClick={function () {
-            setActive();
             router.push("/" +
                 text === "Dashboard" ? ''
                 : text.replace(/\s/g, ''));
@@ -51,14 +50,12 @@ function TextLabel({ text, active }) {
 }
 
 export default function Sidebar({ availablePages, currentPageTitle }) {
-  const [activePage, setActivePage] = useState(currentPageTitle);
   const pageTitles = availablePages;
   const sidebarElements = pageTitles.map((title) => {
     return (
       <SideBarElement
       text={title}
-      active={activePage === title}
-      setActive={() => setActivePage(title)}
+      active={currentPageTitle === title}
       key={title}
     />
     );

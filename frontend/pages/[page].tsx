@@ -44,7 +44,7 @@ const Page = () => {
           <Margin
                     user={user}
                     availablePages={student_pages}
-                    currentPageTitle={"Dashboard"}
+                    currentPageTitle={page}
                 >
                     {page == "Dashboard" && <StudentDashboard user={user} />}
                     {page == "Assignments" && <StudentAssignments user={user} />}
