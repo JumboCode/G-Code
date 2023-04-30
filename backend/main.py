@@ -53,10 +53,10 @@ async def get_questions():
     # response = []
     return response
 
-# @app.get("/api/questions_two")
-# async def get_question_two():
-#     response = fetch_all("Questions")
-#     return response
+@app.get("/api/questions_two")
+async def get_question_two():
+    response = fetch_all("Questions")
+    return response
 
 @app.get("/api/studentinvites")
 async def get_studentinvites():
@@ -480,15 +480,15 @@ async def get_admins():
 
 # Appointment routes
 
-# @app.get("/api/appointments")
-# async def get_appointments():
-#     response = fetch_all("Appointments")
-#     return response
+@app.get("/api/appointments")
+async def get_appointments():
+    response = fetch_all("Appointments")
+    return response
 
-# @app.get("/api/one_appointment")
-# async def get_one_appointment(field_name: str, field_value: Any):
-#     response = fetch_one("Appointments", field_name, field_value)
-#     return response
+@app.get("/api/one_appointment")
+async def get_one_appointment(field_name: str, field_value: Any):
+    response = fetch_one("Appointments", field_name, field_value)
+    return response
 
 # TODO: don't limit to 3
 @app.get("/api/appointments3")
@@ -503,23 +503,22 @@ async def cancel_appointment_by_id(id: str, current_user: UserIn =
     cancel_appointment(id)
     return "ok"
 
+@app.put("/api/put_appointment/")
+async def put_appointment(appointment_data: Appointment):
+    response = create_appointment(appointment_data.dict())
+    return response 
 
-# @app.put("/api/put_appointment/")
-# async def put_appointment(appointment_data: Appointment):
-#     response = create_appointment(appointment_data.dict())
-#     return response 
+@app.put("/api/assign_student_to_appoint/")
+async def assign_student_to_appointment(appointmentID: str , studentID : str):
+    response = reserve_appointment(appointmentID, studentID)   
+    return response 
 
-# @app.put("/api/assign_student_to_appoint/")
-# async def assign_student_to_appointment(appointmentID: str , studentID : str):
-#     response = reserve_appointment(appointmentID, studentID)   
-#     return response 
-
-# @app.put("/api/remove_student_from_appoint/")
-# async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
-#     if user.type != 'admin':
-#         raise HTTPException(status_code=403, detail="must be an admin to remove student")
-#     response = cancel_appointment(appointmentID)
-#     return response 
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to remove student")
+    response = cancel_appointment(appointmentID)
+    return response 
 
 @app.put("/api/reserve_appointment")
 async def reserve_appointment(appointment_data: AppointmentBookingIn,
@@ -567,7 +566,3 @@ async def get_available_appointments(date: date):
         appointments_by_admin[admin] = list(filter(lambda app : not does_appointment_exist(appointment=app, tutorEmail=admin), appointments_by_admin[admin]))
 
     return appointments_by_admin
-
-# Assignment routes
-
-# Post routes
