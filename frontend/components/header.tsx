@@ -78,7 +78,7 @@ function Header(props: Props) {
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="fixed" style={{ "borderBottom": "1px #D8D8DB solid" }} elevation={0}>
-        <Container maxWidth="xl">
+        <Container maxWidth={false}>
           <Toolbar disableGutters>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, mr: 1 }}>
               <img src='/GCodeLogo.svg' />

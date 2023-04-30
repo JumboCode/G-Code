@@ -153,9 +153,11 @@ class Post(BaseModel):
 class PostID(Post):
     id: str = Field(...)
 
-class AppointmentBooking(BaseModel):
-    admin_email: str = Field(...)
-    time_slot: TimeSlot = Field(...)
-    reservation_date: datetime = Field(...)
-    # student_id: str = Field(...)
+class AppointmentBookingIn(BaseModel):
+    tutorEmail: str = Field(...)
+    startTime: datetime = Field(...)
+    endTime: datetime = Field(...)
 
+class AppointmentBooking(AppointmentBookingIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    studentEmail: str = Field(...)

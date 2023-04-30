@@ -5,6 +5,7 @@ Authors: G-Code Jumbocode Team
 '''
 
 import random
+import math
 import string
 import os
 import re
@@ -521,11 +522,11 @@ async def cancel_appointment_by_id(id: str, current_user: UserIn =
 #     return response 
 
 @app.put("/api/reserve_appointment")
-async def reserve_appointment(appointment_data: AppointmentBooking,
+async def reserve_appointment(appointment_data: AppointmentBookingIn,
                               current_user=Depends(get_current_user)):
     data_dict = appointment_data.dict()
-    student_id = fetch_one("Users", "email", current_user.email).id
-    data_dict["student_id"] = student_id
+    student_email = fetch_one("Users", "email", current_user.email).email
+    data_dict["studentEmail"] = student_email
     create_appointment(data_dict)
 
 @app.get("/api/get_available_appointments")
@@ -545,22 +546,25 @@ async def get_available_appointments(date: date):
                 if appointment_slot.weekday == weekday:
                     appointments_by_admin[admin.email].append(appointment_slot)
 
+
     # cross check with booked appointments
     # for each appointment, search for appointment by admin ID and time slot
         # if booking exists, remove from response
     appointments = fetch_all("Appointments")
-    print(appointments)
+    print(appointments_by_admin)
 
-    def does_appointment_exist(appointment, admin_email):
+    def does_appointment_exist(appointment, tutorEmail):
         for existing_appointment in appointments:
-            if (existing_appointment.admin_email == admin_email and 
-                existing_appointment.reservation_date == date and 
-                existing_appointment.start_time == appointment.start_time):
+            hour = math.trunc(appointment.start_time)
+            minute = int(60 * (appointment.start_time - math.trunc(appointment.start_time)))
+            if (existing_appointment.tutorEmail == tutorEmail and 
+                existing_appointment.startTime.date() == date and
+                existing_appointment.startTime.time() == time(hour, minute)):
                 return True
         return False
 
     for admin in appointments_by_admin:
-        filter(does_appointment_exist, appointments_by_admin[admin])
+        appointments_by_admin[admin] = list(filter(lambda app : not does_appointment_exist(appointment=app, tutorEmail=admin), appointments_by_admin[admin]))
 
     return appointments_by_admin
 

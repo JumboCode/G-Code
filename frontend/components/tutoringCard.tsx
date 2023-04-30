@@ -54,7 +54,6 @@ function TutoringCard({
   function handleCancel(id : string) {
 
     const token = Cookies.get('gcode-session');
-    console.log("Cancel Appointment" + id)
 
     axios.put('http://localhost:8000/api/cancel-appointment?id=' + id, null, {
       headers: {
@@ -209,17 +208,14 @@ export default function TutoringCardDisplay() {
         sessions.map((session) => {
           const startTime = new Date(session.startTime);
           const endTime = new Date(session.endTime);
-          const date = new Date(session.date);
-
-          console.log("session:")
-          console.log(session);
+          const date = new Date(session.startTime);
 
           const options = { year: 'numeric', month: 'long', day: 'numeric' };
           const formattedDate = date.toLocaleDateString('en-US', options);
 
           return (
             <TutoringCard
-              name={session.name}
+              name={session.tutorEmail}
               date={formattedDate}
               time={`${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
               id={session._id}

@@ -13,7 +13,6 @@ export const formatAMPM = (date_string: string) => {
 }
 
 export const numberToAMPM = (num: number) => {
-  console.log(num)
   var hours = Math.floor(num);
   var minutes = Math.round((num - hours) * 60);
   var amPm = (hours < 12) ? "AM" : "PM";
@@ -25,6 +24,17 @@ export const numberToAMPM = (num: number) => {
   }
 
   return hours + ":" + (minutes < 10 ? "0" + minutes : minutes) + " " + amPm;
+}
+
+export const numberToMilitary = (num: number) => {
+  // Get the integer part of the number
+  const hour = Math.floor(num);
+  // Get the decimal part of the number and multiply by 60 to get minutes
+  const minute = Math.floor((num - hour) * 60);
+  // Use string interpolation to format the time string
+  const timeString = `${hour}:${minute < 10 ? '0' : ''}${minute}`;
+  // Return the military time string
+  return timeString;
 }
 
 export const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']

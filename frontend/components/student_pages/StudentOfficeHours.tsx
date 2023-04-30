@@ -25,7 +25,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 // constants
-import { numberToAMPM, weekDays, months, dateToString } from '../../constants'
+import { numberToAMPM, weekDays, months, dateToString, numberToMilitary } from '../../constants'
 
 export default function StudentOfficeHours(props) {
     const user = props.user
@@ -43,7 +43,7 @@ export default function StudentOfficeHours(props) {
                     if (res.data[tutor_name].length > 0) {
                         tutor_list.push({
                             name: tutor_name,
-                            email: tutor_name, // TODO: change to email
+                            email: tutor_name,
                             date: date,
                             times: res.data[tutor_name]
                         })
@@ -422,12 +422,9 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
         };
 
         const requestBody = {
-            "admin_email": admin_email,
-            "time_slot": {
-                "starttime": start_time,
-                "endtime": end_time
-            },
-            "reservation_date": date
+            "tutorEmail": admin_email,
+            "startTime": dateToString(date) + 'T' + numberToMilitary(start_time),
+            "endTime": dateToString(date) + 'T' + numberToMilitary(end_time),
         };
 
         axios.put('http://localhost:8000/api/reserve_appointment', requestBody, config)
