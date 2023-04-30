@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  Box,
-  Modal,
-  Typography,
-  TextField,
-} from "@mui/material";
+import { Grid, Box, Modal, Typography, TextField, List, ListItem, ListItemAvatar, ListItemText, Avatar, IconButton } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import TutoringCardDisplay from "../tutoringCard";
 import styles from "../../styles/Home.module.css";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import CommunityResourcesPanel from "../communityResourcesPanel";
 import { useRouter } from "next/router";
 import axios from "axios";
+import Image from "next/image";
+import FAQIcon from "../../public/questionmark.png";
+import CalendarIcon from "../../public/calendar.jpg";
+import AssignmentIcon from "../../public/assignments.jpg";
+import AddAssignmentIcon from "../../public/addassignment.png";
+import PeopleIcon from "../../public/people.png";
+import AddPersonIcon from "../../public/addperson.png";
+import GreenCircle from "../../public/green.png";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -72,10 +67,11 @@ export default function Dashboard(props) {
           <Grid container columnSpacing={2} padding={1}>
             <Grid item xs={6} md={12} lg={4}>
               <div className={styles.question}>
-                <img
-                  src="FAQBoardIcon.svg"
+                <Image
+                  src={PeopleIcon}
+                  alt="View Students"
                   onClick={() => {
-                    router.push("/FAQBoard");
+                    router.push("/People");
                   }}
                 />
                 <br />
@@ -84,10 +80,11 @@ export default function Dashboard(props) {
             </Grid>
             <Grid item xs={6} md={12} lg={4}>
               <div className={styles.question}>
-                <img
-                  src="FAQBoardIcon.svg"
+                <Image
+                  src={PeopleIcon}
+                  alt="View Instructors"
                   onClick={() => {
-                    router.push("/FAQBoard");
+                    router.push("/People");
                   }}
                 />
                 <br />
@@ -96,34 +93,24 @@ export default function Dashboard(props) {
             </Grid>
             <Grid item xs={6} md={12} lg={4}>
               <div className={styles.question}>
-                <img
-                  src="FAQBoardIcon.svg"
+                <Image
+                  src={AssignmentIcon}
+                  alt="View Assignments"
                   onClick={() => {
-                    router.push("/FAQBoard");
+                    router.push("/Assignments");
                   }}
                 />
                 <br />
-                View Classes
+                View Assignments
               </div>
             </Grid>
             <Grid item xs={6} md={12} lg={4}>
               <div className={styles.question}>
-                <img
-                  src="FAQBoardIcon.svg"
+                <Image
+                  src={AddPersonIcon}
+                  alt="People"
                   onClick={() => {
-                    router.push("/FAQBoard");
-                  }}
-                />
-                <br />
-                Add Class
-              </div>
-            </Grid>
-            <Grid item xs={6} md={12} lg={4}>
-              <div className={styles.question}>
-                <img
-                  src="FAQBoardIcon.svg"
-                  onClick={() => {
-                    router.push("/FAQBoard");
+                    router.push("/People");
                   }}
                 />
                 <br />
@@ -132,7 +119,20 @@ export default function Dashboard(props) {
             </Grid>
             <Grid item xs={6} md={12} lg={4}>
               <div className={styles.question}>
-                <img src="FAQBoardIcon.svg" onClick={handleOpen} />
+                <Image
+                  src={AddPersonIcon}
+                  alt="Add Instructor"
+                  onClick={() => {
+                    router.push("/Dashbaord");
+                  }}
+                />
+                <br />
+                Add Instructor
+              </div>
+            </Grid>
+            <Grid item xs={6} md={12} lg={4}>
+              <div className={styles.question}>
+                <Image src={AddAssignmentIcon} alt="Add Assignment" onClick={handleOpen} />
                 <br />
                 Add Assignment
               </div>
@@ -200,7 +200,7 @@ export default function Dashboard(props) {
                   >
                     <ListItemAvatar>
                       <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
-                        <img src="./AssignmentIcon.svg" />
+                        <Image src={GreenCircle} alt="Assignment"/>
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
@@ -214,24 +214,26 @@ export default function Dashboard(props) {
           )}
         </Grid>
         <Grid item xs={12} md={4}>
-          <div className={styles.header2}> Schedule OH </div>
+          <div className={styles.header2}> Resources </div>
           <Grid container spacing={2}>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                <img
-                  src="FAQBoardIcon.svg"
+                <Image
+                  src={CalendarIcon}
+                  alt="Office Hours"
                   onClick={() => {
                     router.push("/OfficeHours");
                   }}
                 />
                 <br />
-                FAQ Board
+                Office Hours
               </div>
             </Grid>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                <img
-                  src="FAQBoardIcon.svg"
+                <Image
+                  src={FAQIcon}
+                  alt="FAQ Board"
                   onClick={() => {
                     router.push("/FAQBoard");
                   }}
@@ -241,7 +243,6 @@ export default function Dashboard(props) {
               </div>
             </Grid>
           </Grid>
-          <CommunityResourcesPanel />
         </Grid>
       </Grid>
     </>

@@ -8,7 +8,7 @@ import loginStyles from "../styles/Login.module.css";
 import Sidebar from "../components/sidebar";
 import logo from "./public/GCodeLogo.png";
 import { Button, ThemeProvider, TextField, Box } from "@mui/material";
-import { theme } from "../theme.ts";
+import { theme } from "../theme";
 import { useRouter } from "next/router";
 import Grid from '@mui/material/Grid'
 import Cookies from "js-cookie";
@@ -21,12 +21,12 @@ import Link from "next/link";
 
 export default function Registration() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [code, setCode] = useState();
-  const [zoom, setZoom] = useState();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [zoom, setZoom] = useState("");
   const [regError, setRegError] = useState(false);
 
   /* POST DATA */
@@ -67,18 +67,18 @@ export default function Registration() {
           <Box component="form">
             <h1 className={loginStyles.signInText}> Create an Account </h1>
             <Grid container spacing={2}>
-              <Grid item md="6" xs="12">
+              <Grid item md={6} xs={12}>
                 <TextField
                   fullWidth
                   id="outlined-basic"
                   label="First name"
                   variant="outlined"
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setFirstName(event.target.value);
+                    setFirstName(event.target.value as string);
                   }}
                 />
               </Grid>
-              <Grid item md="6" xs="12">
+              <Grid item md={6} xs={12}>
                 <TextField
                   fullWidth
                   id="outlined-basic"
@@ -89,7 +89,7 @@ export default function Registration() {
                   }}
                 />
               </Grid>
-              <Grid item xs="12">
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   id="outlined-helperText"
@@ -100,7 +100,7 @@ export default function Registration() {
                   }}
                 />
               </Grid>
-              <Grid item xs="12">
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   id="outlined-basic"
@@ -111,7 +111,7 @@ export default function Registration() {
                   }}
                 />
               </Grid>
-              <Grid item xs="12">
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   id="outlined-basic"
@@ -122,7 +122,7 @@ export default function Registration() {
                   }}
                 />
               </Grid>
-              <Grid item xs="12">
+              <Grid item xs={12}>
                 <Button fullWidth variant="primary" onClick={postRegInfo}>
                   <h1 className={loginStyles.signInButton}>Create Account</h1>
                 </Button>

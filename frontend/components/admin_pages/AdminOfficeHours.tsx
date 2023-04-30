@@ -1,104 +1,230 @@
 import React, { useState } from 'react';
 import styles from '../../styles/Home.module.css'
-import { DropDownMenu, TimeMenu } from '../menus'
-import Switch from '@mui/material/Switch';
+import { Box, Grid, Typography, Button, Switch, IconButton, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Select, FormControl, MenuItem} from "@mui/material"
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import axios from "axios"
 
 const button_style = { color: '#3D495C' };
-
-
-const tutors = [{
-    name: 'Michelle Minns',
-    imageUrl: 'NyraRobinson.png',
-    times: ['10:30 AM', '11 AM', '11:30 AM', '8 PM', '8:30 PM', '9 PM']
-}, {
-    name: 'Laena Tyler',
-    imageUrl: 'LaenaTyler.png',
-    times: ['7 PM', '7:30 PM', '8 PM', '9 PM', '9:30 PM', '10 PM']
-}]
-
+const sessions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+const timezones = ["Eastern", "Central", "Mountain", "Pacific"];
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+const options = ['9:00 AM', '9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM', '12:00 PM',
+'12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM',
+'4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM','8:30 PM', '9:00 PM'];
 export default function AdminOfficeHours(props) {
     const user = props.user
+    const [timeZone, setTimeZone] = React.useState("");
+    const [maxSessions, setMaxSessions] = React.useState(0);
+    const [times, setTimes] = React.useState([[],[],[]]);
+    const [isDefault, setIsDefault] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
 
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    const saveSchedule = () => {
+      console.log("Calling saveSchedule")
+      console.log("Email: " + user.email)
+      console.log("Timezone: " + timeZone);
+      console.log("Max Sessions: " + maxSessions);
+      console.log("Default: " + isDefault);
+
+      const schedule_info = {
+        email: user.email,
+        timezone: timeZone,
+        maxsessions: maxSessions,
+        times: times,
+        default: isDefault,
+      };
+      axios.post('http://localhost:8000/api/save_schedule', schedule_info)
+  };
 
     return (
-        <div style={tutoring_styles.ScheduleContainer}>
-            <PageHeading />
-            <AvailableSessionsSection />
-            <h2 style={{ ...tutoring_styles.SubHeading }}>
-                Available Times for Signup
-            </h2>
+    <>
+    <ConfirmZero open={open} setOpen={setOpen} saveSchedule={saveSchedule} />
 
+    {/* Header */}
+          <Grid container xs={12}>
+              <Grid item xs={4}></Grid>
+              <Grid item xs={4}> 
+                <Typography fontSize="2rem" fontWeight="bold">
+                  Office Hours Schedule
+                </Typography>
+              </Grid>
+              <Grid item xs={4}></Grid>
+            </Grid>
+
+      <Grid container xs={12}>
+{/* Left Side */}
+        <Grid item xs={8}>
+              <h2 style={{ ...tutoring_styles.SubHeading }}>
+                  Current Availablility
+              </h2>
             <TableContainer className={styles.pageElement} component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableBody>
                         {
                             days.map(day => (
-                                <DayRow dayName={day} />
+                                <DayRow dayName={day} key={day} times={times} setTimes={setTimes} />
                             ))
                         }
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+        </Grid>
+<Grid item xs={1}></Grid>
+{ /* Right Side */}
+        <Grid item xs={3}>
+          <OptionsSidebar></OptionsSidebar>
+        </Grid>
+    </Grid>
+    </>
     )
+
+
+  
+  function OptionsSidebar() {
+      return (
+        <>
+            <Box>
+              <Grid item xs={12} mb="10%"></Grid>
+  
+              <Typography variant="h3">
+                Settings
+              </Typography>
+  
+              <Grid item xs={12} mb="10%"></Grid>
+  
+              <Grid item xs={4}></Grid>
+              <Grid item xs={8}>
+                <Typography>
+                  Time Zone
+                </Typography>
+                  <FormControl fullWidth>
+                  <Select
+                    value={timeZone}
+                    displayEmpty
+                    onChange={(event) => setTimeZone(event.target.value)}
+                    sx={{
+                      height: '30px',
+                      fontFamily: 'Poppins',
+                      backgroundColor: 'white'
+                    }}
+                  >
+                  {timezones.map(option =>
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                    )}
+                  </Select>
+                  </FormControl>
+
+                <Grid item xs={4}></Grid>
+  
+                <Grid item xs={12} mb="20%"></Grid>
+  
+              <Typography>
+                  Max # of Sessions / Week
+                  <Typography color="#111111" fontSize=".7rem">
+                  <p>Note: You can put in more times than this, this is just a cap on how many of those times can be reserved by students. Each session is 30 minutes.</p>
+                  </Typography>
+              </Typography>
+              <FormControl fullWidth>
+                  <Select
+                    value={maxSessions}
+                    displayEmpty
+                    onChange={(event) => setMaxSessions(event.target.value as number)}
+                    sx={{
+                      height: '30px',
+                      fontFamily: 'Poppins',
+                      backgroundColor: 'white'
+                    }}
+                  >
+                  {sessions.map(option =>
+                    <MenuItem value={option} key={option}>
+                      {option}
+                    </MenuItem>
+                    )}
+                  </Select>
+                  </FormControl>
+  
+                <Grid item xs={12} mb="20%"></Grid>
+
+                <Typography>
+                  Save as default schedule
+                </Typography>
+                <FormControl fullWidth>
+                  <Select
+                    value={isDefault}
+                    displayEmpty
+                    onChange={(event) => setIsDefault(event.target.value as boolean)}
+                    sx={{
+                      height: '30px',
+                      fontFamily: 'Poppins',
+                      backgroundColor: 'white'
+                    }}
+                  >
+                    <MenuItem value="true" key="yes">Yes</MenuItem>
+                    <MenuItem value="false" key="no">No</MenuItem>
+                  </Select>
+                  </FormControl>
+
+                <Grid item xs={12} mb="20%"></Grid>
+  
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => {
+                    if (maxSessions == 0) {
+                      setOpen(true)
+                    } else {
+                      saveSchedule();
+                    }
+                  }}
+                >
+                    Save Schedule
+                </Button>
+              </Grid>
+            </Box>
+          </>
+      );
+  }
 }
 
-function PageHeading() {
-    return (
-        <div style={tutoring_styles.PageHeadingContainer}>
-            <h1>Office Hours Schedule</h1>
-            {/* <h3 style={tutoring_styles.TimeZone}> Time Zone </h3> */}
-            <DropDownMenu
-                width={'auto'}
-                options={[
-                    'Eastern Time',
-                    'Pacific Time',
-                ]} />
-            <div style={tutoring_styles.CheckBox}>
-                <Checkbox disableRipple />
-                <p>Make this the default schedule</p>
-            </div>
-        </div>
-    )
+function ConfirmZero({ open, setOpen, saveSchedule }) {
+  const handleCloseYes = () => {
+    setOpen(false);
+    console.log("Yes")
+    saveSchedule();
+  };
+
+  const handleCloseNo = () => {
+    setOpen(false);
+    console.log("No")
+  };
+
+  return (
+    <div>
+      <Dialog
+        open={open}
+        onClose={handleCloseNo}
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to have 0 sessions per week?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseNo}>No</Button>
+          <Button onClick={handleCloseYes} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 }
 
-function AvailableSessionsSection() {
-    return (
-        <div style={tutoring_styles.AvailableSessionsContainer}>
-            <h2 style={tutoring_styles.SubHeading}>
-                # of Tutoring Sessions This Week
-            </h2>
-            <p>Note: You can put in more times than this, this is just a cap on how many of those times can be reserved by students</p>
-            <DropDownMenu
-                width="110px"
-                options={[
-                    '1 slot',
-                    '2 slots',
-                    '3 slots',
-                    '4 slots',
-                    '5 slots',
-                    '6 slots',
-                    '7 slots',
-                    '8 slots',
-                    '9 slots',
-                    '10 slots',
-                ]} />
-        </div>
-    )
-}
-
-function DayRow({ dayName }) {
+function DayRow({ dayName, times, setTimes }) {
     const [numTimeIntervals, setNumTimeIntervals] = useState(1);
     return (
         <TableRow
@@ -122,29 +248,78 @@ function DayRow({ dayName }) {
                     <TimeIntervalSelector
                         bottom={index === (numTimeIntervals - 1)}
                         key={index}
-                        setNumTimeIntervals={setNumTimeIntervals} />
+                        dayName = {dayName}
+                        setNumTimeIntervals={setNumTimeIntervals}
+                        times = {times}
+                        setTimes = {setTimes}
+                        />
                 )}
             </TableCell>
         </TableRow>
     );
 }
 
-function TimeIntervalSelector({ bottom, setNumTimeIntervals }) {
-    return <div style={tutoring_styles.TimeIntervalSelector}>
-        <TimeMenu />
+function TimeIntervalSelector({ bottom, setNumTimeIntervals, dayName, times, setTimes }) {
+    function update_start_time(time) {
+      var times_copy = times
+
+
+    }
+
+    function update_end_time(time) {
+
+    }
+
+    return (
+    <div style={tutoring_styles.TimeIntervalSelector}>
+{/* START TIME*/}
+      <FormControl fullWidth>
+        <Select
+          displayEmpty
+          sx = {{
+            height: "30px"
+          }}
+          onChange={(event) => update_start_time(event.target.value)}
+        >
+      {options.map(option =>
+        <MenuItem value={option} key={option}>
+          {option}
+        </MenuItem>
+      )}
+        </Select>
+      </FormControl>
+
         TO
-        <TimeMenu />
-        {bottom && <>
-            <IconButton onClick={() => setNumTimeIntervals((old) => old + 1)}>
-                <AddRoundedIcon sx={button_style} />
-            </IconButton>
-            <IconButton onClick={() => {
-                setNumTimeIntervals((old) => old - 1);
-            }}>
-                <DeleteOutlineOutlinedIcon sx={button_style} />
-            </IconButton>
-        </>}
-    </div>
+
+{/* END TIME */}
+      <FormControl fullWidth>
+        <Select
+          displayEmpty
+          sx = {{
+            height: "30px"
+          }}
+          onChange={(event) => update_end_time(event.target.value)}
+        >
+      {options.map(option =>
+        <MenuItem value={option} key={option}>
+          {option}
+        </MenuItem>
+      )}
+        </Select>
+      </FormControl>
+
+{/* CREATE NEW ROW */}     
+    {bottom && <>
+      <IconButton onClick={() => setNumTimeIntervals((old) => old + 1)}>
+          <AddRoundedIcon sx={button_style} />
+      </IconButton>
+      <IconButton onClick={() => {
+          setNumTimeIntervals((old) => old - 1);
+      }}>
+          <DeleteOutlineOutlinedIcon sx={button_style} />
+      </IconButton>
+    </>}
+  </div>)
 }
 
 const tutoring_styles = ({

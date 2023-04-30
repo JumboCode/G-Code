@@ -31,10 +31,17 @@ class UserIn(BaseModel):
     firstname: str = Field(...)
     lastname: str = Field(...)
     email: str = Field(...)
-    password: str = Field(...)
+    password: Optional[str] = Field(...) # Optional? MARK
     type: str = Field(...)
     zoom: Optional[str] = None
     appointment_slots: Optional[List[AppointmentSlot]] = None
+    timezone: Optional[str] = None
+    maxsessions: Optional[int] = None
+    times: Optional[List[List[str]]] = None
+    linkedin: Optional[str] = None
+    pronouns: Optional[str] = None
+    bio: Optional[str] = None
+    github: Optional[str] = None
 
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -66,7 +73,7 @@ class UserInvite(BaseModel):
 # Assignments
 class IndividualAssignment(BaseModel):
     submitted: bool = Field(...)
-    submissionLink: str = Field(...)
+    submissionLink: Optional[str] = Field(...)
     student_email: EmailStr = Field(...)
     messages: List[str] = Field(...)
 
@@ -75,7 +82,8 @@ class Assignment(BaseModel):
     name: str = Field(...)
     description: str = Field(...)
     dueDate: datetime = Field(...)
-    individualAssignments: List[IndividualAssignment] = None
+    indivdualAssignments: List[IndividualAssignment] = Field(...)
+
 
 # Posts (TODO: remove unneeded models)
 class Reply(BaseModel):
@@ -87,7 +95,7 @@ class QuestionReply(BaseModel):
     reply: Reply = Field(...)
     question_name: str = Field(...)
 
-class Question(BaseModel):
+class QuestionIn(BaseModel):
     title: str = Field(...)
     question: str = Field(...)
     author: str = Field(...)
