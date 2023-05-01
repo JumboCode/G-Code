@@ -540,3 +540,15 @@ async def put_reply(post_ID: str, reply_data: Reply):
     '''
     response = add_reply(post_ID, reply_data.dict())
     return response
+
+@app.get("/api/get_question_by_id")
+async def get_question_by_id (id_string: str):
+    response = fetch_one("Questions", "_id", ObjectId(id_string)).dict()
+    # Prevents TypeError(“‘ObjectId’ object is not iterable”)
+    response['id'] = str(response['id'])
+    return response
+
+@app.get("/api/get_assignment_by_id")
+async def get_question_by_id (id_string: str):
+    response = fetch_one("Assignments", "_id", ObjectId(id_string)).dict()
+    return response

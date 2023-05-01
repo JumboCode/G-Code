@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap");
+@import "@fontsource/poppins";
+
 .header1 {
   position: relative;
   margin: 2rem;
@@ -206,7 +209,50 @@
   border: #b90064;
 }
 
-/* .break {
-    flex-basis: 100%;
-    height: 0;
-  } */
+.title {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 53.0754px;
+  line-height: 70px;
+  /* Dark Blue */
+  color: #2c3a57;
+}
+
+.timeRemaining {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 35.3836px;
+  line-height: 53px;
+  /* Green */
+  color: #00777f;
+}
+
+.header {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 33.6144px;
+  line-height: 44px;
+  /* Dark Blue */
+  color: #2c3a57;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.descriptionText {
+  background: #ffffff;
+  border: 1.76918px solid #e0e0e0;
+  border-radius: 53.0754px;
+
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 169.5%;
+  /* or 54px */
+  display: flex;
+  align-items: center;
+  color: #4a4a4a;
+}
