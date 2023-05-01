@@ -5,7 +5,7 @@ from bson import ObjectId
 from typing import Optional
 from bson.objectid import ObjectId as BsonObjectId
 
-
+# For MongoDB IDs
 class PyObjectId(ObjectId):
     @classmethod
     def __get_validators__(cls):
@@ -21,15 +21,11 @@ class PyObjectId(ObjectId):
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
 
-
-class TimeSlot(BaseModel):
-    starttime: datetime = Field(...)
-    endtime: datetime = Field(...)
-
-
-class Language(BaseModel):
-    language: str = Field(...)
-    level: str = Field(...)
+# User models
+class AppointmentSlot(BaseModel):
+    weekday: str = Field(...)
+    start_time: float = Field(...)
+    end_time: float = Field(...)
 
 class UserIn(BaseModel):
     firstname: str = Field(...)
@@ -38,6 +34,7 @@ class UserIn(BaseModel):
     password: Optional[str] = Field(...) # Optional? MARK
     type: str = Field(...)
     zoom: Optional[str] = None
+    appointment_slots: Optional[List[AppointmentSlot]] = None
     timezone: Optional[str] = None
     maxsessions: Optional[int] = None
     times: Optional[List[List[str]]] = None
@@ -49,14 +46,16 @@ class UserIn(BaseModel):
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
-
+# Authentication
 class Token(BaseModel):
     access_token: str
     token_type: str
+
 class TokenData(BaseModel):
     email: Optional[str] = None
     type: Optional[str] = None
 
+# User invites
 class UserInviteRequest(BaseModel):
     firstname: str = Field(...)
     lastname: str = Field(...)
@@ -71,27 +70,7 @@ class UserInvite(BaseModel):
     date: datetime = Field(...)
     accesscode: str = Field(...)
 
-class Class(BaseModel):
-    name: str = Field(...)
-
-class Appointment(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    tutorEmail: str = Field(...)
-    studentEmail: str = Field(...)
-    startTime: datetime = Field(...)
-    
-
-# class Assignment(BaseModel):
-#     assignmentid: str = Field(...)
-#     name: str = Field(...)
-#     description: str = Field(...)
-#     completed: bool = Field(...)
-#     dueDate: datetime = Field(...)
-#     messages: List[str] = Field(...)
-#     submissionLink: str = Field(...)
-#     submitted: bool = Field(...)
-#     studentid: str = Field(...)
-
+# Assignments
 class IndividualAssignment(BaseModel):
     submitted: bool = Field(...)
     submissionLink: Optional[str] = Field(...)
@@ -106,6 +85,7 @@ class Assignment(BaseModel):
     indivdualAssignments: List[IndividualAssignment] = Field(...)
 
 
+# Posts (TODO: remove unneeded models)
 class Reply(BaseModel):
     author_id: str = Field(...)
     body: str = Field(...)
@@ -126,20 +106,6 @@ class QuestionIn(BaseModel):
 class Question(QuestionIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
-class Test (BaseModel):
-    title: str = Field(...)
-    question: str = Field(...)
-    # author: str = Field(...)
-    # date: datetime = Field(...)
-    # ##numreplies: str = Field(...)
-    # replies: List[Reply] = Field(...)
-    # topics: List[str] = Field(...)
-
-
-class LoginInfo(BaseModel):
-    email: str = Field(...)
-    password: str = Field(...)
-
 class Post(BaseModel):
     title: str = Field(...)
     body: str = Field(...)
@@ -151,3 +117,15 @@ class Post(BaseModel):
 class PostID(Post):
     id: str = Field(...)
 
+# Appointments
+class AppointmentBookingIn(BaseModel):
+    tutorEmail: str = Field(...)
+    startTime: datetime = Field(...)
+    endTime: datetime = Field(...)
+
+class AppointmentBooking(AppointmentBookingIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    studentEmail: str = Field(...)
+
+class Appointment(AppointmentBooking):
+    id2: str = Field(...)

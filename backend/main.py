@@ -7,6 +7,7 @@ Authors: G-Code Jumbocode Team
 import random
 import string
 import os
+import math
 import re
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,8 +15,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from hashing import Hash
 from jwttoken import create_access_token
 from oauth import get_current_user
-from datetime import datetime, timezone, timedelta, date
-import datetime, time
+from datetime import datetime, date, time
 # from http.client import HTTPException
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
@@ -156,22 +156,6 @@ async def get_students():
 @app.get("/api/admins")
 async def get_admins():
     response = fetch_all("Admins")
-    return response
-
-@app.get("/api/appointments")
-async def get_appointments():
-    response = fetch_all("Appointments")
-    return response
-
-@app.get("/api/assignments")
-async def get_assignments():
-    response = fetch_all("Assignments")
-    return response
-
-@app.get("/api/appointments3")
-async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
-    print("Printing Current User Email: " + currentUser.email)
-    response = fetch3Appointments(currentUser.email)
     return response
 
 @app.get("/api/questions")
@@ -361,12 +345,6 @@ async def get_filtered_appointments(filter: list[tuple]):
     response = fetch_filtered("Appointments", filter)
     return response
 
-@app.put("/api/cancel-appointment")
-async def cancel_appointment_by_id(id: str, current_user: UserIn = 
-                            Depends(get_current_user)):
-    cancel_appointment(id)
-    return "ok"
-
 
 # Send request for new user
 @app.put("/api/request_student")
@@ -404,23 +382,6 @@ async def put_student_join(access_token: str, student_data: User):
         return s
     else:
         return HTTPException("Student was not created")
-
-# Add new appt to database
-@app.put("/api/put_appointment/")
-async def put_appointment(appointment_data: Appointment):
-    response = create_appointment(appointment_data.dict())
-    return response 
-
-@app.put("/api/assign_student_to_appoint/")
-async def assign_student_to_appointment(appointmentID: str , studentID : str):
-    '''
-    Purpose: updates an appointment by linking it to the student reserving the appointment, 
-             and marks as reserved 
-    
-    Input: The appointment ID, and the ID of the student registering 
-    '''
-    response = reserve_appointment(appointmentID, studentID)   
-    return response 
 
 @app.put("/api/remove_student_from_appoint/")
 async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
@@ -614,4 +575,90 @@ async def put_reply(post_ID: str, reply_data: Reply):
     Input: A reply data object and a post id string
     '''
     response = add_reply(post_ID, reply_data.dict())
+    return response
+
+# Appointment routes
+
+@app.get("/api/appointments")
+async def get_appointments():
+    response = fetch_all("Appointments")
+    return response
+
+@app.get("/api/one_appointment")
+async def get_one_appointment(field_name: str, field_value: Any):
+    response = fetch_one("Appointments", field_name, field_value)
+    return response
+
+# TODO: don't limit to 3
+@app.get("/api/appointments3")
+async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
+    response = fetch3Appointments(currentUser.email)
+    return response
+
+# done
+@app.put("/api/cancel-appointment")
+async def cancel_appointment_by_id(id: str, current_user: UserIn = 
+                            Depends(get_current_user)):
+    cancel_appointment(id)
+    return "ok"
+
+@app.put("/api/put_appointment/")
+async def put_appointment(appointment_data: Appointment):
+    response = create_appointment(appointment_data.dict())
+    return response 
+
+@app.put("/api/assign_student_to_appoint/")
+async def assign_student_to_appointment(appointmentID: str , studentID : str):
+    response = reserve_appointment(appointmentID, studentID)   
+    return response 
+
+@app.put("/api/reserve_appointment")
+async def reserve_appointment(appointment_data: AppointmentBookingIn,
+                              current_user=Depends(get_current_user)):
+    data_dict = appointment_data.dict()
+    student_email = fetch_one("Users", "email", current_user.email).email
+    data_dict["studentEmail"] = student_email
+    create_appointment(data_dict)
+
+@app.get("/api/get_available_appointments")
+async def get_available_appointments(date: date):
+    appointments_by_admin = dict()
+
+    weekday = date.strftime('%A')
+    
+    print(str(date) + " is a " + str(weekday))
+
+    admins = fetch_filtered("Users",[("type", "admin")])
+
+    for admin in admins:
+        appointments_by_admin[admin.email] = []
+        if admin.appointment_slots:
+            for appointment_slot in admin.appointment_slots:
+                if appointment_slot.weekday == weekday:
+                    appointments_by_admin[admin.email].append(appointment_slot)
+
+
+    # cross check with booked appointments
+    # for each appointment, search for appointment by admin ID and time slot
+        # if booking exists, remove from response
+    appointments = fetch_all("Appointments")
+
+    def does_appointment_exist(appointment, tutorEmail):
+        for existing_appointment in appointments:
+            hour = math.trunc(appointment.start_time)
+            minute = int(60 * (appointment.start_time - math.trunc(appointment.start_time)))
+            if (existing_appointment.tutorEmail == tutorEmail and 
+                existing_appointment.startTime.date() == date and
+                existing_appointment.startTime.time() == datetime.time(hour, minute)):
+                return True
+        return False
+
+    for admin in appointments_by_admin:
+        appointments_by_admin[admin] = list(filter(lambda app : not does_appointment_exist(appointment=app, tutorEmail=admin), appointments_by_admin[admin]))
+
+    return appointments_by_admin
+
+@app.get("/api/assignments")
+async def get_assignments():
+    response = fetch_all("Assignments")
     return response

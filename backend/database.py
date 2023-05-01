@@ -30,7 +30,7 @@ questions    = database.questions
 posts        = database.posts
 
 
-model_dic = {"Users": UserIn, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": Appointment, "Questions": Question, "Sessions": Any, "Assignments": Assignment}
+model_dic = {"Users": UserIn, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": AppointmentBooking, "Questions": Question, "Sessions": Any, "Assignments": Assignment}
 
 db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions, "Assignments": assignments}
 
@@ -87,7 +87,7 @@ def fetch3Appointments(studentEmail):
     print("email: " + studentEmail)
     cursor = appointments.find({"studentEmail" : studentEmail}).sort("date", -1).limit(3)
     for document in cursor:
-        result_list.append(stringify_id(Appointment(**document)))
+        result_list.append(stringify_id(AppointmentBooking(**document)))
     return result_list
 
 def create_one (model_class: str, to_add):
@@ -229,9 +229,9 @@ def cancel_appointment(appointmentID):
     '''
     Purpose: If there are more than 24 before the appointment, cancel and unmark as reserved
     '''
-    appointmentDoc = appointments.find_one({"_id": ObjectId(appointmentID)})
+    appointmentDoc = appointments.delete_one({"_id": ObjectId(appointmentID)})
     # if (appointmentDoc['startTime'] - timedelta(days=1) > datetime.today()):
-    appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentName": "", "reserved": False , "studentEmail":""} })
+    # appointments.update_one({"_id": ObjectId(appointmentID)}, { "$set": { "studentName": "", "reserved": False , "studentEmail":""} })
     return appointmentID
 
 def remove_student_invite(ak):
