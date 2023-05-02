@@ -9,13 +9,14 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Image from "next/image";
-import FAQIcon from "../../public/questionmark.png";
-import CalendarIcon from "../../public/calendar.jpg";
-import AssignmentIcon from "../../public/assignments.jpg";
-import AddAssignmentIcon from "../../public/addassignment.png";
-import PeopleIcon from "../../public/people.png";
-import AddPersonIcon from "../../public/addperson.png";
+import FAQIcon from "../../public/faq.svg";
+import CalendarIcon from "../../public/officehours.svg";
 import GreenCircle from "../../public/green.png";
+
+import PeopleIcon from '@mui/icons-material/People';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -65,74 +66,48 @@ export default function Dashboard(props) {
             <TutoringCardDisplay />
           </div>
           <Grid container columnSpacing={2} padding={1}>
-            <Grid item xs={6} md={12} lg={4}>
+            <Grid item xs={12} md={6}>
               <div className={styles.question}>
-                <Image
-                  src={PeopleIcon}
-                  alt="View Students"
+                <PeopleIcon
                   onClick={() => {
                     router.push("/People");
                   }}
+                  sx={icon_style}
                 />
                 <br />
-                View Students
+                View People
               </div>
             </Grid>
-            <Grid item xs={6} md={12} lg={4}>
+            <Grid item xs={12} md={6}>
               <div className={styles.question}>
-                <Image
-                  src={PeopleIcon}
-                  alt="View Instructors"
+                <PersonAddIcon
                   onClick={() => {
                     router.push("/People");
                   }}
+                  sx={icon_style}
                 />
                 <br />
-                View Instructors
+                Add People
               </div>
             </Grid>
-            <Grid item xs={6} md={12} lg={4}>
+            <Grid item xs={12} md={6}>
               <div className={styles.question}>
-                <Image
-                  src={AssignmentIcon}
-                  alt="View Assignments"
+                <AssignmentIcon
                   onClick={() => {
                     router.push("/Assignments");
                   }}
+                  sx={icon_style}
                 />
                 <br />
                 View Assignments
               </div>
             </Grid>
-            <Grid item xs={6} md={12} lg={4}>
+            <Grid item xs={12} md={6}>
               <div className={styles.question}>
-                <Image
-                  src={AddPersonIcon}
-                  alt="People"
-                  onClick={() => {
-                    router.push("/People");
-                  }}
+                <PostAddIcon
+                  onClick={handleOpen}
+                  sx={icon_style}
                 />
-                <br />
-                Add Student
-              </div>
-            </Grid>
-            <Grid item xs={6} md={12} lg={4}>
-              <div className={styles.question}>
-                <Image
-                  src={AddPersonIcon}
-                  alt="Add Instructor"
-                  onClick={() => {
-                    router.push("/Dashbaord");
-                  }}
-                />
-                <br />
-                Add Instructor
-              </div>
-            </Grid>
-            <Grid item xs={6} md={12} lg={4}>
-              <div className={styles.question}>
-                <Image src={AddAssignmentIcon} alt="Add Assignment" onClick={handleOpen} />
                 <br />
                 Add Assignment
               </div>
@@ -200,7 +175,7 @@ export default function Dashboard(props) {
                   >
                     <ListItemAvatar>
                       <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
-                        <Image src={GreenCircle} alt="Assignment"/>
+                        <Image src={GreenCircle} alt="Assignment" />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
@@ -224,6 +199,7 @@ export default function Dashboard(props) {
                   onClick={() => {
                     router.push("/OfficeHours");
                   }}
+                  style={{marginTop: 19, marginBottom: 18}}
                 />
                 <br />
                 Office Hours
@@ -247,4 +223,9 @@ export default function Dashboard(props) {
       </Grid>
     </>
   );
+}
+
+const icon_style = {
+  fontSize: 120,
+  color: 'white'
 }

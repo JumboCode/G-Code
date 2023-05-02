@@ -6,8 +6,8 @@ import styles from '../../styles/Home.module.css'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useRouter } from "next/router";
 import axios from "axios";
-import FAQIcon from "../../public/questionmark.png";
-import CalendarIcon from "../../public/calendar.jpg";
+import FAQIcon from "../../public/faq.svg";
+import CalendarIcon from "../../public/officehours.svg";
 import GreenCircle from "../../public/green.png";
 
 export default function Dashboard(props) {
@@ -83,17 +83,26 @@ export default function Dashboard(props) {
           <Grid container spacing={2}>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                <Image src={CalendarIcon} alt="OfficeHours" onClick={() => {
-                  router.push('/OfficeHours')
-                }} /><br />
+                <Image 
+                  src={CalendarIcon} 
+                  alt="OfficeHours" 
+                  onClick={() => {
+                    router.push('/OfficeHours')
+                  }} 
+                  style={{marginTop: 19, marginBottom: 18}}
+                /><br />
                 Office Hours
               </div>
             </Grid>
             <Grid item xs={6} md={12} lg={6}>
               <div className={styles.question}>
-                <Image src={FAQIcon} alt="FAQ" onClick={() => {
-                  router.push('/FAQBoard')
-                }} /><br />
+                <Image 
+                  src={FAQIcon}
+                  alt="FAQ" 
+                  onClick={() => {
+                    router.push('/FAQBoard')
+                  }} 
+                /><br />
                 FAQ Board
               </div>
             </Grid>

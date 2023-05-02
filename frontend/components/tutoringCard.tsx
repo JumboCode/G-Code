@@ -161,7 +161,7 @@ function TutoringCard({
           </div>
 
           <div className={dashboardStyles.tutoringSessionTextDetails}>
-            <div className={dashboardStyles.tutoringSessionName}>{name}</div>
+            <div className={dashboardStyles.tutoringSessionName}>Office Hours with {name}</div>
 
             <div className={dashboardStyles.tutoringSessionLogistics}>
               <CalendarToday />
@@ -209,7 +209,7 @@ export default function TutoringCardDisplay() {
         sessions.map((session) => {
           const startTime = new Date(session.startTime);
           const endTime = new Date(session.endTime);
-          const date = new Date(session.date);
+          const date = new Date(session.startTime);
 
           console.log("session:")
           console.log(session);
@@ -219,7 +219,7 @@ export default function TutoringCardDisplay() {
 
           return (
             <TutoringCard
-              name={session.name}
+              name={session.tutorEmail}
               date={formattedDate}
               time={`${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
               id={session._id}
