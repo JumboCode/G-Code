@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Box, Select, List, ListItem, Avatar, ListItemAvatar, ListItemText, Divider, Typography, Card, Paper, IconButton, InputBase, Button, Modal, TextField, InputLabel, MenuItem, FormControl} from "@mui/material"
+import { Grid, Box, Select, List, ListItem, Avatar, ListItemAvatar, ListItemText, Divider, Typography, Card, Paper, IconButton, InputBase, Button, Modal, TextField, InputLabel, MenuItem, FormControl } from "@mui/material"
 
 // components
 import CustomSelect from "../customSelect";
@@ -13,7 +13,6 @@ import axios from "axios"
 
 // styling
 import "react-quill/dist/quill.snow.css";
-import styles from "../../styles/Home.module.css";
 
 // other
 import dynamic from "next/dynamic";
@@ -35,39 +34,25 @@ const modal_style = {
     p: 4,
 };
 
-// function QuestionList({ questions } : []) {
-//     return (
-//       <div>
-//         {questions.map(question => (
-//           <div key={question.title}>
-//             <h2>{question.title}</h2>
-//             <Link href={`/question/${question.title}`}>
-//               <a>See details</a>
-//             </Link>
-//           </div>
-//         ))}
-//       </div>
-//     )
-//   }
-
+const updateQuestions = setQuestions => {
+    axios.get("http://localhost:8000/api/questions").then((res) => {
+        setQuestions(
+            res.data.map((question) => {
+                console.log(question._id)
+                return {
+                    ...question,
+                    date: new Date(Date.parse(question.date)),
+                }
+            })
+        );
+    });
+}
 
 export default function GeneralFAQBoard(props) {
     const user = props.user
     // create and get questiosn from backend
     const [questions, setQuestions] = React.useState([]);
-    React.useEffect(() => {
-        axios.get("http://localhost:8000/api/questions").then((res) => {
-            setQuestions(
-                res.data.map((question) => {
-                    console.log(question._id)
-                    return {
-                        ...question,
-                        date: new Date(Date.parse(question.date)),
-                    };
-                })
-            );
-        });
-    }, []);
+    React.useEffect(() => { updateQuestions(setQuestions) }, []);
 
     // filter data
     const weeks = ["All Weeks"].concat(
@@ -108,7 +93,7 @@ export default function GeneralFAQBoard(props) {
     };
 
     const filterAuthor = (question) => {
-      return !onlyMyQuestions || question["author"] == (props.user["firstname"] + " " + props.user["lastname"]);
+        return !onlyMyQuestions || question["author"] == (props.user["firstname"] + " " + props.user["lastname"]);
     }
 
     // ask question modal
@@ -125,22 +110,15 @@ export default function GeneralFAQBoard(props) {
         setFormValid(valid);
 
         if (valid) {
-            console.log(
-                `title: ${modalTitle}, 
-                topic: ${modalTopic}, 
-                question: ${rteValue}`
-            );
-
             const question_info = {
-                title: modalTitle, 
+                title: modalTitle,
                 question: rteValue,
                 author: user.firstname + " " + user.lastname,
                 date: new Date(),
                 topics: [modalTopic],
                 replies: []
-              };
-              console.log("BEFORE POST 2")
-              axios.post('http://localhost:8000/api/create_question', question_info)
+            };
+            axios.post('http://localhost:8000/api/create_question', question_info).then(() => { updateQuestions(setQuestions) })
 
             setModalTitle("");
             setModalTopic("General");
@@ -242,7 +220,7 @@ export default function GeneralFAQBoard(props) {
                         <Grid item xs={6}>
                             <FormControl fullWidth>
                                 <Button
-                                    variant="secondary"
+                                    variant='secondary'
                                     onClick={handleClose}
                                 >
                                     {" "}
@@ -264,7 +242,7 @@ export default function GeneralFAQBoard(props) {
                     </Grid>
                 </Box>
             </Modal>
-            <Grid  container spacing={2}>
+            <Grid container spacing={2}>
                 <Grid item md={9} xs={12}>
                     <Box sx={{ padding: "40px 0 30px 0" }}>
                         <Grid container>
@@ -281,10 +259,10 @@ export default function GeneralFAQBoard(props) {
                                 <Button
                                     sx={{ margin: "10px" }}
                                     variant="secondary"
-                                    onClick = {() => setOnlyMyQuestions(!onlyMyQuestions)}
+                                    onClick={() => setOnlyMyQuestions(!onlyMyQuestions)}
                                 >
-                                  {onlyMyQuestions ? "All Questions" : "My Questions"}
-                  
+                                    {onlyMyQuestions ? "All Questions" : "My Questions"}
+
                                 </Button>
                                 <Button
                                     onClick={handleOpen}
@@ -364,56 +342,31 @@ export default function GeneralFAQBoard(props) {
                 <Grid item md={9} xs={12}>
                     <Card sx={{ borderRadius: '10px' }}>
 
-                         <List sx={{ padding: '0 20px 20px 20px' }}>
+                        <List sx={{ padding: '0 20px 20px 20px' }}>
                             {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).filter(filterAuthor).map(question =>
                                 <>
-                                    <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
-                                        <ListItemAvatar sx={{ width: '70px' }}>
-                                            <Avatar sx={{ height: '50px', width: '50px' }}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText style={{ cursor: 'pointer' }}>
-                                            <Typography variant="subtitle2">
-                                                {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
-                                            </Typography>
-                                            <Typography variant="h4">
-                                                <Link href={`/question/${question._id}`}>
+                                    <Link href={`/question/${question._id}`}>
+                                        <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
+                                            <ListItemAvatar sx={{ width: '70px' }}>
+                                                <Avatar sx={{ height: '50px', width: '50px' }}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText style={{ cursor: 'pointer' }}>
+                                                <Typography variant="subtitle2">
+                                                    {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
+                                                </Typography>
+                                                <Typography variant="h4">
                                                     {question.title}
-                                                </Link>
-                                            </Typography>
-                                            <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
-                                                {question.replies.length} {question.replies.length == 1 ? "reply" : "replies"}
-                                            </Typography>
-                                        </ListItemText>
-                                    </ListItem>
+                                                </Typography>
+                                                <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
+                                                    {question.replies.length} {question.replies.length == 1 ? "reply" : "replies"}
+                                                </Typography>
+                                            </ListItemText>
+                                        </ListItem>
+                                    </Link>
                                     <Divider component="li" />
                                 </>
                             )}
                         </List>
-
-
-                        {/* <List sx={{ padding: '0 20px 20px 20px' }}>
-                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).map(question =>
-                                <>
-                                    <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
-                                        <ListItemAvatar sx={{ width: '70px' }}>
-                                            <Avatar sx={{ height: '50px', width: '50px' }}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText style={{ cursor: 'pointer' }}>
-                                            <Typography variant="subtitle2">
-                                                {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
-                                            </Typography>
-                                            <Typography variant="h4">
-                                                {question.title}
-                                            </Typography>
-                                            <Typography variant="subtitle2" sx={{ fontWeight: "400" }} >
-                                                {question.replies.length} {question.replies.length == 1 ? "reply" : "replies"}
-                                            </Typography>
-                                        </ListItemText>
-                                    </ListItem>
-                                    <Divider component="li" />
-                                </>
-                            )}
-                        </List> */}
                     </Card>
                 </Grid>
                 <Grid item md={3} xs={12}>

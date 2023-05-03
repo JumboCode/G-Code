@@ -74,7 +74,7 @@ class UserInvite(BaseModel):
 class IndividualAssignment(BaseModel):
     submitted: bool = Field(...)
     submissionLink: Optional[str] = Field(...)
-    student_email: EmailStr = Field(...)
+    student_email: Optional[EmailStr] = Field(...)
     messages: List[str] = Field(...)
 
 class Assignment(BaseModel):
@@ -82,7 +82,7 @@ class Assignment(BaseModel):
     name: str = Field(...)
     description: str = Field(...)
     dueDate: datetime = Field(...)
-    indivdualAssignments: List[IndividualAssignment] = Field(...)
+    # indivdualAssignments: List[IndividualAssignment] = Field(...)
 
 
 # Posts (TODO: remove unneeded models)

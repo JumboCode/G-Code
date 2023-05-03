@@ -45,3 +45,6 @@ export const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
 export const dateToString = (date: Date) => {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 }
+
+export const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
+export const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
