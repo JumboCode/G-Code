@@ -31,7 +31,7 @@ class UserIn(BaseModel):
     firstname: str = Field(...)
     lastname: str = Field(...)
     email: str = Field(...)
-    password: Optional[str] = Field(...) # Optional? MARK
+    password: str = Field(...)
     type: str = Field(...)
     zoom: Optional[str] = None
     appointment_slots: Optional[List[AppointmentSlot]] = None
@@ -78,12 +78,11 @@ class IndividualAssignment(BaseModel):
     messages: List[str] = Field(...)
 
 class Assignment(BaseModel):
-    assignmentid: str = Field(...)
+    #id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
     name: str = Field(...)
     description: str = Field(...)
     dueDate: datetime = Field(...)
-    # indivdualAssignments: List[IndividualAssignment] = Field(...)
-
+    indivdualAssignments: Optional[List[IndividualAssignment]] = Field(...)
 
 # Posts (TODO: remove unneeded models)
 class Reply(BaseModel):

@@ -195,18 +195,27 @@ async def get_one_student(field_name: str, field_value: Any):
     response = fetch_one("Students", field_name, field_value)
     return response
 
-def create_one (model_class: str, to_add):
+def create_one(model_class: str, to_add):
     db = db_dic[model_class]
     if isinstance(to_add, model_dic[model_class]):
-        db.insert_one(to_add.dict())
+        return db.insert_one(to_add.dict())
     else:
         raise Exception("The given object was not an instance of the given model_class")
 
 @app.post("/api/create_assignment")
-async def create_assignment (new_assignment: Assignment):
-    if (new_assignment.indivdualAssignments == None):
-        new_assignment.individualAssignments = []
-    response = create_one("Assignments", new_assignment)
+async def create_assignment(assignment: Assignment):
+    print(assignment)
+    response = create_one("Assignments", assignment)
+    newID = response.inserted_id
+
+    users = fetch_all("Users")
+    emails = []
+    for user in users:
+        if user["type"] == "student":
+            emails.append(user["email"])
+
+    assign_assignment(newID, emails)
+
     return response
 
 @app.post("/api/assign_assignment")
@@ -219,6 +228,7 @@ async def assign_assignment (assignment_id: str, student_emails: list[str]):
             raise HTTPException(status_code=500, detail=error_message)
         individual_assignment = {
             'submitted': False,
+            'submissionLink': "",
             'student_email': email,
             'messages': []
         }

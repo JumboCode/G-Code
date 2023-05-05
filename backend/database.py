@@ -93,7 +93,8 @@ def fetch3Appointments(studentEmail):
 def create_one (model_class: str, to_add):
     db = db_dic[model_class]
     if isinstance(to_add, model_dic[model_class]):
-        db.insert_one(to_add.dict())
+        result = db.insert_one(to_add.dict())
+        return result
     else:
         raise Exception("The given object was not an instance of the given model_class")
 
