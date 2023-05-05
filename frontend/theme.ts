@@ -5,6 +5,7 @@ declare module '@mui/material/Button' {
     primary: true;
     secondary: true;
     text: true;
+    profile: true;
   }
 }
 
@@ -120,79 +121,90 @@ export const theme = createTheme({
           },
         },
         {
-          props: { variant: 'text' },
+          props: { variant: 'profile' },
           style: {
-            fontWeight: 'normal',
-            backgroundColor: '#fff',
-            color: '#000',
+            color: '#29395B',
+            backgroundColor: '#F1F1F1',
+            padding: '5px 15px',
+            marginTop: '10px',
             borderRadius: '30px',
-            boxShadow: 'none',
-            textTransform: 'none',
-            '&:hover': {
-              backgroundColor: '#F3F4F6',
-              boxShadow: 'none',
-            },
-            '&:active': {
-              boxShadow: 'none',
-              backgroundColor: '#F3F4F6',
-            },
-          },
+            textTransform: 'none'
+        }
         },
+        {
+    props: { variant: 'text' },
+    style: {
+      fontWeight: 'normal',
+      backgroundColor: '#fff',
+      color: '#000',
+      borderRadius: '30px',
+      boxShadow: 'none',
+      textTransform: 'none',
+      '&:hover': {
+        backgroundColor: '#F3F4F6',
+        boxShadow: 'none',
+      },
+      '&:active': {
+        boxShadow: 'none',
+        backgroundColor: '#F3F4F6',
+      },
+    },
+  },
       ],
     },
-    MuiTypography: {
-      variants: [
-        {
-          props: { variant: 'h1' },
-          style: {
-            fontSize: '36px',
-            fontFamily: '"IBM Plex Sans", sans-serif',
-            lineHeight: '42.48px',
-            fontWeight: '600',
-            color: "#29395B"
-          },
-        },
-        {
-          props: { variant: 'h3' },
-          style: {
-            fontSize: '20px',
-            fontFamily: 'Red Hat Display',
-            lineHeight: '26px',
-            fontWeight: '700',
-            color: "#000f25"
-          }
-        },
-        {
-          props: { variant: 'h4' },
-          style: {
-            fontSize: '19px',
-            fontFamily: '"IBM Plex Sans", sans-serif',
-            lineHeight: '22.99px',
-            fontWeight: '500',
-            color: "#29395B"
-          },
-        },
-        {
-          props: { variant: 'subtitle1' },
-          style: {
-            fontSize: '16px',
-            fontFamily: '"IBM Plex Sans", sans-serif',
-            lineHeight: '19.36px',
-            fontWeight: '500',
-            color: "#949494"
-          },
-        },
-        {
-          props: { variant: 'subtitle2' },
-          style: {
-            fontSize: '14px',
-            fontFamily: '"IBM Plex Sans", sans-serif',
-            lineHeight: '22.05px',
-            fontWeight: '500',
-            color: "#949494"
-          },
-        },
-      ]
-    }
+MuiTypography: {
+  variants: [
+    {
+      props: { variant: 'h1' },
+      style: {
+        fontSize: '36px',
+        fontFamily: '"IBM Plex Sans", sans-serif',
+        lineHeight: '42.48px',
+        fontWeight: '600',
+        color: "#29395B"
+      },
+    },
+    {
+      props: { variant: 'h3' },
+      style: {
+        fontSize: '20px',
+        fontFamily: 'Red Hat Display',
+        lineHeight: '26px',
+        fontWeight: '700',
+        color: "#000f25"
+      }
+    },
+    {
+      props: { variant: 'h4' },
+      style: {
+        fontSize: '19px',
+        fontFamily: '"IBM Plex Sans", sans-serif',
+        lineHeight: '22.99px',
+        fontWeight: '500',
+        color: "#29395B"
+      },
+    },
+    {
+      props: { variant: 'subtitle1' },
+      style: {
+        fontSize: '16px',
+        fontFamily: '"IBM Plex Sans", sans-serif',
+        lineHeight: '19.36px',
+        fontWeight: '500',
+        color: "#949494"
+      },
+    },
+    {
+      props: { variant: 'subtitle2' },
+      style: {
+        fontSize: '14px',
+        fontFamily: '"IBM Plex Sans", sans-serif',
+        lineHeight: '22.05px',
+        fontWeight: '500',
+        color: "#949494"
+      },
+    },
+  ]
+}
   },
 });

@@ -9,29 +9,56 @@ import { useRouter } from "next/router";
 import IsUserAuthorized from "../../components/authentification";
 import Margin from "../../components/margin";
 import { student_pages, admin_pages } from '../../constants'
-import { Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Link from "next/link";
 import Card from '@mui/material/Card';
 import CardContent from "@mui/material/CardContent";
+import "@fontsource/inter"; 
 
-const MessageCard = ({ body, type }) => {
+const MessageCard = ({ author, body, type }) => {
   return (
-    <Card
-      sx={{
-        marginBottom: '20px',
-        background: '#FFFFFF',
-        boxShadow: '2px 2px 10px 2px rgba(142, 142, 142, 0.2)',
-        backdropFilter: 'blur(30px)',
-        /* Note: backdrop-filter has minimal browser support */
-        borderRadius: '12px'
-      }}
-    >
-      <CardContent>
-        <p style={{ color: '#6A5DF9', fontWeight: 'bold' }}>{type}</p>
-        <div dangerouslySetInnerHTML={{ __html: body }} />
-      </CardContent>
-    </Card>
+    <Grid sx={{ marginBottom: '20px', }} container spacing={2}>
+      <Grid item xs={3} md={2}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100%' }}>
+          <div>
+            <Avatar alt={author} sx={{ width: 40, height: 40 }} src="/static/images/avatar/2.jpg" sizes="large" />
+          </div>
+          <div
+            style={{
+              fontFamily: 'Inter',
+              fontStyle: 'normal',
+              fontWeight: 600,
+              fontSize: '14px',
+              marginTop: '10px',
+              color: '#29395B',
+              textAlign: 'center'
+            }}
+          >
+            {author}
+          </div>
+          <div>
+            <Button variant="profile">Profile</Button>
+          </div>
+        </div>
+      </Grid>
+      <Grid item xs={9} md={10}>
+        <Card
+          sx={{
+            background: '#FFFFFF',
+            boxShadow: '2px 2px 10px 2px rgba(142, 142, 142, 0.2)',
+            backdropFilter: 'blur(30px)',
+            /* Note: backdrop-filter has minimal browser support */
+            borderRadius: '12px'
+          }}
+        >
+          <CardContent>
+            <p style={{ color: '#6A5DF9', fontWeight: 'bold' }}>{type}</p>
+            <div dangerouslySetInnerHTML={{ __html: body }} />
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid >
   )
 }
 
@@ -75,12 +102,12 @@ export default function QuestionDetails() {
       question_name: question.title
     }
     axios.post('http://localhost:8000/api/respond_to_question', question_reply)
-    .then(_ => {
-      updateQuestion()
-      setNewReply("")
-    }).catch(error => {
-      console.error(error);
-    })
+      .then(_ => {
+        updateQuestion()
+        setNewReply("")
+      }).catch(error => {
+        console.error(error);
+      })
   }
 
   useEffect(() => {
@@ -91,7 +118,6 @@ export default function QuestionDetails() {
     return <>Loading...</>
   }
 
-
   return (
     <Margin
       user={user}
@@ -99,8 +125,8 @@ export default function QuestionDetails() {
       currentPageTitle={'FAQBoard'}
     >
       <Grid container spacing={2}>
-        <Grid item xs={10}>
-          <div style={{marginBottom: '20px'}}>
+        <Grid item xs={12} lg={10}>
+          <div style={{ marginBottom: '20px' }}>
             <Link href="../FAQBoard">
               <Button variant="secondary">
                 <ArrowBackIcon />
@@ -112,8 +138,8 @@ export default function QuestionDetails() {
             Last updated on Nov 21 • 3:30 PM
           </Typography>
           <h2>{question.title}</h2>
-          <MessageCard body={question.question} type='Question' />
-          {question.replies.map(reply => <MessageCard body={reply.body} type='Response' />)}
+          <MessageCard author={question.author} body={question.question} type='Question' />
+          {question.replies.map(reply => <MessageCard author={reply.author_id} body={reply.body} type='Response' />)}
           <div>
             <p style={{ fontWeight: 'bold' }}>Reply</p>
           </div>

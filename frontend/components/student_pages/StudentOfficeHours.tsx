@@ -366,12 +366,7 @@ function TutorProfile({ name, email, date, times }) {
                 }}>
                     <p>{name}</p>
                     <Avatar>{name[0]}</Avatar>
-                    <Button sx={{
-                        color: '#29395B',
-                        backgroundColor: '#F6F6F6',
-                        padding: '5px 15px',
-                        marginTop: '10px'
-                    }}>
+                    <Button variant='profile'>
                         View Profile
                     </Button>
                 </Box>
