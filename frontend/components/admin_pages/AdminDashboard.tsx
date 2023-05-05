@@ -156,7 +156,7 @@ export default function Dashboard(props) {
               </div>
               <List
                 className={styles.pageElement}
-                sx={{ backgroundColor: "white" }}
+                sx={{ marginTop: '15px', backgroundColor: "white" }}
               >
                 {assignmentList.map((assignment) => (
                   <ListItem
