@@ -18,6 +18,7 @@ import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { useRouter } from 'next/router';
 import Link from 'next/link'
+import Cookies from 'js-cookie'
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
@@ -34,67 +35,43 @@ const modal_style = {
     p: 4,
 };
 
-const updateQuestions = setQuestions => {
-    axios.get("http://localhost:8000/api/questions").then((res) => {
-        setQuestions(
-            res.data.map((question) => {
-                console.log(question._id)
-                return {
-                    ...question,
-                    date: new Date(Date.parse(question.date)),
-                }
-            })
-        );
-    });
-}
-
 export default function GeneralFAQBoard(props) {
     const user = props.user
     // create and get questiosn from backend
-    const [questions, setQuestions] = React.useState([]);
-    React.useEffect(() => { updateQuestions(setQuestions) }, []);
+    const [questions, setQuestions] = React.useState(null);
+    const [users, setUsers] = React.useState(null);
 
-    // filter data
-    const weeks = ["All Weeks"].concat(
-        Array.from(
-            new Set(questions.map((question) => `Week ${question.week}`))
-        )
-    );
-    const [week, setWeek] = React.useState<string>(weeks[0]);
-    const topics = ["All Topics"].concat(
-        Array.from(
-            new Set(
-                questions.reduceRight(
-                    (accumulator, question) =>
-                        accumulator.concat(question.topics),
-                    []
-                )
-            )
-        )
-    );
-    const [topic, setTopic] = React.useState<string>("All Topics");
-    const [searchQuery, setSearchQuery] = React.useState<string>("");
-    const [onlyMyQuestions, setOnlyMyQuestions] = React.useState(false);
-
-    // filter functions
-    const filterWeek = (question) => {
-        return week == "All Weeks" || week == `Week ${question.week}`;
-    };
-    const filterTopic = (question) => {
-        return topic == "All Topics" || question.topics.includes(topic);
-    };
-    const filterSearch = (question) => {
-        return (
-            searchQuery == "" ||
-            JSON.stringify(question)
-                .toUpperCase()
-                .includes(searchQuery.toUpperCase())
-        );
-    };
-
-    const filterAuthor = (question) => {
-        return !onlyMyQuestions || question["author"] == (props.user["firstname"] + " " + props.user["lastname"]);
+    const updateQuestions = () => {
+        axios.get("http://localhost:8000/api/questions").then((res) => {
+            setQuestions(
+                res.data.map(question => {
+                    return {
+                        ...question,
+                        date: new Date(Date.parse(question.date)),
+                    }
+                })
+            );
+        });
     }
+
+    const updateUsers = () => {
+        axios.get("http://localhost:8000/api/users").then((res) => {
+            let users_map = {}
+            for (const user_idx in res.data) {
+                const user = res.data[user_idx]
+                users_map[user._id] = user
+            }
+            setUsers(users_map)
+        })
+    }
+
+    React.useEffect(() => {
+        updateQuestions()
+        updateUsers()
+    }, []);
+
+
+    const [onlyMyQuestions, setOnlyMyQuestions] = React.useState(false);
 
     // ask question modal
     const [open, setOpen] = React.useState(false);
@@ -110,15 +87,19 @@ export default function GeneralFAQBoard(props) {
         setFormValid(valid);
 
         if (valid) {
-            const question_info = {
+            const token = Cookies.get('gcode-session');
+            const data = {
                 title: modalTitle,
-                question: rteValue,
-                author: user.firstname + " " + user.lastname,
-                date: new Date(),
-                topics: [modalTopic],
-                replies: []
+                body: rteValue,
             };
-            axios.post('http://localhost:8000/api/create_question', question_info).then(() => { updateQuestions(setQuestions) })
+            const config = {
+                headers: {
+                    'accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
+            };
+            axios.post('http://localhost:8000/api/create_post', data, config).then(() => { updateQuestions() })
 
             setModalTitle("");
             setModalTopic("General");
@@ -134,6 +115,10 @@ export default function GeneralFAQBoard(props) {
 
     // validation
     const router = useRouter();
+
+    if (!questions || !users) {
+        return <></>
+    }
 
     return (
         <>
@@ -273,7 +258,7 @@ export default function GeneralFAQBoard(props) {
                             </Grid>
                         </Grid>
                     </Box>
-                    <Box sx={{ paddingBottom: "20px" }}>
+                    {/* <Box sx={{ paddingBottom: "20px" }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={5}>
                                 <Paper
@@ -331,28 +316,27 @@ export default function GeneralFAQBoard(props) {
                                 />
                             </Grid>
                         </Grid>
-                    </Box>
+                    </Box> */}
                 </Grid>
                 <Grid item md={3} xs={0}>
-                    {/* Filler */}
                 </Grid>
-            </Grid>
+            </Grid> 
 
             <Grid container spacing={2}>
                 <Grid item md={9} xs={12}>
                     <Card sx={{ borderRadius: '10px' }}>
 
                         <List sx={{ padding: '0 20px 20px 20px' }}>
-                            {questions.filter(filterWeek).filter(filterTopic).filter(filterSearch).filter(filterAuthor).map(question =>
+                            {questions.map(question =>
                                 <>
                                     <Link href={`/question/${question._id}`}>
                                         <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
                                             <ListItemAvatar sx={{ width: '70px' }}>
-                                                <Avatar sx={{ height: '50px', width: '50px' }}> {question.author.split(' ')[0][0]}{question.author.split(' ')[1][0]} </Avatar>
+                                                <Avatar sx={{ height: '50px', width: '50px' }}> {users[question.author_id]['firstname'][0]} </Avatar>
                                             </ListItemAvatar>
                                             <ListItemText style={{ cursor: 'pointer' }}>
                                                 <Typography variant="subtitle2">
-                                                    {question.author} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
+                                                    {users[question.author_id]['firstname']} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
                                                 </Typography>
                                                 <Typography variant="h4">
                                                     {question.title}

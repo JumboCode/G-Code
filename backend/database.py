@@ -26,13 +26,12 @@ si           = database.student_invites
 ai           = database.admin_invites
 ui           = database.user_invites
 classes      = database.classes
-questions    = database.questions
 posts        = database.posts
 
 
-model_dic = {"Users": UserIn, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": AppointmentBooking, "Questions": Question, "Sessions": Any, "Assignments": Assignment}
+model_dic = {"Users": User, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": AppointmentBooking, "Posts": Post, "Sessions": Any, "Assignments": Assignment}
 
-db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Questions":questions, "Sessions":sessions, "Assignments": assignments}
+db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Posts":posts, "Sessions":sessions, "Assignments": assignments}
 
 def stringify_id(object):
     try:
@@ -111,15 +110,12 @@ def fetch_user_by_email(email):
     result_list = []
     cursor = users.find({"email": email})
     for document in cursor:
-        result_list.append(model_dic["Users"](**document))
+        result_list.append(stringify_id(User(**document)))
     if len(result_list) == 0:
         return "No Result Found"
     elif len(result_list) > 1:
         return "Multiple Instances Found"
     return result_list[0]
-
-    user = users.find_one({"email": email}, {'_id': 0})
-    return user
 
 def set_schedule(data: dict):
     user = fetch_user_by_email(data.get("email"))
@@ -137,17 +133,6 @@ def set_schedule(data: dict):
         {"email": user["email"]},
         { "$set": data}
     );
-
-
-
-# def fetch_user_by_email(email):
-#     '''
-#     Purpose: Fetchs the user, either an admin or student, with the given email
-#     '''
-#     user = students.find_one({"email": email})
-#     if user is None:
-#         user = admins.find_one({"email": email})
-#     return user
 
 def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):
     print(assignmentid)
@@ -243,6 +228,7 @@ def get_assignments_by_assignment_id(assignmentid):
     assignment_list = []
     for document in cursor:
         assignment_list.append(Assignment(**document))
+
     return assignment_list
 
 def get_assignments_by_student_id(studentid):
@@ -252,32 +238,6 @@ def get_assignments_by_student_id(studentid):
         assignment_list.append(Assignment(**document))
     return assignment_list
 
-def fetch_all_posts():
-    '''
-    Purpose: Returns all posts stored in the database
-    '''
-    posts_list = []
-    cursor = posts.find({})
-    for document in cursor:
-        document['id'] = str(document['_id'])
-        posts_list.append(PostID(**document))
-    return posts_list
-
-def add_question(question: QuestionIn):
-    questions.insert_one(question)
-    return question
-
-def add_reply_to_question (question_title: str, reply_data: Reply):
-    questions.update_one(
-        {"title": question_title},
-        { "$push": {"replies": reply_data}}
-        )
-    return question_title
-
-def create_post(post: Post):
-    posts.insert_one(post)
-    return post
-
 def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):
     print("in create indiv assignment")
     print(assignmentid)
@@ -286,14 +246,6 @@ def create_individual_assignment(assignmentid: str, indiv_assignment: Individual
         { "$push": {"individual_assignments": indiv_assignment}}
         )
     return assignmentid
-
-
-def add_reply(post_ID: str, reply_data: Reply):
-    posts.update_one(
-        {"_id": post_ID},
-        { "$push": {"replies": reply_data}}
-        )
-    return post_ID
 
 def get_all_student_assignments(student_email):
     '''
@@ -307,3 +259,28 @@ def get_all_student_assignments(student_email):
         if 'individual_assignments' in document:
             assignment_list.append(document)
     return assignment_list
+
+###################################################################
+############################## Posts ##############################
+###################################################################
+
+def fetch_all_posts_sorted():
+    result_list = []
+    cursor = posts.find({})
+    cursor.sort('date')
+    for document in cursor:
+        result_list.append(stringify_id(Post(**document)))
+    return result_list[::-1]
+
+def insert_post(post: PostIn, author_id: str, date: datetime):
+    posts.insert_one({**post, 
+                      'author_id': str(author_id), 
+                      'date': date, 
+                      'replies': []})
+
+def add_reply(post_ID: str, reply_data: Reply):
+    id = ObjectId(post_ID)
+    posts.update_one({"_id": id},
+                     { "$push": {"replies": reply_data.dict()}}
+                     )
+    return post_ID

@@ -14,7 +14,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Link from "next/link";
 import Card from '@mui/material/Card';
 import CardContent from "@mui/material/CardContent";
-import "@fontsource/inter"; 
+import "@fontsource/inter";
+import Cookies from 'js-cookie'
 
 const MessageCard = ({ author, body, type }) => {
   return (
@@ -22,7 +23,7 @@ const MessageCard = ({ author, body, type }) => {
       <Grid item xs={3} md={2}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100%' }}>
           <div>
-            <Avatar alt={author} sx={{ width: 40, height: 40 }} src="/static/images/avatar/2.jpg" sizes="large" />
+            <Avatar alt={author.firstname} sx={{ width: 40, height: 40 }} src="/static/images/avatar/2.jpg" sizes="large" />
           </div>
           <div
             style={{
@@ -35,7 +36,7 @@ const MessageCard = ({ author, body, type }) => {
               textAlign: 'center'
             }}
           >
-            {author}
+            {author.firstname + ' ' + author.lastname}
           </div>
           <div>
             <Button variant="profile">Profile</Button>
@@ -48,7 +49,6 @@ const MessageCard = ({ author, body, type }) => {
             background: '#FFFFFF',
             boxShadow: '2px 2px 10px 2px rgba(142, 142, 142, 0.2)',
             backdropFilter: 'blur(30px)',
-            /* Note: backdrop-filter has minimal browser support */
             borderRadius: '12px'
           }}
         >
@@ -65,22 +65,24 @@ const MessageCard = ({ author, body, type }) => {
 export default function QuestionDetails() {
   const router = useRouter()
   const { _id } = router.query
-  const [question, setQuestion] = useState(null)
 
+  const [question, setQuestion] = useState(null)
+  const [users, setUsers] = useState(null)
   const [user, setUser] = useState(null);
+
   const save_user = curr_user => {
     if (user == null) {
       setUser(curr_user)
     }
   }
-  /* Authorize user and return user 
-   * information (ex. first name, username, ect.) */
   IsUserAuthorized(save_user)
+
+  console.log(_id)
 
   const [newReply, setNewReply] = React.useState("");
 
   const updateQuestion = () => {
-    axios.get("http://localhost:8000/api/get_question_by_id", {
+    axios.get("http://localhost:8000/api/post_by_id", {
       params: {
         id_string: _id
       },
@@ -91,30 +93,53 @@ export default function QuestionDetails() {
     })
   }
 
+  const updateUsers = () => {
+    axios.get("http://localhost:8000/api/users").then((res) => {
+      let users_map = {}
+      for (const user_idx in res.data) {
+        const user = res.data[user_idx]
+        users_map[user._id] = user
+      }
+      setUsers(users_map)
+    })
+  }
+
   const submitReply = () => {
-    const reply_info = {
-      author_id: "temp",
-      body: newReply,
-      date: new Date()
+    const token = Cookies.get('gcode-session')
+
+    const apiUrl = `http://localhost:8000/api/reply_to_post?post_ID=${_id}`;
+
+    const headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json',
     };
-    const question_reply = {
-      reply: reply_info,
-      question_name: question.title
-    }
-    axios.post('http://localhost:8000/api/respond_to_question', question_reply)
+
+    const data = {
+      body: newReply,
+    };
+
+    axios.post(apiUrl, data, { headers })
       .then(_ => {
         updateQuestion()
         setNewReply("")
-      }).catch(error => {
-        console.error(error);
       })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 
   useEffect(() => {
     updateQuestion()
-  }, [])
+    updateUsers()
+  }, [router.isReady])
 
-  if (!question || !user) {
+  if (_id == '') {
+    return <>index</>
+  }
+
+
+  if (!question || !user || !users) {
     return <>Loading...</>
   }
 
@@ -138,8 +163,8 @@ export default function QuestionDetails() {
             Last updated on Nov 21 • 3:30 PM
           </Typography>
           <h2>{question.title}</h2>
-          <MessageCard author={question.author} body={question.question} type='Question' />
-          {question.replies.map(reply => <MessageCard author={reply.author_id} body={reply.body} type='Response' />)}
+          <MessageCard author={users[question.author_id]} body={question.body} type='Question' />
+          {question.replies.map(reply => <MessageCard author={users[reply.author_id]} body={reply.body} type='Response' />)}
           <div>
             <p style={{ fontWeight: 'bold' }}>Reply</p>
           </div>

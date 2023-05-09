@@ -84,39 +84,6 @@ class Assignment(BaseModel):
     dueDate: datetime = Field(...)
     # indivdualAssignments: List[IndividualAssignment] = Field(...)
 
-
-# Posts (TODO: remove unneeded models)
-class Reply(BaseModel):
-    author_id: str = Field(...)
-    body: str = Field(...)
-    date: datetime = Field(...)
-
-class QuestionReply(BaseModel):
-    reply: Reply = Field(...)
-    question_name: str = Field(...)
-
-class QuestionIn(BaseModel):
-    title: str = Field(...)
-    question: str = Field(...)
-    author: str = Field(...)
-    date: datetime = Field(...)
-    replies: List[Reply] = Field(...)
-    topics: List[str] = Field(...)
-
-class Question(QuestionIn):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-
-class Post(BaseModel):
-    title: str = Field(...)
-    body: str = Field(...)
-    author_id: str = Field(...)
-    date: datetime = Field(...)
-    topic: str = Field(...)
-    replies: List[Reply] = Field(...)
-
-class PostID(Post):
-    id: str = Field(...)
-
 # Appointments
 class AppointmentBookingIn(BaseModel):
     tutorEmail: str = Field(...)
@@ -129,3 +96,27 @@ class AppointmentBooking(AppointmentBookingIn):
 
 class Appointment(AppointmentBooking):
     id2: str = Field(...)
+
+
+###################################################################
+############################## Posts ##############################
+###################################################################
+
+class ReplyIn(BaseModel):
+    body: str = Field(...)
+
+class Reply(ReplyIn):
+    author_id: str = Field(...)
+    date: datetime = Field(...)
+
+class PostIn(BaseModel):
+    title: str = Field(...)
+    body: str = Field(...)
+
+class Post(PostIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    author_id: str = Field(...)
+    title: str = Field(...)
+    body: str = Field(...)
+    date: datetime = Field(...)
+    replies: List[Reply] = Field(...)

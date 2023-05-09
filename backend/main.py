@@ -148,10 +148,6 @@ def save_schedule(data: dict):
     set_schedule(data)
     return user
 
-@app.get("/api/students")
-async def get_students():
-    response = fetch_filtered("Users",[("type", "student")] )
-    return response
 
 @app.get("/api/admins")
 async def get_admins():
@@ -160,11 +156,7 @@ async def get_admins():
 
 @app.get("/api/questions")
 async def get_questions():
-    response = fetch_all("Questions")
-
-
-    print(response)
-    # response = []
+    response = fetch_all_posts_sorted()
     return response
 
 # @app.get("/api/questions_two")
@@ -246,13 +238,6 @@ async def get_one_question(field_name: str, field_value: Any):
     response['id'] = str(response['id'])
     return response
 
-@app.get("/api/get_question_by_id")
-async def get_question_by_id (id_string: str):
-    response = fetch_one("Questions", "_id", ObjectId(id_string)).dict()
-    # Prevents TypeError("'ObjectId' object is not iterable")
-    response['id'] = str(response['id'])
-    return response
-
 @app.get("/api/one_invite")
 async def get_one_invite(field_name: str, field_value: Any):
     response = fetch_one("Invites", field_name, field_value)
@@ -302,19 +287,19 @@ async def assign_assignment (assignment_id: str, student_emails: list[str]):
 
     return "success"
 
-@app.post("/api/create_question")
-async def create_question (request: QuestionIn):
-    '''
-    Purpose: Add a question to the database
+# @app.post("/api/create_question")
+# async def create_question (request: PostIn):
+#     '''
+#     Purpose: Add a question to the database
 
-    Input: A question object
-    '''
-    response = add_question(request.dict())
+#     Input: A question object
+#     '''
+#     response = add_question(request.dict())
 
-    return "success"
+#     return "success"
 
 @app.post("/api/respond_to_question")
-async def respond_to_question (question_reply: QuestionReply):
+async def respond_to_question (question_reply: Reply):
 # async def respond_to_question (question_title : str, reply: Reply):
     '''
     Purpose: Add a question to the database
@@ -552,31 +537,6 @@ def sent_invite_email(to_contact: User):
     except Exception as e:
         print(e.message)
 
-@app.get("/api/posts")
-async def get_posts():
-    response = fetch_all_posts()
-    return response
-
-@app.put("/api/posts")
-async def put_post(post_data: Post):
-    '''
-    Purpose: Add a post to the database
-
-    Input: A post object
-    '''
-    response = create_post(post_data.dict())
-    return response 
-
-@app.put("/api/postreply")
-async def put_reply(post_ID: str, reply_data: Reply):
-    '''
-    Purpose: Add a reply to a post in the database
-
-    Input: A reply data object and a post id string
-    '''
-    response = add_reply(post_ID, reply_data.dict())
-    return response
-
 # Appointment routes
 
 @app.get("/api/appointments")
@@ -661,4 +621,51 @@ async def get_available_appointments(date: date):
 @app.get("/api/assignments")
 async def get_assignments():
     response = fetch_all("Assignments")
+    return response
+
+###################################################################
+############################## Users ##############################
+###################################################################
+
+@app.get("/api/students")
+async def get_students():
+    response = fetch_filtered("Users",[("type", "student")] )
+    return response
+
+@app.get("/api/admins")
+async def get_admins():
+    response = fetch_filtered("Users",[("type", "admin")] )
+    return response
+
+@app.get("/api/users")
+async def get_users():
+    response = fetch_all("Users")
+    return response
+
+###################################################################
+############################## Posts ##############################
+###################################################################
+
+@app.get("/api/posts")
+async def get_posts():
+    response = fetch_all_posts_sorted()
+    return response
+
+@app.post("/api/create_post")
+async def post_create_post(post_data: PostIn, currentUser: UserIn = Depends(get_current_user)):
+    id = fetch_filtered('Users', [('email', currentUser.email)])[0].id
+    response = insert_post(post_data.dict(), id, datetime.datetime.now())
+    return response 
+
+@app.post("/api/reply_to_post")
+async def post_reply_to_post(post_ID: str, reply_data: ReplyIn, currentUser: UserIn = Depends(get_current_user)):
+    id = fetch_filtered('Users', [('email', currentUser.email)])[0].id
+    reply = Reply(body=reply_data.body, date=datetime.datetime.now(), author_id=str(id))
+    response = add_reply(post_ID, reply)
+    return response
+
+@app.get("/api/post_by_id")
+async def get_post_by_id (id_string: str):
+    response = fetch_one("Posts", "_id", ObjectId(id_string)).dict()
+    response['id'] = str(response['id'])
     return response
