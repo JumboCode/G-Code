@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Box, Modal, Typography, TextField, List, ListItem, ListItemAvatar, ListItemText, Avatar, IconButton } from "@mui/material";
+import { Grid, Box, Modal, Button, Typography, TextField, List, ListItem, ListItemAvatar, ListItemText, Avatar, IconButton } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import TutoringCardDisplay from "../tutoringCard";
 import styles from "../../styles/Home.module.css";
@@ -12,6 +13,7 @@ import Image from "next/image";
 import FAQIcon from "../../public/faq.svg";
 import CalendarIcon from "../../public/officehours.svg";
 import GreenCircle from "../../public/green.png";
+import dayjs, { Dayjs } from 'dayjs';
 
 import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -37,6 +39,10 @@ export default function Dashboard(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  // Get new assignment data
+  const [assignmentName, setAssignmentName] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [assignmentDue, setAssignmentDue] = React.useState(dayjs(new Date()));
   // make call to backend to get real data
   const [assignmentList, setAssignmentList] = useState([]);
   useEffect(() => {
@@ -53,6 +59,18 @@ export default function Dashboard(props) {
         console.log(error);
       });
   }, []);
+
+  //Save appointment
+  const saveAssignment = () => {
+    const info = {
+      name: assignmentName,
+      description: description,
+      dueDate: assignmentDue,
+    };
+
+    axios.post('http://localhost:8000/api/create_assignment', info);
+  }
+
   return (
     <>
       <Grid container spacing={2}>
@@ -131,6 +149,8 @@ export default function Dashboard(props) {
                     label="Assignment Title"
                     variant="outlined"
                     sx={{ marginBottom: "10px" }}
+                    value={assignmentName}
+                    onChange = {(event) => setAssignmentName(event.target.value)}
                   />
                   <TextField
                     fullWidth
@@ -138,12 +158,35 @@ export default function Dashboard(props) {
                     label="Assignment Details"
                     multiline
                     maxRows={20}
+                    minRows={5}
                     variant="outlined"
                     sx={{ marginBottom: "10px" }}
+                    value = {description}
+                    onChange = {(event) => setDescription(event.target.value)}
                   />
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker label="Due Date" />
-                  </LocalizationProvider>
+                    <DatePicker 
+                    value={assignmentDue}
+                    onChange = {(newValue) => setAssignmentDue(newValue)}
+                    label="Due Date" />
+                    </LocalizationProvider>
+                  <Button
+                  sx={{marginTop: "10px"}}
+                  variant="contained"
+                  size="large"
+                  onClick={() => {
+                    saveAssignment();
+                  }}
+                  >
+                  Submit
+                  </Button>
+                  <Button
+                  variant="outlined"
+                  sx={{marginTop: "10px", marginLeft: "10px"}}
+                  size="large"
+                  onClick={handleClose}>
+                    Cancel
+                  </Button>
                 </Box>
               </Modal>
             </Grid>
