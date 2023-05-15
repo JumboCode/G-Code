@@ -39,7 +39,7 @@ const MessageCard = ({ author, body, type }) => {
             {author.firstname + ' ' + author.lastname}
           </div>
           <div>
-            <Link href={'/profile/' + author._id}>
+            <Link href={'/People/' + author._id}>
               <Button variant="profile">Profile</Button>
             </Link>
           </div>

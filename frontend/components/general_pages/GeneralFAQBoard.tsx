@@ -329,7 +329,7 @@ export default function GeneralFAQBoard(props) {
                         <List sx={{ padding: '0 20px 20px 20px' }}>
                             {questions.map(question =>
                                 <>
-                                    <Link href={`/question/${question._id}`}>
+                                    <Link href={`/FAQBoard/${question._id}`}>
                                         <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
                                             <ListItemAvatar sx={{ width: '70px' }}>
                                                 <Avatar sx={{ height: '50px', width: '50px' }}> {users[question.author_id]['firstname'][0]} </Avatar>
