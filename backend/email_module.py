@@ -4,6 +4,7 @@ from email.message import EmailMessage
 from datetime import datetime, timezone, timedelta, date
 import datetime
 import time
+from model import UserInvite
 
 def send_email(msg: str, subject: str, recipient: str):
     username = "jumbo.g.code@gmail.com"
@@ -23,9 +24,11 @@ def send_email(msg: str, subject: str, recipient: str):
     server.quit()
 
 def format_appt_reminder(firstname: str, date_obj: datetime):
-
     day_str = date_obj.strftime("%A %B %d")
     time_str = date_obj.strftime("%I:%M %p")
-
     message = "Hi " + firstname + ",\n\n" + "This is reminder that you have an office hours appointment on " + day_str + " at " + time_str +  ".\n\n" + "Best,\n{G}Code"
+    return message
+
+def format_invite(invite: UserInvite):
+    message = f"Hello,\n\n You have been invited to join G-Code. Your access code is {invite.accesscode}."
     return message

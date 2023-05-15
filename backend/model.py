@@ -22,29 +22,7 @@ class PyObjectId(ObjectId):
         field_schema.update(type="string")
 
 # User models
-class AppointmentSlot(BaseModel):
-    weekday: str = Field(...)
-    start_time: float = Field(...)
-    end_time: float = Field(...)
 
-class UserIn(BaseModel):
-    firstname: str = Field(...)
-    lastname: str = Field(...)
-    email: str = Field(...)
-    password: str = Field(...)
-    type: str = Field(...)
-    zoom: Optional[str] = None
-    appointment_slots: Optional[List[AppointmentSlot]] = None
-    timezone: Optional[str] = None
-    maxsessions: Optional[int] = None
-    times: Optional[List[List[str]]] = None
-    linkedin: Optional[str] = None
-    pronouns: Optional[str] = None
-    bio: Optional[str] = None
-    github: Optional[str] = None
-
-class User(UserIn):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
 # Authentication
 class Token(BaseModel):
@@ -57,16 +35,10 @@ class TokenData(BaseModel):
 
 # User invites
 class UserInviteRequest(BaseModel):
-    firstname: str = Field(...)
-    lastname: str = Field(...)
     acctype: str = Field(...)
     email: EmailStr = Field(...)
 
-class UserInvite(BaseModel):
-    firstname: str = Field(...)
-    lastname: str = Field(...)
-    acctype: str = Field(...)
-    email: EmailStr = Field(...)
+class UserInvite(UserInviteRequest):
     date: datetime = Field(...)
     accesscode: str = Field(...)
 
@@ -97,6 +69,38 @@ class AppointmentBooking(AppointmentBookingIn):
 class Appointment(AppointmentBooking):
     id2: str = Field(...)
 
+###################################################################
+############################## Users ##############################
+###################################################################
+
+class AppointmentSlot(BaseModel):
+    weekday: str = Field(...)
+    start_time: float = Field(...)
+    end_time: float = Field(...)
+
+class UserIn(BaseModel):
+    firstname: str = Field(...)
+    lastname: str = Field(...)
+    email: str = Field(...)
+    password: str = Field(...)
+    zoom: Optional[str] = None
+    timezone: Optional[str] = None
+    maxsessions: Optional[int] = None
+    linkedin: Optional[str] = None
+    pronouns: Optional[str] = None
+    bio: Optional[str] = None
+    github: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    firstname: str = Field(...)
+    lastname: str = Field(...)
+    email: str = Field(...)
+    zoom: str = Field(...)
+
+class User(UserIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    type: str = Field(...)
+    appointment_slots: Optional[List[AppointmentSlot]] = None
 
 ###################################################################
 ############################## Posts ##############################

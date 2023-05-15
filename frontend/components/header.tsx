@@ -28,7 +28,7 @@ declare module '@mui/material/styles' {
 
 interface Props {
   window?: () => Window;
-  user: {firstname: string}
+  user: { firstname: string }
 }
 
 const theme = createTheme({
@@ -159,16 +159,18 @@ function Header(props: Props) {
               >
 
                 {settings.map((setting) => (
-                  <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center"><a href={'./' + setting[1]}>{setting[0]}</a></Typography>
-                  </MenuItem>
+                  <a href={'/' + setting[1]}>
+                    <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
+                      <Typography textAlign="center">{setting[0]}</Typography>
+                    </MenuItem>
+                  </a>
                 ))}
-              </Menu>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-    </ThemeProvider>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+    </ThemeProvider >
 
   );
 }

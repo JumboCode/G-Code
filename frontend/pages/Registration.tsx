@@ -21,41 +21,36 @@ import Link from "next/link";
 
 export default function Registration() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [code, setCode] = useState("");
-  const [zoom, setZoom] = useState("");
   const [regError, setRegError] = useState(false);
+
+  const [formData, setFormData] = useState({})
+  const [accessCode, setAccessCode] = useState("")
+
+  const handleChange = event => {
+    setFormData(formData => {
+      return ({
+        ...formData,
+        [event.target.name]: event.target.value
+      })
+    })
+  }
 
   /* POST DATA */
   const postRegInfo = () => {
-    const postRegData = {
-      firstname: firstName,
-      lastname: lastName,
-      email: email,
-      password: password,
-      code: code,
-      zoom: zoom
+    const apiUrl = `http://localhost:8000/api/join?access_code=${accessCode}`;
+
+    const headers = {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
     };
 
-    axios.put('http://localhost:8000/registration', postRegData, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'accept': 'application/json'
-      }
-    })
-      .then(function success(response) {
-        console.log(response)
-        const token = response.data.access_token;
-        Cookies.set('gcode-session', token, { expires: 7 });
-        router.push('/Login');
+    axios.post(apiUrl, formData, { headers })
+      .then(response => {
+        console.log('Response:', response.data);
       })
-      .catch(function failure(error) {
-        console.log(error);
-        setRegError(true);
-      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
   /* END POST DATA */
 
@@ -70,56 +65,51 @@ export default function Registration() {
               <Grid item md={6} xs={12}>
                 <TextField
                   fullWidth
+                  name="firstname"
                   id="outlined-basic"
                   label="First name"
                   variant="outlined"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setFirstName(event.target.value as string);
-                  }}
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item md={6} xs={12}>
                 <TextField
                   fullWidth
+                  name="lastname"
+                  id="outlined-basic"
+                  label="Last name"
+                  variant="outlined"
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item md={12} xs={12}>
+                <TextField
+                  fullWidth
+                  name="email"
                   id="outlined-basic"
                   label="Email"
                   variant="outlined"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setEmail(event.target.value);
-                  }}
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  name="password"
                   id="outlined-helperText"
                   label="Password"
                   type="password"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setPassword(event.target.value);
-                  }}
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  name="access_code"
                   id="outlined-basic"
-                  label="Class Code"
+                  label="Access Code"
                   variant="outlined"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setCode(event.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="outlined-basic"
-                  label="Zoom Link"
-                  variant="outlined"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setZoom(event.target.value);
-                  }}
+                  onChange={event => setAccessCode(event.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>

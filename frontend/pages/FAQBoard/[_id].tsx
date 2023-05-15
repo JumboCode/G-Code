@@ -39,7 +39,9 @@ const MessageCard = ({ author, body, type }) => {
             {author.firstname + ' ' + author.lastname}
           </div>
           <div>
-            <Button variant="profile">Profile</Button>
+            <Link href={'/profile/' + author._id}>
+              <Button variant="profile">Profile</Button>
+            </Link>
           </div>
         </div>
       </Grid>
@@ -76,8 +78,6 @@ export default function QuestionDetails() {
     }
   }
   IsUserAuthorized(save_user)
-
-  console.log(_id)
 
   const [newReply, setNewReply] = React.useState("");
 

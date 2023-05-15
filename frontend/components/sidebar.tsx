@@ -17,9 +17,7 @@ function SideBarElement({ text, active }) {
     return <div
         key={text}
         onClick={function () {
-            router.push("/" +
-                text === "Dashboard" ? ''
-                : text.replace(/\s/g, ''));
+            router.push("/" + text)
         }}
         onMouseOver={() => setIsHover(true)}
         onMouseOut={() => setIsHover(false)}

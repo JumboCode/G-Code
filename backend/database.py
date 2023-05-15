@@ -19,19 +19,17 @@ client   = MongoClient(uri, 8000)
 database = client.db
 
 users        = database.users
-appointments = database.appointments #change based on the actual collection
+appointments = database.appointments
 sessions     = database.sessions
 assignments  = database.assignments
-si           = database.student_invites
-ai           = database.admin_invites
-ui           = database.user_invites
+user_invites = database.user_invites
 classes      = database.classes
 posts        = database.posts
 
 
-model_dic = {"Users": User, "UserInvites": UserInvite, "StudentInvites": UserInvite, "AdminInvites": UserInvite, "Appointments": AppointmentBooking, "Posts": Post, "Sessions": Any, "Assignments": Assignment}
+model_dic = {"Users": User, "UserInvites": UserInvite, "Appointments": AppointmentBooking, "Posts": Post, "Sessions": Any, "Assignments": Assignment}
 
-db_dic = {"Users":users, "UserInvites": ui, "StudentInvites" : si, "AdminInvites": ai, "Appointments":appointments, "Posts":posts, "Sessions":sessions, "Assignments": assignments}
+db_dic = {"Users":users, "UserInvites": user_invites, "Appointments":appointments, "Posts":posts, "Sessions":sessions, "Assignments": assignments}
 
 def stringify_id(object):
     try:
@@ -61,7 +59,7 @@ def fetch_one(model_class: str, field_name: str, field_value: Any):
         return "No Result Found"
     elif len(result_list) > 1:
         return "Multiple Instances Found"
-    return result_list[0]
+    return stringify_id(result_list[0])
 
 def fetch_filtered(model_class: str, filters: list[tuple]):
     result_list = []
@@ -178,13 +176,9 @@ def create_user_invite(inviteToAdd : UserInvite):
     return inviteToAdd
 
 
-def create_student_invite(ak, em, d):
-    inviteToAdd = {
-        "accesscode": ak,
-        "requestdate": d,
-        "email": em
-    }
-    si.insert_one(inviteToAdd) 
+def create_student_invite(accesscode, email, acctype, date):
+    inviteToAdd = UserInvite(accesscode=accesscode, email=email, acctype=acctype, date=date)
+    user_invites.insert_one(inviteToAdd.dict()) 
     return inviteToAdd
 
 def create_admin_invite(ak, em, d):
@@ -260,6 +254,22 @@ def get_all_student_assignments(student_email):
         if 'individual_assignments' in document:
             assignment_list.append(document)
     return assignment_list
+
+###################################################################
+############################## Users ##############################
+###################################################################
+
+def update_user_by_id(user_id: str, user_data: UserIn):
+    users.update_one({'_id': ObjectId(user_id)}, {"$set": user_data.dict()})
+
+def validate_invite_request(invite_request: UserInviteRequest):
+    users = fetch_filtered("Users", [("email", invite_request.email)])
+    if len(users) > 0:
+        return "user already exists"
+    invites = fetch_filtered("UserInvites", [("email", invite_request.email)])
+    if len(invites) > 0:
+        return "user already exists"
+    return "success"
 
 ###################################################################
 ############################## Posts ##############################

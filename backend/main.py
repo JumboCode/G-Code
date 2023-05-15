@@ -18,8 +18,6 @@ from oauth import get_current_user
 from datetime import datetime, date, time
 # from http.client import HTTPException
 from dotenv import load_dotenv
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 
 # Mark
 from bson import json_util, ObjectId
@@ -64,11 +62,11 @@ def register_student(postData: dict):
     email = postData.get('email')
 
     new_user = UserIn(
-    firstname = postData.get('firstName'),
-    lastname = postData.get('lastName'),
-    email = email,
-    password = Hash.bcrypt(postData.get('password')),
-    type = "student"
+        firstname = postData.get('firstName'),
+        lastname = postData.get('lastName'),
+        email = email,
+        password = Hash.bcrypt(postData.get('password')),
+        type = "student"
     )
 
     user = fetch_user_by_email(email)
@@ -83,7 +81,7 @@ def register_student(postData: dict):
 def login(request: OAuth2PasswordRequestForm = Depends()):   
     user = fetch_user_by_email(request.username)
 
-    if not user:
+    if type(user) == str:
         raise HTTPException(status_code=403, detail="Invalid Username")
 
     if not Hash.verify(user.password, request.password):
@@ -651,6 +649,63 @@ async def get_admins():
 async def get_users():
     response = fetch_all("Users")
     return response
+
+@app.put("/api/user_by_id")
+async def put_user_by_id(user_data: UserUpdate, currentUser: UserIn = Depends(get_current_user)):
+    currentUserID = fetch_one("Users", "email", currentUser.email).id
+    update_user_by_id(currentUserID, user_data)
+    result = fetch_one("Users", "_id", ObjectId(currentUserID))
+    return result
+
+@app.get("/api/user_by_id")
+async def get_user_by_id(user_id: str):
+    result = fetch_one("Users", "_id", ObjectId(user_id))
+    return result
+
+# Send request for new user
+# @app.post("/api/student_invite")
+# async def post_student_invite(invite_request: UserInviteRequest):
+#     # ensure email is not in invites or users
+#     validation = validate_invite_request(invite_request)
+#     if validation != "success":
+#         return validation
+#     accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
+#     date = datetime.datetime.now()
+#     invite = create_student_invite(accessKey, invite_request.email, invite_request.acctype, date)
+#     send_email(format_invite(invite), "{G}Code User Invite", invite_request.email)
+#     return "success"
+
+@app.post("/api/user_invites")
+async def post_user_invites(invite_requests: list[UserInviteRequest], currentUser: UserIn = Depends(get_current_user)):
+    if currentUser.type != 'admin':
+        return "you must be an admin to invite users"
+    validations = []
+    valid = True
+    for invite_request in invite_requests:
+        validation = validate_invite_request(invite_request)
+        if validation != "success":
+            valid = False
+        validations.append(validation)
+    if valid:
+        for invite_request in invite_requests:
+            accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
+            date = datetime.datetime.now()
+            invite = create_student_invite(accessKey, invite_request.email, invite_request.acctype, date)
+            send_email(format_invite(invite), "{G}Code User Invite", invite_request.email)
+    return validations
+    
+
+@app.post("/api/join")
+async def post_user_invite(user_data: UserIn, access_code: str):
+    invite = fetch_one("UserInvites", "accesscode", access_code)
+    if type(invite) == str:
+        return "invalid access code"
+    if invite.email != user_data.email:
+        return "invalid email"
+    user_data.password = Hash.bcrypt(user_data.password)
+    create_new_user(user_data.dict())
+    return "success"
+
 
 ###################################################################
 ############################## Posts ##############################
