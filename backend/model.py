@@ -46,15 +46,17 @@ class UserInvite(UserInviteRequest):
 class IndividualAssignment(BaseModel):
     submitted: bool = Field(...)
     submissionLink: Optional[str] = Field(...)
-    student_email: Optional[EmailStr] = Field(...)
+    studentid: Optional[str] = Field(...)
     messages: List[str] = Field(...)
 
-class Assignment(BaseModel):
-    #id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
+class AssignmentIn(BaseModel):
     name: str = Field(...)
     description: str = Field(...)
     dueDate: datetime = Field(...)
-    # indivdualAssignments: List[IndividualAssignment] = Field(...)
+
+class Assignment(AssignmentIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    individual_assignments: List[IndividualAssignment] = Field(...)
 
 # Appointments
 class AppointmentBookingIn(BaseModel):

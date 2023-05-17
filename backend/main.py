@@ -224,55 +224,7 @@ async def get_one_invite(field_name: str, field_value: Any):
 ##########################################################################
 
 
-@app.get("/api/get_student_assignments")
-async def get_student_assignments(student_email : str):
-   return get_all_student_assignments(student_email)
 
-@app.post("/api/create_assignment")
-async def create_assignment (new_assignment: Assignment):
-    '''
-    Purpose: Add a question to the database
-
-    Input: A question object
-    '''
-    response = create_one("Assignments", new_assignment)
-    return response
-
-@app.post("/api/assign_assignment")
-async def assign_assignment (assignment_id: str, student_emails: list[str]):
-    '''
-    Purpose: Add a question to the database
-
-    Input: A question object
-    '''
-
-    for email in student_emails:
-        print("IN STUDENT EMAILS LOOP")
-        user = fetch_user_by_email(email)
-        if user is None:
-            error_message = ("A user with the email \"" + email +
-                            "\" does not exist")
-            raise HTTPException(status_code=500, detail=error_message)
-        
-        individual_assignment = {
-            'submitted': False,
-            'student_email': email,
-            'messages': []
-        }
-        create_individual_assignment(assignment_id, individual_assignment)
-
-    return "success"
-
-# @app.post("/api/create_question")
-# async def create_question (request: PostIn):
-#     '''
-#     Purpose: Add a question to the database
-
-#     Input: A question object
-#     '''
-#     response = add_question(request.dict())
-
-#     return "success"
 
 @app.post("/api/respond_to_question")
 async def respond_to_question (question_reply: Reply):
@@ -305,134 +257,13 @@ async def get_filtered_appointments(filter: list[tuple]):
     '''
     response = fetch_filtered("Appointments", filter)
     return response
-
-
-# Send request for new user
-@app.put("/api/request_student")
-async def put_student_request(email: str):
-    '''
-    Purpose: Generates an access code for a student and stores the code as well
-             as the student's information and the datetime they were added
-             in the student requests document of the database.
-
-    Input:   For now just the students email address. We will also require
-             an authentication token of some sort once that is set up.
-    '''
-    accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
-    date = datetime.now()
-    create_student_invite(accessKey, email, date)
     
-# Requuest multiple users at the same time
-
-# Lets student join/register
-@app.put("/api/student_join")
-async def put_student_join(access_token: str, student_data: User):
-    '''
-    Purpose: Verifies that access token that was added is valid and then
-             adds the student with all of their data into the database.
-
-    Input:   An access token, which is a string. Also the student's data,
-             as specified by the model.
-    '''
-    studentFromKey = fetch_one_invite(access_token)
-    if studentFromKey:
-        # await create_student(student_data)
-        # raise HTTPException(404, f"there are no students with this key")
-        s = create_student(student_data.dict())
-        remove_student_invite(access_token)
-        return s
-    else:
-        return HTTPException("Student was not created")
-
 @app.put("/api/remove_student_from_appoint/")
 async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
-    '''
-    Purpose: If there are more than 24 before the appointment, update the apppointment 
-            by removing the student cancel and unmark as reserved
-
-    Input: the appointment ID to mark as unreserved 
-    '''
     if user.type != 'admin':
         raise HTTPException(status_code=403, detail="must be an admin to remove student")
     response = cancel_appointment(appointmentID)
-    return response 
-
-@app.put("/api/assign_student_to_class/")
-async def assign_student_to_class (username : str, class_name : str, 
-                                   user: dict = Depends(get_current_user)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
-
-    Input: the student name, and the class name to assign them to
-    '''
-    if user.type != 'admin':
-        raise HTTPException(status_code=403, detail="must be an admin to assign student")
-    student = fetch_student_by_username(username)
-    if student is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given student does not exist")
-    add_student_to_class(class_name, student)
-
-@app.put("/api/unassign_student_from_class/")
-async def unassign_student_to_class (username : str, class_name : str, 
-                                   user: dict = Depends(get_current_user)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
-
-    Input: the student name, and the class name to assign them to
-    '''
-    if user.type != 'admin':
-        raise HTTPException(status_code=403, detail="must be an admin to unassign student")
-    student = fetch_student_by_username(username)
-    if student is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given student does not exist")
-    remove_student_from_class(class_name, student)
-
-@app.put("/api/assign_instructor_to_class/")
-async def assign_instructor_to_class (username : str, class_name : str, 
-                                      user: dict = Depends(get_current_user)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
-
-    Input: the student name, and the class name to assign them to
-    '''
-    if user.type != 'admin':
-        raise HTTPException(status_code=403, detail="must be an admin to assign instructor")
-    instructor = fetch_admin_by_username(username)
-    if instructor is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given instructor does not exist")
-    add_instructor_to_class(class_name, instructor)
-
-@app.put("/api/unassign_instructor_from_class/")
-async def unassign_instructor_from_class (username : str, class_name : str, 
-                                          user: dict = Depends(get_current_user)):
-    '''
-    Purpose: Allows the admin to create a new student and add them to a class
-
-    Input: the student name, and the class name to assign them to
-    '''
-    if user.type != 'admin':
-        raise HTTPException(status_code=403, detail="must be an admin to unassign instructor")
-    instructor = fetch_admin_by_username(username)
-    if instructor is None:
-        raise HTTPException(status_code=500, 
-                            detail="The given instructor does not exist")
-    remove_instructor_from_class(class_name, instructor)
-
-@app.get("/api/view_students_in_class/")
-async def view_students_in_class (class_name : str, 
-                                  user: dict = Depends(get_current_user)):
-    # Conversion to string must be done because student documents may have an
-    # 'ObjectId' field, which is non-iterable and will result in a type-error 
-    # if returned directly
-    return  str(get_all_students_in_class(class_name))
-
-# @app.get("/api/view_instructors_in_class/")
-# async def view_instructors_in_class (class_name : str, 
-#                                      user: dict = Depends(get_current_user)):
-#     return str(get_all_instructors_in_class(class_name))
+    return response
 
 @app.post("/api/edit_user_profile")
 async def edit_user_profile (username: str, new_profile_values: dict, 
@@ -467,51 +298,6 @@ async def student_profile_self_view (new_profile_values: dict,
         update_profile_field(username, user["permission_level"], 
                              field, new_profile_values[field])
 
-@app.post("/api/create_invites/")
-async def create_users (new_users: list):
-    print("IN CREATE USERS")
-    print(type(new_users))
-    for new_user in new_users:
-        print(type(new_user))
-        print("Adding new user!")
-        if fetch_user_by_email(new_user["email"]) != None:
-            error_message = ("A user with the email \"" + new_user["email"] +
-                            "\" already exists")
-            raise HTTPException(status_code=500, detail=error_message)
-
-        access_code = str(hash((new_user["email"], registration_secret)))
-        today = date.today().isoformat()
-
-        ## TODO: Student and Admin models require a lot of temporary placeholder 
-        # values, should these be required?
-        user_invite = {
-            "accesscode": access_code,
-            "requestdate": today,
-            "email": new_user["email"],
-            "firstname": new_user["firstname"],
-            "lastname": new_user["lastname"],
-            "acctype": new_user["acctype"]
-        }
-        create_user_invite(user_invite)
-
-
-def sent_invite_email(to_contact: User):
-    student_id = fetch_student_by_username(to_contact.username)['_id']
-    message = Mail(
-        from_email = 'jumbo.g.code@gmail.com',
-        to_emails = to_contact.email,
-        subject = 'G-Code Invitation',
-        # TODO: Switch URL in html_content from localhost to actual url
-        html_content = '<div> <p>You\'ve been invited to join G-Code\'s course' 
-                        'page! Please click the following link: </p>'
-                        '<a href=\'http://localhost:3000/' + str(student_id) + 
-                        '\'> Sign-Up </a> </div>'
-   )
-    try:
-        sg = SendGridAPIClient(os.environ["SENDGRID_API_KEY"])
-        response = sg.send(message)
-    except Exception as e:
-        print(e.message)
 
 # Appointment routes
 
@@ -532,11 +318,6 @@ async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
     return response
 
 # done
-@app.put("/api/cancel-appointment")
-async def cancel_appointment_by_id(id: str, current_user: UserIn = 
-                            Depends(get_current_user)):
-    cancel_appointment(id)
-    return "ok"
 
 @app.put("/api/put_appointment/")
 async def put_appointment(appointment_data: Appointment):
@@ -548,10 +329,57 @@ async def assign_student_to_appointment(appointmentID: str , studentID : str):
     response = reserve_appointment(appointmentID, studentID)   
     return response 
 
+###################################################################
+########################### Assignments ###########################
+###################################################################
+
+@app.get("/api/all_assignments")
+async def get_assignments(currentUser: UserIn = Depends(get_current_user)):
+    if (currentUser.type != 'admin'):
+        raise HTTPException(status_code=403, detail='Must be admin to view all assignments')
+    result = fetch_all("Assignments")
+    return result
+
+@app.post("/api/assignment")
+async def create_assignment(assignment: AssignmentIn, currentUser: UserIn = Depends(get_current_user)):
+    if currentUser.type != 'admin':
+        raise HTTPException(status_code=403, detail='Must be admin to create assignments')
+    new_assignment = {**assignment.dict(), 'individual_assignments': []}
+    create_one("Assignments", new_assignment)
+    return "success"
+
+@app.post("/api/assign_assignment")
+async def assign_assignment (assignment_id: str, student_emails: list[str]):
+    for email in student_emails:
+        user = fetch_user_by_email(email)
+        if user is None:
+            error_message = ("A user with the email \"" + email +
+                            "\" does not exist")
+            raise HTTPException(status_code=500, detail=error_message)
+        
+        individual_assignment = {
+            'submitted': False,
+            'student_email': email,
+            'github_link': '',
+            'messages': []
+        }
+        create_individual_assignment(assignment_id, individual_assignment)
+    return "success"
+
 @app.get("/api/assignments")
-async def get_assignments():
-    response = fetch_all("Assignments")
-    return response
+async def get_assignments(currentUser: UserIn = Depends(get_current_user)):
+    user = fetch_user_by_email(currentUser.email)
+    result = fetch_assignments_by_user(user.id)
+    return result
+
+@app.get("/api/submit_assignment")
+async def put_submit_assignment(assignment_id: str, github_link: str, currentUser: UserIn = Depends(get_current_user)):
+    user = fetch_user_by_email(currentUser.email)
+    submit_assignment(assignment_id, github_link, user.id)
+
+@app.get("/api/assignment_by_id")
+async def get_assignment_by_id(assignment_id: str, currentUser: UserIn = Depends(get_current_user)):
+    return fetch_one("Assignments", "_id", ObjectId(assignment_id))
 
 ###################################################################
 ########################## Appointments ###########################
@@ -634,6 +462,12 @@ async def get_available_appointments(date: date):
         appointments_by_admin[admin] = list(filter(lambda app : not does_appointment_exist(appointment=app, tutorEmail=admin), appointments_by_admin[admin]))
 
     return appointments_by_admin
+
+@app.put("/api/cancel-appointment")
+async def cancel_appointment_by_id(id: str, current_user: UserIn = 
+                            Depends(get_current_user)):
+    cancel_appointment(id)
+    return "ok"
 
 ###################################################################
 ############################## Users ##############################

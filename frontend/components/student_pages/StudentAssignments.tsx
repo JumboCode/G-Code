@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Box, Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar, IconButton } from "@mui/material"; 
+import { Grid, Box, Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar, IconButton } from "@mui/material";
 import Image from "next/image";
 import TutoringCardDisplay from "../tutoringCard";
 import styles from '../../styles/Home.module.css'
@@ -9,6 +9,10 @@ import axios from "axios";
 import FAQIcon from "../../public/questionmark.png";
 import CalendarIcon from "../../public/calendar.jpg";
 import GreenCircle from "../../public/green.png";
+import Cookie from 'js-cookie'
+import Link from 'next/link'
+
+import { formatAMPM, dateToString } from "../../constants";
 
 // styles
 import assignentStyles from "../../styles/Assignments.module.css";
@@ -21,20 +25,21 @@ export default function StudentAssignments(props) {
   const [assignmentList, setAssignmentList] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/assignments', {
-      // params: {
-      //   student_email: 'user.email',
-      // },
-      headers: {
-        'Accept': 'application/json'
-      }
-    })
+    const apiUrl = 'http://localhost:8000/api/assignments';
+
+    const token = Cookie.get('gcode-session')
+
+    const headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer ' + token,
+    };
+
+    axios.get(apiUrl, { headers })
       .then(response => {
-        console.log(response.data)
         setAssignmentList(response.data)
       })
       .catch(error => {
-        console.log(error);
+        console.error('Error:', error);
       });
   }, []);
 
@@ -48,30 +53,32 @@ export default function StudentAssignments(props) {
         </Grid>
         <Grid item xs={12} md={9}>
           <div className={assignentStyles.leftColumn}>
-          <List className={styles.pageElement} sx={{ backgroundColor: 'white' }}>
-          {assignmentList.map(assignment => (
-            <ListItem
-              key={assignment.name}
-              secondaryAction={
-                <IconButton edge="end" aria-label="delete" onClick={() => {
-                  router.push('/Assignments')
-                }}>
-                  <ArrowForwardIosIcon />
-                </IconButton>
-              }
-            >
-              <ListItemAvatar>
-                <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
-                  <Image src={GreenCircle} alt="Assignment Icon" />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={assignment.name}
-                secondary={assignment.dueDate}
-              />
-            </ListItem>
-          ))}
-        </List>
+            <List className={styles.pageElement} sx={{ backgroundColor: 'white' }}>
+              {assignmentList.map(assignment => (
+                <Link href={"/Assignments/" + assignment._id}>
+                  <ListItem
+                    key={assignment.name}
+                    secondaryAction={
+                      <IconButton edge="end" aria-label="delete" onClick={() => {
+                        router.push('/Assignments')
+                      }}>
+                        <ArrowForwardIosIcon />
+                      </IconButton>
+                    }
+                  >
+                    <ListItemAvatar>
+                      <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
+                        <Image src={GreenCircle} alt="Assignment Icon" />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={assignment.name}
+                      secondary={"Due " + dateToString(new Date(assignment.dueDate)) + " at " + formatAMPM(assignment.dueDate)}
+                    />
+                  </ListItem>
+                </Link>
+              ))}
+            </List>
           </div>
         </Grid>
         <Grid item xs={12} md={3}>
@@ -82,6 +89,6 @@ export default function StudentAssignments(props) {
           <div className={assignentStyles.question}>Q and A Board</div>
         </Grid>
       </Grid>
-  </div>
+    </div>
   );
 }

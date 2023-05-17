@@ -245,6 +245,43 @@ def get_all_student_assignments(student_email):
     return assignment_list
 
 ###################################################################
+########################### Assignments ###########################
+###################################################################
+
+def fetch_assignments_by_user(user_id: str):
+    cursor = assignments.find({})
+    student_assignments = []
+    for document in cursor:
+        assignment = stringify_id(Assignment(**document))
+        for individual_assignment in assignment.individual_assignments:
+            if individual_assignment.studentid == user_id:
+                student_assignments.append(assignment)
+    return student_assignments
+
+def submit_assignment(assignment_id: str, github_link: str, user_id: str):
+    query = {
+        "_id": ObjectId(assignment_id)
+    }
+    assignment = assignments.find_one(query)
+    
+
+    if assignment:
+        individual_assignments = assignment["individual_assignments"]
+
+        # Find an individual assignment in the object's individual_assignment list that has a given studentid
+        for individual_assignment in individual_assignments:
+            if individual_assignment["studentid"] == user_id:
+                # Set the submitted field in that object to true
+                individual_assignment["submitted"] = True
+
+                # Set the github link in that assignment to a given string
+                individual_assignment["submissionLink"] = github_link
+
+        # Update the modified assignment in the collection
+        assignments.update_one({"_id": assignment["_id"]}, {"$set": {"individual_assignments": individual_assignments}})
+    
+
+###################################################################
 ############################## Users ##############################
 ###################################################################
 
