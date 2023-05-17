@@ -75,7 +75,7 @@ export default function Login() {
               setPassword(event.target.value);
             }}
           />
-          <text className={loginStyles.forgotPassword}>Forgot Password?</text>
+          <Link href="./ResetPassword"><text className={loginStyles.forgotPassword}>Forgot Password?</text></Link>
           {loginError && <Alert sx={{marginTop: '30px'}} severity="error"> Invalid username or password. </Alert> }
           <Button fullWidth variant="primary" sx={{margin: '20px 0 10px 0'}} onClick={postInfo}>
             <h1 className={loginStyles.signInButton}>Login </h1>

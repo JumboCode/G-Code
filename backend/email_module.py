@@ -32,3 +32,7 @@ def format_appt_reminder(firstname: str, date_obj: datetime):
 def format_invite(invite: UserInvite):
     message = f"Hello,\n\n You have been invited to join G-Code. Your access code is {invite.accesscode}."
     return message
+
+def send_reset_email(code: str):
+    message = "Your G-Code password reset code is " + code + ".\n\n" + "Best, \n{G}Code"
+    return message

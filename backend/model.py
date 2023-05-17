@@ -132,6 +132,20 @@ class PostIn(BaseModel):
     title: str = Field(...)
     body: str = Field(...)
 
+class ResetDataIn(BaseModel):
+    email: str = Field(...)
+    code: str = Field(...)
+    password: str = Field(...)
+
+class ResetData(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    email: str = Field(...)
+    code: str = Field(...)
+
+class EmailIn(BaseModel):
+    email: str = Field(...)
+    placeholder: Optional[str] = Field(...)
+
 class Post(PostIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     author_id: str = Field(...)
