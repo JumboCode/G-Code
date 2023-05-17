@@ -4,6 +4,7 @@ import { Box, Grid, Typography, Button, Switch, IconButton, Table, TableBody, Ta
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import axios from "axios"
+import Cookie from 'js-cookie'
 
 const button_style = { color: '#3D495C' };
 const sessions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
@@ -12,7 +13,9 @@ const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 const options = ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM',
   '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM',
   '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM'];
-import { numberToAMPM, convertToFloat } from '../../constants'
+const defaultTimeSlot = { 'starttime': 9.0, 'endtime': 9.5 }
+
+import { numberToAMPM, convertTimeToNumber } from '../../constants'
 
 export default function AdminOfficeHours(props) {
   const user = props.user
@@ -23,20 +26,23 @@ export default function AdminOfficeHours(props) {
   const [appointmentSchedule, setAppointmentSchedule] = React.useState(user.appointment_schedule);
 
   const saveSchedule = () => {
-    console.log("Calling saveSchedule")
-    console.log("Email: " + user.email)
-    console.log("Timezone: " + timeZone);
-    console.log("Max Sessions: " + maxSessions);
-    console.log("Default: " + isDefault);
+    const token = Cookie.get('gcode-session')
 
-    const schedule_info = {
-      email: user.email,
-      timezone: timeZone,
-      maxsessions: maxSessions,
-      times: appointmentSchedule,
-      default: isDefault,
+    const apiUrl = `http://localhost:8000/api/save_schedule?maxSessions=${maxSessions}&timeZone=${timeZone}`;
+
+    const headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json',
     };
-    axios.post('http://localhost:8000/api/save_schedule', schedule_info)
+
+    axios.post(apiUrl, appointmentSchedule, { headers })
+      .then(response => {
+        console.log('Response:', response.data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   return (
@@ -228,6 +234,25 @@ function ConfirmZero({ open, setOpen, saveSchedule }) {
 
 function DayRow({ dayName, appointmentSchedule, setAppointmentSchedule }) {
   let times_on_day = appointmentSchedule[dayName.toLowerCase()]
+
+  const dayToggleOn = () => {
+    setAppointmentSchedule(appointmentSchedule => {
+      return { ...appointmentSchedule, [dayName.toLowerCase()]: [defaultTimeSlot] }
+    })
+  }
+  const dayToggleOff = () => {
+    setAppointmentSchedule(appointmentSchedule => {
+      return { ...appointmentSchedule, [dayName.toLowerCase()]: [] }
+    })
+  }
+  const dayToggle = (_) => {
+    if (appointmentSchedule[dayName.toLowerCase()].length) {
+      dayToggleOff()
+    } else {
+      dayToggleOn()
+    }
+  }
+
   return (
     <TableRow
       key={dayName}
@@ -240,9 +265,7 @@ function DayRow({ dayName, appointmentSchedule, setAppointmentSchedule }) {
       </TableCell>
       <TableCell sx={{ borderColor: 'white', padding: '2px' }} align="right">
         <div style={tutoring_styles.SwitchContainer}>
-          <Switch checked={times_on_day.length > 0} onChange={
-            (event) => console.log("switched")
-          } />
+          <Switch checked={times_on_day.length > 0} onChange={dayToggle} />
         </div>
       </TableCell>
       <TableCell sx={{ borderColor: 'white', padding: '2px' }} align="right">
@@ -251,10 +274,19 @@ function DayRow({ dayName, appointmentSchedule, setAppointmentSchedule }) {
             bottom={index === (times_on_day.length - 1)}
             timeSlot={time_slot}
             setTimeSlot={e => setAppointmentSchedule(appointmentSchedule => {
-                let newTimeArray = [...appointmentSchedule[dayName.toLowerCase()]]
-                newTimeArray[index] = {...newTimeArray[index], [e.target.name]:convertToFloat(e.target.value)}
-                console.log(newTimeArray)
-                return {...appointmentSchedule, [dayName.toLowerCase()]: newTimeArray}})}
+              let newTimeArray = [...appointmentSchedule[dayName.toLowerCase()]]
+              newTimeArray[index] = { ...newTimeArray[index], [e.target.name]: convertTimeToNumber(e.target.value) }
+              return { ...appointmentSchedule, [dayName.toLowerCase()]: newTimeArray }
+            })}
+            addSlot={() => setAppointmentSchedule(appointmentSchedule => {
+              let newTimeArray = [...appointmentSchedule[dayName.toLowerCase()], defaultTimeSlot]
+              return { ...appointmentSchedule, [dayName.toLowerCase()]: newTimeArray }
+            })}
+            removeSlot={() => setAppointmentSchedule(appointmentSchedule => {
+              let newTimeArray = [...appointmentSchedule[dayName.toLowerCase()]]
+              newTimeArray.pop()
+              return { ...appointmentSchedule, [dayName.toLowerCase()]: newTimeArray }
+            })}
           />
         )}
       </TableCell>
@@ -262,56 +294,51 @@ function DayRow({ dayName, appointmentSchedule, setAppointmentSchedule }) {
   );
 }
 
-function TimeIntervalSelector({ bottom, timeSlot, setTimeSlot }) {
+function TimeIntervalSelector({ bottom, timeSlot, setTimeSlot, addSlot, removeSlot }) {
   return (
     <div style={tutoring_styles.TimeIntervalSelector}>
       {/* START TIME*/}
-      <FormControl fullWidth>
-        <Select
-          displayEmpty
-          sx={{
-            height: "30px"
-          }}
-          name="starttime"
-          value={numberToAMPM(timeSlot.starttime)}
-          onChange={setTimeSlot}
-        >
-          {options.map(option =>
-            <MenuItem value={option} key={option}>
-              {option}
-            </MenuItem>
-          )}
-        </Select>
-      </FormControl>
+      <Select
+        displayEmpty
+        sx={{
+          height: "30px"
+        }}
+        name="starttime"
+        value={numberToAMPM(timeSlot.starttime)}
+        onChange={setTimeSlot}
+      >
+        {options.map(option =>
+          <MenuItem value={option} key={option}>
+            {option}
+          </MenuItem>
+        )}
+      </Select>
 
       TO
 
       {/* END TIME */}
-      <FormControl fullWidth>
-        <Select
-          displayEmpty
-          sx={{
-            height: "30px"
-          }}
-          name="endtime"
-          value={numberToAMPM(timeSlot.endtime)}
-        >
-          {options.map(option =>
-            <MenuItem value={option} key={option}>
-              {option}
-            </MenuItem>
-          )}
-        </Select>
-      </FormControl>
+      <Select
+        displayEmpty
+        sx={{
+          height: "30px"
+        }}
+        name="endtime"
+        value={numberToAMPM(timeSlot.endtime)}
+        onChange={setTimeSlot}
+      >
+        {options.map(option =>
+          <MenuItem value={option} key={option}>
+            {option}
+          </MenuItem>
+        )}
+      </Select>
 
       {/* CREATE NEW ROW */}
       {bottom && <>
-        <IconButton onClick={() => setNumTimeIntervals((old) => old + 1)}>
+        <IconButton onClick={addSlot}>
           <AddRoundedIcon sx={button_style} />
         </IconButton>
-        <IconButton onClick={() => {
-          setNumTimeIntervals((old) => old - 1);
-        }}>
+        <IconButton onClick={removeSlot}>
           <DeleteOutlineOutlinedIcon sx={button_style} />
         </IconButton>
       </>}
@@ -383,7 +410,7 @@ const tutoring_styles = ({
   {
     display: 'flex',
     gap: '3%',
-    width: '400px',
+    // width: '400px',
     alignItems: 'center',
     height: '50px'
   },

@@ -116,21 +116,10 @@ def fetch_user_by_email(email):
         return "Multiple Instances Found"
     return result_list[0]
 
-def set_schedule(data: dict):
-    user = fetch_user_by_email(data.get("email"))
-    if (user == None):
-        return "User not found"
-    if (user["type"] != "Admin" and user["type"] != "admin"):
-        return "User is not admin"
-    
-    filter = { 'email' : user["email"] }
-    default = data.get('default')
-    data.pop('default')
-    data.pop('email')
-    print(data)
+def set_schedule(appointment_schedule: AppointmentSchedule, user_id: str):
     users.update_one( 
-        {"email": user["email"]},
-        { "$set": data}
+        {"_id": ObjectId(user_id)},
+        { "$set": {'appointment_schedule': appointment_schedule.dict()}}
     );
 
 def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):

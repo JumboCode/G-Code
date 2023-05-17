@@ -37,13 +37,19 @@ export const numberToMilitary = (num: number) => {
   return timeString;
 }
 
-export function convertToFloat(timeString) {
-  var timeParts = timeString.split(':');
-  var hour = parseInt(timeParts[0], 10);
-  if (timeString.includes('PM')) {
-    hour += 12;
+export function convertTimeToNumber(timeString) {
+  const [hours, minutes] = timeString.split(':');
+  let numericTime = parseInt(hours, 10);
+  
+  if (timeString.includes('PM') && numericTime !== 12) {
+    numericTime += 12;
   }
-  return parseFloat(hour);
+  
+  if (minutes) {
+    numericTime += parseInt(minutes, 10) / 60;
+  }
+  
+  return numericTime;
 }
 
 export const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']

@@ -375,8 +375,8 @@ function TutorProfile({ name, email, date, times }) {
                 return (
                     <Grid item xs={12} md={3.33}>
                         <TimeBox
-                            start_time={time.start_time}
-                            end_time={time.end_time}
+                            starttime={time.starttime}
+                            endtime={time.endtime}
                             admin_email={email}
                             date={date}
                         />
@@ -387,7 +387,7 @@ function TutorProfile({ name, email, date, times }) {
 }
 
 // start time, end time, admin email, date
-function TimeBox({ start_time, end_time, admin_email, date }) {
+function TimeBox({ starttime, endtime, admin_email, date }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -417,8 +417,8 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
 
         const requestBody = {
             "tutorEmail": admin_email,
-            "startTime": dateToString(date) + 'T' + numberToMilitary(start_time),
-            "endTime": dateToString(date) + 'T' + numberToMilitary(end_time),
+            "startTime": dateToString(date) + 'T' + numberToMilitary(starttime),
+            "endTime": dateToString(date) + 'T' + numberToMilitary(endtime),
         };
 
         axios.put('http://localhost:8000/api/reserve_appointment', requestBody, config)
@@ -441,7 +441,7 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
             onClick={handleOpen}
         >
             <p style={{ color: '#29395B', textAlign: 'center' }}>
-                {numberToAMPM(start_time)}-{numberToAMPM(end_time)}
+                {numberToAMPM(starttime)}-{numberToAMPM(endtime)}
             </p>
         </Button>
         <Modal
@@ -453,7 +453,7 @@ function TimeBox({ start_time, end_time, admin_email, date }) {
             <Box sx={booking_modal}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <p style={{ textAlign: 'center' }}>Confirm booking with {admin_email} for {numberToAMPM(start_time)}-{numberToAMPM(end_time)} on {dateToString(date)}?</p>
+                        <p style={{ textAlign: 'center' }}>Confirm booking with {admin_email} for {numberToAMPM(starttime)}-{numberToAMPM(endtime)} on {dateToString(date)}?</p>
                     </Grid>
                     <Grid item xs={6}>
                         <Button

@@ -90,31 +90,7 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(data={"email": user.email, "type": user.type})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/send_appt_reminder")
-def send_appt_reminder(appt: Appointment):
-    if (appt == None):
-        raise HTTPException(status_code=403, detail="Appointment is null")
-    
-    tutor: UserIn = fetch_user_by_email(appt.tutorEmail)
-    student: UserIn = fetch_user_by_email(appt.studentEmail)
-    start: datetime = appt.startTime
 
-    if (tutor == None):
-        raise HTTPException(status_code=403, detail="Tutor email doesn't match existing user")
-    if (student == None):
-        raise HTTPException(status_code=403, detail="Student email doesn't match existing user")
-
-    tutor_msg = format_appt_reminder(tutor.firstname, start)
-    student_msg = format_appt_reminder(student.firstname, start)
-    
-    send_email(tutor_msg, "{G}Code Appointment Reminder", tutor.email)
-    send_email(student_msg, "{G}Code Appointment Reminder", student.email)
-
-
-@app.post("/call_send_appt")
-def call_send_appt():
-    appt: Appointment = fetch_one("Appointments", "tutorEmail", "theseus.lim@gmail.com")
-    send_appt_reminder(appt)
 
 @app.post("/registration")
 def registration(request: UserIn):
@@ -138,14 +114,6 @@ def registration(request: UserIn):
 # Routes to Get All Of a DB Collection
 # TODO: For students/admins, filter out passwords / other sensitive info
 # TODO: Add HTTP Error checking
-
-@app.post("/api/save_schedule")
-def save_schedule(data: dict):
-    email = data.get('email')
-    user = fetch_user_by_email(email)
-    set_schedule(data)
-    return user
-
 
 @app.get("/api/admins")
 async def get_admins():
@@ -580,6 +548,25 @@ async def assign_student_to_appointment(appointmentID: str , studentID : str):
     response = reserve_appointment(appointmentID, studentID)   
     return response 
 
+@app.get("/api/assignments")
+async def get_assignments():
+    response = fetch_all("Assignments")
+    return response
+
+###################################################################
+########################## Appointments ###########################
+###################################################################
+
+@app.post("/api/save_schedule")
+def save_schedule(data: AppointmentSchedule, maxSessions: int, timeZone: str, currentUser: UserIn = Depends(get_current_user)):
+    user = fetch_user_by_email(currentUser.email)
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail='Must be admin to set appointment schedule')
+    update_profile_field(currentUser.email, 'maxsessions', maxSessions)
+    update_profile_field(currentUser.email, 'timezone', timeZone)
+    set_schedule(data, user.id)
+    return user
+
 @app.put("/api/reserve_appointment")
 async def reserve_appointment(appointment_data: AppointmentBookingIn,
                               current_user=Depends(get_current_user)):
@@ -587,6 +574,32 @@ async def reserve_appointment(appointment_data: AppointmentBookingIn,
     student_email = fetch_one("Users", "email", current_user.email).email
     data_dict["studentEmail"] = student_email
     create_appointment(data_dict)
+
+@app.get("/send_appt_reminder")
+def send_appt_reminder(appt: Appointment):
+    if (appt == None):
+        raise HTTPException(status_code=403, detail="Appointment is null")
+    
+    tutor: UserIn = fetch_user_by_email(appt.tutorEmail)
+    student: UserIn = fetch_user_by_email(appt.studentEmail)
+    start: datetime = appt.startTime
+
+    if (tutor == None):
+        raise HTTPException(status_code=403, detail="Tutor email doesn't match existing user")
+    if (student == None):
+        raise HTTPException(status_code=403, detail="Student email doesn't match existing user")
+
+    tutor_msg = format_appt_reminder(tutor.firstname, start)
+    student_msg = format_appt_reminder(student.firstname, start)
+    
+    send_email(tutor_msg, "{G}Code Appointment Reminder", tutor.email)
+    send_email(student_msg, "{G}Code Appointment Reminder", student.email)
+
+
+@app.post("/call_send_appt")
+def call_send_appt():
+    appt: Appointment = fetch_one("Appointments", "tutorEmail", "theseus.lim@gmail.com")
+    send_appt_reminder(appt)
 
 @app.get("/api/get_available_appointments")
 async def get_available_appointments(date: date):
@@ -599,12 +612,7 @@ async def get_available_appointments(date: date):
     admins = fetch_filtered("Users",[("type", "admin")])
 
     for admin in admins:
-        appointments_by_admin[admin.email] = []
-        if admin.appointment_slots:
-            for appointment_slot in admin.appointment_slots:
-                if appointment_slot.weekday == weekday:
-                    appointments_by_admin[admin.email].append(appointment_slot)
-
+        appointments_by_admin[admin.email] = admin.appointment_schedule.dict()[weekday.lower()]
 
     # cross check with booked appointments
     # for each appointment, search for appointment by admin ID and time slot
@@ -612,9 +620,10 @@ async def get_available_appointments(date: date):
     appointments = fetch_all("Appointments")
 
     def does_appointment_exist(appointment, tutorEmail):
+        print(appointment)
         for existing_appointment in appointments:
-            hour = math.trunc(appointment.start_time)
-            minute = int(60 * (appointment.start_time - math.trunc(appointment.start_time)))
+            hour = math.trunc(appointment['starttime'])
+            minute = int(60 * (appointment['starttime'] - math.trunc(appointment['starttime'])))
             if (existing_appointment.tutorEmail == tutorEmail and 
                 existing_appointment.startTime.date() == date and
                 existing_appointment.startTime.time() == datetime.time(hour, minute)):
@@ -625,11 +634,6 @@ async def get_available_appointments(date: date):
         appointments_by_admin[admin] = list(filter(lambda app : not does_appointment_exist(appointment=app, tutorEmail=admin), appointments_by_admin[admin]))
 
     return appointments_by_admin
-
-@app.get("/api/assignments")
-async def get_assignments():
-    response = fetch_all("Assignments")
-    return response
 
 ###################################################################
 ############################## Users ##############################
