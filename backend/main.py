@@ -379,7 +379,14 @@ async def put_submit_assignment(assignment_id: str, github_link: str, currentUse
 
 @app.get("/api/assignment_by_id")
 async def get_assignment_by_id(assignment_id: str, currentUser: UserIn = Depends(get_current_user)):
-    return fetch_one("Assignments", "_id", ObjectId(assignment_id))
+    user = fetch_user_by_email(currentUser.email)
+
+    full_assignment = fetch_one("Assignments", "_id", ObjectId(assignment_id))
+    user_assignment = None
+    for individual_assignment in full_assignment.individual_assignments:
+        if individual_assignment.studentid == user.id:
+            user_assignment = individual_assignment
+    return StudentAssignmentView(**full_assignment.dict(), individual_assignment=user_assignment)
 
 ###################################################################
 ########################## Appointments ###########################

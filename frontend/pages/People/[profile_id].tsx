@@ -65,7 +65,7 @@ export default function ProfileDetails() {
         <Margin
             user={user}
             availablePages={user.type == 'admin' ? admin_pages : student_pages}
-            currentPageTitle={'FAQBoard'}
+            currentPageTitle={'People'}
         >
         <>
         <Box sx={{ m: 10}}/>

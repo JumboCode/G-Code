@@ -58,6 +58,11 @@ class Assignment(AssignmentIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     individual_assignments: List[IndividualAssignment] = Field(...)
 
+class StudentAssignmentView(AssignmentIn):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    individual_assignment: IndividualAssignment
+
+
 # Appointments
 class AppointmentBookingIn(BaseModel):
     tutorEmail: str = Field(...)

@@ -15,6 +15,7 @@ import Link from "next/link";
 import Card from '@mui/material/Card';
 import CardContent from "@mui/material/CardContent";
 import "@fontsource/inter";
+import BackButton from '../../components/backButton'
 import Cookies from 'js-cookie'
 
 const MessageCard = ({ author, body, type }) => {
@@ -153,11 +154,7 @@ export default function QuestionDetails() {
       <Grid container spacing={2}>
         <Grid item xs={12} lg={10}>
           <div style={{ marginBottom: '20px' }}>
-            <Link href="../FAQBoard">
-              <Button variant="secondary">
-                <ArrowBackIcon />
-              </Button>
-            </Link>
+            <BackButton href="/FAQBoard"/>
           </div>
 
           <Typography variant="subtitle1">
