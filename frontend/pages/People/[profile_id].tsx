@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import IsUserAuthorized from "../../components/authentification";
 import Margin from "../../components/margin";
 import { student_pages, admin_pages } from '../../constants'
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Link from "next/link";
 import "@fontsource/inter";
@@ -21,6 +21,7 @@ export default function ProfileDetails() {
 
     const [user, setUser] = useState(null)
     const [profile, setProfile] = useState(null);
+    const fields = ['firstname', 'lastname', 'pronouns', 'email', 'bio', 'timezone', 'linkedin', 'github', 'zoom']
 
     const save_user = curr_user => {
         if (user == null) {
@@ -58,17 +59,36 @@ export default function ProfileDetails() {
         return <>Loading...</>
     }
 
+    const filteredFields = fields.filter(field => profile[field] != "string");
+
     return (
         <Margin
             user={user}
             availablePages={user.type == 'admin' ? admin_pages : student_pages}
             currentPageTitle={'FAQBoard'}
         >
+        <>
+        <Box sx={{ m: 10}}/>
+            <Typography sx={{ fontWeight: 600, textTransform: 'capitalize', textAlign: 'center'  }}>
+                    {profile.firstname} {profile.lastname}
+            </Typography>
+            <Box sx={{m: 10}}/>
+
             <Grid container spacing={2}>
-                <Grid item xs={12} lg={10}>
-                    Profile of {profile.firstname} {profile.lastname}
+              {filteredFields.map(field => (
+                <>
+                <Grid item xs={4}/>
+                <Grid item xs={2} key={field}>
+                  {field}:
                 </Grid>
+                <Grid item xs={2} key={field}>
+                  {profile[field]}
+                </Grid>
+                <Grid item xs={4}/>
+                </>
+              ))}
             </Grid>
-        </Margin >
+        </>
+        </Margin>
     )
 }
