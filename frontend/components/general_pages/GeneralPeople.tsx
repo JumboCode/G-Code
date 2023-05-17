@@ -100,17 +100,19 @@ function Person({ person, updatePeople }) {
           <Avatar> {person.firstname[0]}{person.lastname[0]} </Avatar>
         </TableCell>
         <TableCell component="th" scope="row">
-          <Typography
-            sx={{
-              fontSize: '16px',
-              fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
-              lineHeight: '19.36px',
-              fontWeight: '500',
-              color: '#6A5DF9',
-            }}
-          >
-            {person.firstname} {person.lastname}
-          </Typography>
+          <Link href={'/People/' + person._id}>
+            <Typography
+              sx={{
+                fontSize: '16px',
+                fontFamily: '__Inter_9c9965, __Inter_Fallback_9c9965',
+                lineHeight: '19.36px',
+                fontWeight: '500',
+                color: '#6A5DF9',
+              }}
+            >
+              {person.firstname} {person.lastname}
+            </Typography>
+          </Link>
         </TableCell>
         <TableCell component="th" scope="row">
           <Typography>
@@ -139,7 +141,7 @@ export default function GeneralPeople(props) {
 
   const updatePeople = () => {
     axios.get('http://localhost:8000/api/users')
-      .then(response => {setPeople(response.data)})
+      .then(response => { setPeople(response.data) })
       .catch(error => console.log(error))
   }
 
