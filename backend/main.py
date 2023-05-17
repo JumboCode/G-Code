@@ -410,13 +410,26 @@ async def put_submit_assignment(assignment_id: str, github_link: str, currentUse
 @app.get("/api/assignment_by_id")
 async def get_assignment_by_id(assignment_id: str, currentUser: UserIn = Depends(get_current_user)):
     user = fetch_user_by_email(currentUser.email)
-
     full_assignment = fetch_one("Assignments", "_id", ObjectId(assignment_id))
     user_assignment = None
     for individual_assignment in full_assignment.individual_assignments:
         if individual_assignment.studentid == user.id:
             user_assignment = individual_assignment
     return StudentAssignmentView(**full_assignment.dict(), individual_assignment=user_assignment)
+
+@app.get("/api/current_assignments")
+async def get_current_assignemtns(currentUser: UserIn = Depends(get_current_user)):
+    user = fetch_user_by_email(currentUser.email)
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail='Must be admin to access all assignments')
+    return current_assignments()    
+
+@app.get("/api/past_assignments")
+async def get_past_assignments(currentUser: UserIn = Depends(get_current_user)):
+    user = fetch_user_by_email(currentUser.email)
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail='Must be admin to access all assignments')
+    return past_assignments()    
 
 ###################################################################
 ########################## Appointments ###########################

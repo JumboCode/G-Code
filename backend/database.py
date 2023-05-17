@@ -304,6 +304,21 @@ def submit_assignment(assignment_id: str, github_link: str, user_id: str):
         # Update the modified assignment in the collection
         assignments.update_one({"_id": assignment["_id"]}, {"$set": {"individual_assignments": individual_assignments}})
     
+def current_assignments():
+    current_date = datetime.now()
+    cursor = assignments.find({"dueDate": {"$gt": current_date}})
+    current_assignments = []
+    for document in cursor:
+        current_assignments.append(stringify_id(Assignment(**document)))
+    return current_assignments
+
+def past_assignments():
+    current_date = datetime.now()
+    cursor = assignments.find({"dueDate": {"$lt": current_date}})
+    current_assignments = []
+    for document in cursor:
+        current_assignments.append(stringify_id(Assignment(**document)))
+    return current_assignments
 
 ###################################################################
 ############################## Users ##############################

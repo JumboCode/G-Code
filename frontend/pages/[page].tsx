@@ -108,7 +108,7 @@ const Page = () => {
             currentPageTitle={page}
           >
             {page == "Dashboard" && <AdminDashboard user={user} />}
-            {/* {page == "Assignments" && <AdminAssignments user={user} />} */}
+            {page == "Assignments" && <AdminAssignments user={user} />}
             {page == "FAQBoard" && <GeneralFAQBoard user={user} />}
             {page == "OfficeHours" && <AdminOfficeHours user={user} />}
             {page == "People" && <GeneralPeople user={user} />}

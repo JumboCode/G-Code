@@ -16,6 +16,7 @@ import { formatAMPM, dateToString } from "../../constants";
 
 // styles
 import assignentStyles from "../../styles/Assignments.module.css";
+import AssignmentList from "../assignmentsList";
 
 export default function StudentAssignments(props) {
   const user = props.user
@@ -24,7 +25,7 @@ export default function StudentAssignments(props) {
   // make call to backend to get real data
   const [assignmentList, setAssignmentList] = useState([]);
 
-  useEffect(() => {
+  const getAssignments = () => {
     const apiUrl = 'http://localhost:8000/api/assignments';
 
     const token = Cookie.get('gcode-session')
@@ -41,6 +42,10 @@ export default function StudentAssignments(props) {
       .catch(error => {
         console.error('Error:', error);
       });
+  }
+
+  useEffect(() => {
+    getAssignments()
   }, []);
 
   return (
@@ -53,32 +58,7 @@ export default function StudentAssignments(props) {
         </Grid>
         <Grid item xs={12} md={9}>
           <div className={assignentStyles.leftColumn}>
-            <List className={styles.pageElement} sx={{ backgroundColor: 'white' }}>
-              {assignmentList.map(assignment => (
-                <Link href={"/Assignments/" + assignment._id}>
-                  <ListItem
-                    key={assignment.name}
-                    secondaryAction={
-                      <IconButton edge="end" aria-label="delete" onClick={() => {
-                        router.push('/Assignments')
-                      }}>
-                        <ArrowForwardIosIcon />
-                      </IconButton>
-                    }
-                  >
-                    <ListItemAvatar>
-                      <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
-                        <Image src={GreenCircle} alt="Assignment Icon" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={assignment.name}
-                      secondary={"Due " + dateToString(new Date(assignment.dueDate)) + " at " + formatAMPM(assignment.dueDate)}
-                    />
-                  </ListItem>
-                </Link>
-              ))}
-            </List>
+            <AssignmentList assignmentList={assignmentList} />
           </div>
         </Grid>
         <Grid item xs={12} md={3}>
