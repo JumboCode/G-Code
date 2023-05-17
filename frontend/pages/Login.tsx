@@ -12,6 +12,7 @@ import { theme } from '../theme';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import Link from "next/link";
+import Alert from '@mui/material/Alert'
 
 export default function Login() {
   const router = useRouter();
@@ -75,6 +76,7 @@ export default function Login() {
             }}
           />
           <text className={loginStyles.forgotPassword}>Forgot Password?</text>
+          {loginError && <Alert sx={{marginTop: '30px'}} severity="error"> Invalid username or password. </Alert> }
           <Button fullWidth variant="primary" sx={{margin: '20px 0 10px 0'}} onClick={postInfo}>
             <h1 className={loginStyles.signInButton}>Login </h1>
           </Button>

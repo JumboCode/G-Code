@@ -37,6 +37,15 @@ export const numberToMilitary = (num: number) => {
   return timeString;
 }
 
+export function convertToFloat(timeString) {
+  var timeParts = timeString.split(':');
+  var hour = parseInt(timeParts[0], 10);
+  if (timeString.includes('PM')) {
+    hour += 12;
+  }
+  return parseFloat(hour);
+}
+
 export const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat']
 
 export const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -47,4 +56,9 @@ export const dateToString = (date: Date) => {
 }
 
 export const student_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
+
 export const admin_pages = ["Dashboard", "Assignments", "FAQBoard", "OfficeHours", "People"]
+
+export const validate_email = (input: string) => { return input && input.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) }
+
+export const validate_string = (input: string) => { return input && input != "" }

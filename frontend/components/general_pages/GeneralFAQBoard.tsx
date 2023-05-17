@@ -320,7 +320,7 @@ export default function GeneralFAQBoard(props) {
                 </Grid>
                 <Grid item md={3} xs={0}>
                 </Grid>
-            </Grid> 
+            </Grid>
 
             <Grid container spacing={2}>
                 <Grid item md={9} xs={12}>
@@ -332,11 +332,11 @@ export default function GeneralFAQBoard(props) {
                                     <Link href={`/FAQBoard/${question._id}`}>
                                         <ListItem sx={{ padding: '40px 20px 40px 20px' }}>
                                             <ListItemAvatar sx={{ width: '70px' }}>
-                                                <Avatar sx={{ height: '50px', width: '50px' }}> {users[question.author_id]['firstname'][0]} </Avatar>
+                                                <Avatar sx={{ height: '50px', width: '50px' }}> {question.author_id in users ? users[question.author_id]['firstname'][0] : 'U'} </Avatar>
                                             </ListItemAvatar>
                                             <ListItemText style={{ cursor: 'pointer' }}>
                                                 <Typography variant="subtitle2">
-                                                    {users[question.author_id]['firstname']} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
+                                                    {question.author_id in users ? users[question.author_id]['firstname'] : 'author removed'} · {question.date.toDateString()} · {question.date.toLocaleTimeString()}
                                                 </Typography>
                                                 <Typography variant="h4">
                                                     {question.title}

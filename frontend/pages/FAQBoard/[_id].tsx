@@ -23,7 +23,7 @@ const MessageCard = ({ author, body, type }) => {
       <Grid item xs={3} md={2}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100%' }}>
           <div>
-            <Avatar alt={author.firstname} sx={{ width: 40, height: 40 }} src="/static/images/avatar/2.jpg" sizes="large" />
+            <Avatar alt={author ? author.firstname : 'U'} sx={{ width: 40, height: 40 }} src="/static/images/avatar/2.jpg" sizes="large" />
           </div>
           <div
             style={{
@@ -36,12 +36,13 @@ const MessageCard = ({ author, body, type }) => {
               textAlign: 'center'
             }}
           >
-            {author.firstname + ' ' + author.lastname}
+            {author ? author.firstname + ' ' + author.lastname : 'author removed'}
           </div>
           <div>
-            <Link href={'/People/' + author._id}>
-              <Button variant="profile">Profile</Button>
-            </Link>
+            {author &&
+              <Link href={'/People/' + author._id}>
+                <Button variant="profile">Profile</Button>
+              </Link>}
           </div>
         </div>
       </Grid>
@@ -163,7 +164,7 @@ export default function QuestionDetails() {
             Last updated on Nov 21 • 3:30 PM
           </Typography>
           <h2>{question.title}</h2>
-          <MessageCard author={users[question.author_id]} body={question.body} type='Question' />
+          <MessageCard author={question.author_id in users ? users[question.author_id] : null} body={question.body} type='Question' />
           {question.replies.map(reply => <MessageCard author={users[reply.author_id]} body={reply.body} type='Response' />)}
           <div>
             <p style={{ fontWeight: 'bold' }}>Reply</p>

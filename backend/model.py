@@ -74,9 +74,17 @@ class Appointment(AppointmentBooking):
 ###################################################################
 
 class AppointmentSlot(BaseModel):
-    weekday: str = Field(...)
-    start_time: float = Field(...)
-    end_time: float = Field(...)
+    starttime: float = Field(...)
+    endtime: float = Field(...)
+
+class AppointmentSchedule(BaseModel):
+    monday: list[AppointmentSlot] = []
+    tuesday: list[AppointmentSlot] = []
+    wednesday: list[AppointmentSlot] = []
+    thursday: list[AppointmentSlot] = []
+    friday: list[AppointmentSlot] = []
+    saturday: list[AppointmentSlot] = []
+    sunday: list[AppointmentSlot] = []
 
 class UserIn(BaseModel):
     firstname: str = Field(...)
@@ -100,7 +108,7 @@ class UserUpdate(BaseModel):
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     type: str = Field(...)
-    appointment_slots: Optional[List[AppointmentSlot]] = None
+    appointment_schedule: Optional[AppointmentSchedule] = AppointmentSchedule()
 
 ###################################################################
 ############################## Posts ##############################

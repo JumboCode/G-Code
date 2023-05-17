@@ -8,7 +8,7 @@ const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 import { useRouter } from "next/router";
 import IsUserAuthorized from "../../components/authentification";
 import Margin from "../../components/margin";
-import { student_pages, admin_pages } from '../../constants'
+import { student_pages, admin_pages, validate_email } from '../../constants'
 import { Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Link from "next/link";
@@ -32,7 +32,7 @@ export default function ProfileDetails() {
         firstname: "",
         lastname: "",
         email: "",
-        acctype: "Student"
+        acctype: "student"
     }
 
     const [user, setUser] = useState(null)
@@ -89,7 +89,6 @@ export default function ProfileDetails() {
     }
 
     // validation
-    const validate_email = (input: string) => { return input.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) }
     const check_duplicates = (input: string, arr: Array<string>) => { return arr.map(item => item.toLowerCase()).filter((item, index) => arr.indexOf(item.toLowerCase()) != index).includes(input.toLowerCase()) }
     const validate_person = person => {
         return (
@@ -147,11 +146,11 @@ export default function ProfileDetails() {
                                                 onChange={buildHandleChange(index)}
                                                 fullWidth
                                             >
-                                                <MenuItem key={0} value="Student">
+                                                <MenuItem key={0} value="student">
                                                     Student
                                                 </MenuItem>
-                                                <MenuItem key={1} value="Tutor">
-                                                    Tutor
+                                                <MenuItem key={1} value="admin">
+                                                    Admin
                                                 </MenuItem>
                                             </Select>
                                         </Grid>

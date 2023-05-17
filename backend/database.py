@@ -271,6 +271,12 @@ def validate_invite_request(invite_request: UserInviteRequest):
         return "user already exists"
     return "success"
 
+def delete_invite_by_code(code: str):
+    user_invites.delete_one({'accesscode': code})
+
+def delete_user_by_id(id: str):
+    users.delete_one({'_id': ObjectId(id)})
+
 ###################################################################
 ############################## Posts ##############################
 ###################################################################

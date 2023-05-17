@@ -662,19 +662,6 @@ async def get_user_by_id(user_id: str):
     result = fetch_one("Users", "_id", ObjectId(user_id))
     return result
 
-# Send request for new user
-# @app.post("/api/student_invite")
-# async def post_student_invite(invite_request: UserInviteRequest):
-#     # ensure email is not in invites or users
-#     validation = validate_invite_request(invite_request)
-#     if validation != "success":
-#         return validation
-#     accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
-#     date = datetime.datetime.now()
-#     invite = create_student_invite(accessKey, invite_request.email, invite_request.acctype, date)
-#     send_email(format_invite(invite), "{G}Code User Invite", invite_request.email)
-#     return "success"
-
 @app.post("/api/user_invites")
 async def post_user_invites(invite_requests: list[UserInviteRequest], currentUser: UserIn = Depends(get_current_user)):
     if currentUser.type != 'admin':
@@ -690,7 +677,7 @@ async def post_user_invites(invite_requests: list[UserInviteRequest], currentUse
         for invite_request in invite_requests:
             accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
             date = datetime.datetime.now()
-            invite = create_student_invite(accessKey, invite_request.email, invite_request.acctype, date)
+            invite = create_student_invite(accessKey, invite_request.email, invite_request.acctype.lower(), date)
             send_email(format_invite(invite), "{G}Code User Invite", invite_request.email)
     return validations
     
@@ -699,13 +686,21 @@ async def post_user_invites(invite_requests: list[UserInviteRequest], currentUse
 async def post_user_invite(user_data: UserIn, access_code: str):
     invite = fetch_one("UserInvites", "accesscode", access_code)
     if type(invite) == str:
-        return "invalid access code"
-    if invite.email != user_data.email:
-        return "invalid email"
+        raise HTTPException(status_code=403, detail="Invite code not valid. Please enter a valid invite code.")
+    user = fetch_one("Users", "email", user_data.email)
+    if type(user) != str:
+        raise HTTPException(status_code=403, detail="Email already exists. Please enter a valid email.")
     user_data.password = Hash.bcrypt(user_data.password)
-    create_new_user(user_data.dict())
+    create_new_user({**user_data.dict(), 'type':invite.acctype, 'appointment_schedule': AppointmentSchedule().dict()})
+    delete_invite_by_code(access_code)
     return "success"
 
+@app.delete("/api/user")
+async def delete_user(user_id: str, currentUser: UserIn = Depends(get_current_user)):
+    if currentUser.type != 'admin':
+        raise HTTPException(status_code=401, detail="Must be admin to delete users.")
+    delete_user_by_id(user_id)
+    return "success"
 
 ###################################################################
 ############################## Posts ##############################
