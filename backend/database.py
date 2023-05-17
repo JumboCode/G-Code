@@ -25,6 +25,7 @@ assignments  = database.assignments
 user_invites = database.user_invites
 classes      = database.classes
 posts        = database.posts
+reset_codes = database.password_reset_codes
 
 
 model_dic = {"Users": User, "UserInvites": UserInvite, "Appointments": AppointmentBooking, "Posts": Post, "Sessions": Any, "Assignments": Assignment}
@@ -120,7 +121,7 @@ def set_schedule(appointment_schedule: AppointmentSchedule, user_id: str):
     users.update_one( 
         {"_id": ObjectId(user_id)},
         { "$set": {'appointment_schedule': appointment_schedule.dict()}}
-    );
+    )
 
 def create_individual_assignment(assignmentid: str, indiv_assignment: IndividualAssignment):
     print(assignmentid)
@@ -169,6 +170,29 @@ def create_student_invite(accesscode, email, acctype, date):
     inviteToAdd = UserInvite(accesscode=accesscode, email=email, acctype=acctype, date=date)
     user_invites.insert_one(inviteToAdd.dict()) 
     return inviteToAdd
+
+def create_reset_code(email, code):
+    resetCode = {
+        "email": email,
+        "code": code
+    }
+
+    exists = reset_codes.find_one({'email': email})
+    if exists:
+        reset_codes.delete({'email':email})
+        
+    reset_codes.insert_one(resetCode)
+    return resetCode
+
+def get_one_reset_code(email):
+    result = reset_codes.find_one({'email': email})
+    return result
+
+def update_password(email, password):
+    users.update_one( 
+        {"email": email},
+        { "$set": {"password":password}}
+    )
 
 def create_admin_invite(ak, em, d):
     inviteToAdd = {

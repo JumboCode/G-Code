@@ -110,6 +110,36 @@ def registration(request: UserIn):
     create_new_user(request.dict())
     return
 
+@app.post("/sendreset")
+def send_reset(data: EmailIn):
+    user = fetch_user_by_email(data.email)
+    if not user:
+        raise HTTPException(status_code=403, detail="Email Not Found")
+    code = ''.join(random.choices(string.ascii_uppercase, k = 6))
+    create_reset_code(data.email, code)
+    msg = send_reset_email(code)
+    send_email(msg, "GCode Reset Code", data.email)
+    return True
+
+@app.post("/resetpassword")
+def reset_password(data: ResetDataIn):
+    email = data.email
+    code = data.code
+    password = data.password
+
+    reset_obj: ResetData = get_one_reset_code(email)
+    if not reset_obj:
+        raise HTTPException(status_code=403, detail="No password reset requested for this account.")
+
+    true_code = reset_obj["code"]
+    if (code != true_code):
+        raise HTTPException(status_code=403, detail="Reset code does not match")
+    
+    hashedPW =  Hash.bcrypt(password)
+    update_password(email, hashedPW)
+
+
+
 ############################################################################
 # Routes to Get All Of a DB Collection
 # TODO: For students/admins, filter out passwords / other sensitive info
