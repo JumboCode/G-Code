@@ -25,17 +25,7 @@ export default function Login() {
   const [resetError, setResetError] = useState(false);
 
   const requestEmail = () => {
-    const data = {
-      email: username,
-      placeholder: "",
-    };
-    console.log(data)
-    axios.post('http://localhost:8000/sendreset', data, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'accept': 'application/json'
-      }
-    })
+    axios.post(`http://localhost:8000/sendreset?email=${username}`)
       .then(() => {
         setCodeSent(true);
       })
@@ -57,7 +47,7 @@ export default function Login() {
   
       axios.post('http://localhost:8000/resetpassword', data, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
           'accept': 'application/json'
         }
       })
@@ -109,6 +99,7 @@ export default function Login() {
     id="outlined-basic"
     label="Password"
     variant="outlined"
+    type="password"
     sx={{ marginBottom: "20px" }}
     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
@@ -119,6 +110,7 @@ export default function Login() {
     id="outlined-basic"
     label="Confirm Password"
     variant="outlined"
+    type="password"
     sx={{ marginBottom: "20px" }}
     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
       setPassword2(event.target.value);

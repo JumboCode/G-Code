@@ -142,10 +142,6 @@ class ResetData(BaseModel):
     email: str = Field(...)
     code: str = Field(...)
 
-class EmailIn(BaseModel):
-    email: str = Field(...)
-    placeholder: Optional[str] = Field(...)
-
 class Post(PostIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     author_id: str = Field(...)

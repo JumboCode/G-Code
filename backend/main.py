@@ -111,14 +111,14 @@ def registration(request: UserIn):
     return
 
 @app.post("/sendreset")
-def send_reset(data: EmailIn):
-    user = fetch_user_by_email(data.email)
+def send_reset(email: str):
+    user = fetch_user_by_email(email)
     if not user:
         raise HTTPException(status_code=403, detail="Email Not Found")
     code = ''.join(random.choices(string.ascii_uppercase, k = 6))
-    create_reset_code(data.email, code)
+    create_reset_code(email, code)
     msg = send_reset_email(code)
-    send_email(msg, "GCode Reset Code", data.email)
+    send_email(msg, "GCode Reset Code", email)
     return True
 
 @app.post("/resetpassword")
@@ -135,7 +135,7 @@ def reset_password(data: ResetDataIn):
     if (code != true_code):
         raise HTTPException(status_code=403, detail="Reset code does not match")
     
-    hashedPW =  Hash.bcrypt(password)
+    hashedPW = Hash.bcrypt(password)
     update_password(email, hashedPW)
 
 

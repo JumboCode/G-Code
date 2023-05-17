@@ -179,7 +179,7 @@ def create_reset_code(email, code):
 
     exists = reset_codes.find_one({'email': email})
     if exists:
-        reset_codes.delete({'email':email})
+        reset_codes.delete_one({'email':email})
         
     reset_codes.insert_one(resetCode)
     return resetCode
