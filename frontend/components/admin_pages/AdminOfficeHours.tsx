@@ -57,9 +57,9 @@ export default function AdminOfficeHours(props) {
       </Box>
 
 
-      <Grid container xs={12}>
+      <Grid container>
         {/* Left Side */}
-        <Grid item xs={8}>
+        <Grid item xs={12} md={10}>
           <Typography variant='h3'>
             Current Availablility
           </Typography>
@@ -74,12 +74,19 @@ export default function AdminOfficeHours(props) {
               </TableBody>
             </Table>
           </TableContainer>
+
+          <Button
+              variant="primary"
+              size="large"
+              onClick={saveSchedule}
+            >
+              Save Schedule
+            </Button>
         </Grid>
-        <Grid item xs={1}></Grid>
-        { /* Right Side */}
+        {/* <Grid item xs={1}></Grid>
         <Grid item xs={3}>
           <OptionsSidebar></OptionsSidebar>
-        </Grid>
+        </Grid> */}
       </Grid>
     </>
   )

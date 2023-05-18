@@ -8,12 +8,10 @@
 4. Add ability for instructors to make comments on student assignments
 5. Add ability for instructors to upload assignment pdfs
 6. Clean up backend
-7. Enforce / remove max sessions
-8. Enforce / remove default schedule
-9. Remove invite users link from students
-10. Add hamburger functionality for mobile
-11. No more shark meldon or green circle
-12. Show upcoming tutoring sessions for admin on frontend and send them an email when students sign up
+7. Remove invite users link from students
+8. No more shark meldon or green circle
+9. Show upcoming tutoring sessions for admin on frontend and send them an email when students sign up
+10. Don't return passwords from backend
 
 ## Frontend Setup
 
