@@ -44,9 +44,11 @@ export default function Dashboard(props) {
     <>
       <CreateAssignmentModal open={open} handleClose={handleClose} />
       <Grid container spacing={2}>
+
         <Grid className={styles.header1} item xs={12}>
-          {/* get a firstname from backend */}
-          <p> Hey, {user["firstname"]} 🤟 </p>
+          <Box className="headerBox">
+            <Typography variant="h1"> Hey, {user["firstname"]} 🤟 </Typography>
+          </Box>
         </Grid>
         <Grid item xs={12} md={8}>
           <div className={styles.header2}>Coming Up Soon</div>

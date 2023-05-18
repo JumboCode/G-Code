@@ -19,7 +19,6 @@
 
 .tutoringSessionName {
   margin-top: 10px;
-  margin-left: 20px;
   font-family: Poppins;
   font-size: 16px;
   font-weight: 500;
@@ -29,9 +28,11 @@
 }
 
 .tutoringSessionTextDetails {
+  margin-left: 20px;
   margin-top: 10px;
   text-align: left;
-  width: 50pc;
+  
+  /* width: 50pc; */
 }
 
 .tutoringSessionLogistics {
@@ -41,9 +42,10 @@
   font-weight: 500;
   line-height: 25px;
   letter-spacing: 0em;
-  text-align: left;
-
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
   color: #00777f;
 }
 
@@ -63,8 +65,7 @@
 }
 
 .tutoringSessionImage {
-  float: left;
-  margin-right: 10px;
-
-  border: px solid #0000;
+  display: flex;
+  justify-content: left;
+  align-items: center;
 }

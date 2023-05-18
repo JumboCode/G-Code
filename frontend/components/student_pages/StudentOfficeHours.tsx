@@ -53,6 +53,10 @@ export default function StudentOfficeHours(props) {
         )
     }
 
+    useEffect(() => {
+        setCurrentDayTutors(currentDay)
+    }, [currentDay])
+
     // handle opening filter modal
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
@@ -168,20 +172,20 @@ export default function StudentOfficeHours(props) {
                 </Box>
             </Modal>
             <Grid container spacing={2}>
-                <Grid item xs={12} md={8}>
+                <Grid item xs={12} >
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={9}>
                             <StudentHeading />
                         </Grid>
                         <Grid item xs={12} md={3}>
-                            <Button variant="secondary" sx={{
+                            {/* <Button variant="secondary" sx={{
                                 marginTop: '20px',
                             }}
                                 onClick={openFilterModal}
                             >
                                 <TuneRoundedIcon />
                                 Filters
-                            </Button>
+                            </Button> */}
                         </Grid>
                     </Grid>
 
@@ -195,7 +199,7 @@ export default function StudentOfficeHours(props) {
                     <p style={{
                         color: '#61646D',
                     }}>
-                        Appointments Available on {weekDays[currentDay.getDay()]}, {months[currentDay.getMonth()]} {currentDay.getDate()}
+                        {tutorProfiles.length == 0 && "No "}Appointments Available on {weekDays[currentDay.getDay()]}, {months[currentDay.getMonth()]} {currentDay.getDate()}
                     </p>
                     <Box sx={{
                         display: 'flex',
@@ -205,19 +209,19 @@ export default function StudentOfficeHours(props) {
                     }}>
                         {tutorProfiles.map((tutorProfile) => <TutorProfile {...tutorProfile} />)}
                     </Box>
-                    <Button sx={{
+                    {/* <Button sx={{
                         backgroundColor: '#61646D',
                         width: '90%',
                         marginTop: '20px',
                         color: 'white'
                     }}>
                         Continue →
-                    </Button>
+                    </Button> */}
                 </Grid>
 
                 <Grid item xs={12} md={4}>
-                    <p>Can&apos;t find a time?</p>
-                    <Button variant="secondary">Suggest New Times</Button>
+                    {/* <p>Can&apos;t find a time?</p>
+                    <Button variant="secondary">Suggest New Times</Button> */}
                 </Grid>
             </Grid>
         </div>

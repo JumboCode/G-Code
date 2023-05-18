@@ -36,7 +36,7 @@ const modal_style = {
     p: 4,
 };
 
-export default function GeneralFAQBoard({user, question_id}) {
+export default function GeneralFAQBoard({ user, question_id }) {
     if (question_id) {
         return <IndividualQuestion user={user} question_id={question_id} />
     }
@@ -232,16 +232,17 @@ export default function GeneralFAQBoard({user, question_id}) {
             </Modal>
             <Grid container spacing={2}>
                 <Grid item md={9} xs={12}>
-                    <Box sx={{ padding: "40px 0 30px 0" }}>
+                    <Box className="headerBox">
                         <Grid container>
                             <Grid item xs={12} md={8}>
-                                <Typography variant="h1">
-                                    Community Forum
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Ask a question or help out your
-                                    fellow classmates!
-                                </Typography>
+                                    <Typography variant="h1">
+                                        Community Forum
+                                    </Typography>
+                                    <Typography variant="subtitle1">
+                                        Ask a question or help out your
+                                        fellow classmates!
+                                    </Typography>
+
                             </Grid>
                             <Grid item xs={12} md={4}>
                                 <Button

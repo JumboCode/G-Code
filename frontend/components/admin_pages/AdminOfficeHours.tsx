@@ -50,22 +50,19 @@ export default function AdminOfficeHours(props) {
       <ConfirmZero open={open} setOpen={setOpen} saveSchedule={saveSchedule} />
 
       {/* Header */}
-      <Grid container xs={12}>
-        <Grid item xs={4}></Grid>
-        <Grid item xs={4}>
-          <Typography fontSize="2rem" fontWeight="bold">
-            Office Hours Schedule
-          </Typography>
-        </Grid>
-        <Grid item xs={4}></Grid>
-      </Grid>
+      <Box className="headerBox">
+        <Typography variant='h1'>
+          Office Hours Schedule
+        </Typography>
+      </Box>
+
 
       <Grid container xs={12}>
         {/* Left Side */}
         <Grid item xs={8}>
-          <h2 style={{ ...tutoring_styles.SubHeading }}>
+          <Typography variant='h3'>
             Current Availablility
-          </h2>
+          </Typography>
           <TableContainer className={styles.pageElement} component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableBody>
