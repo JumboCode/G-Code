@@ -1,4 +1,19 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Pressing Tasks
+
+1. Make styling consistent accross pages
+2. Add routes to API and use base URL instead of hard coded
+3. Add ability to change password and modify more profile fields
+4. Add ability for instructors to make comments on student assignments
+5. Add ability for instructors to upload assignment pdfs
+6. Clean up backend
+7. Enforce / remove max sessions
+8. Enforce / remove default schedule
+9. Remove invite users link from students
+10. Add hamburger functionality for mobile
+11. No more shark meldon or green circle
+12. Get appointments for loading day in student office hours
+13. Handle no appointments on student office hours
+14. Remove filters and suggest a time from student office hours
 
 ## Getting Started
 
