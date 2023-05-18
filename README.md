@@ -2,7 +2,7 @@
 
 ## Pressing Tasks
 
-1. Make styling consistent accross pages
+1. Make styling consistent across pages
 2. Add routes to API and use base URL instead of hard coded
 3. Add ability to change password and modify more profile fields
 4. Add ability for instructors to make comments on student assignments
