@@ -171,7 +171,8 @@ MuiTypography: {
         fontFamily: 'Red Hat Display',
         lineHeight: '26px',
         fontWeight: '700',
-        color: "#000f25"
+        color: "#000f25",
+        marginBottom: '10px'
       }
     },
     {

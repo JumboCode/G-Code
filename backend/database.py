@@ -76,7 +76,7 @@ def fetch_filtered(model_class: str, filters: list[tuple]):
     
     cursor = db.find(filter_dict)
     for document in cursor:
-        result_list.append(model_dic[model_class](**document))
+        result_list.append(stringify_id(model_dic[model_class](**document)))
     
     return result_list
 
@@ -96,6 +96,9 @@ def create_one (model_class: str, to_add):
     else:
         raise Exception("The given object was not an instance of the given model_class")
 
+def create_assignment (assignment: AssignmentIn):
+    print('happens')
+    assignments.insert_one(assignment.dict())
 
 def create_new_user(user: UserIn):
     users.insert_one(user)

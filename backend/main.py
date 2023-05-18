@@ -190,22 +190,6 @@ def create_one(model_class: str, to_add):
     else:
         raise Exception("The given object was not an instance of the given model_class")
 
-@app.post("/api/create_assignment")
-async def create_assignment(assignment: Assignment):
-    print(assignment)
-    response = create_one("Assignments", assignment)
-    newID = response.inserted_id
-
-    users = fetch_all("Users")
-    emails = []
-    for user in users:
-        if user["type"] == "student":
-            emails.append(user["email"])
-
-    assign_assignment(newID, emails)
-
-    return response
-
 @app.post("/api/assign_assignment")
 async def assign_assignment (assignment_id: str, student_emails: list[str]):
     for email in student_emails:
@@ -371,11 +355,21 @@ async def get_assignments(currentUser: UserIn = Depends(get_current_user)):
     return result
 
 @app.post("/api/assignment")
-async def create_assignment(assignment: AssignmentIn, currentUser: UserIn = Depends(get_current_user)):
+async def post_assignment(assignment: AssignmentIn, currentUser: UserIn = Depends(get_current_user)):
     if currentUser.type != 'admin':
         raise HTTPException(status_code=403, detail='Must be admin to create assignments')
-    new_assignment = {**assignment.dict(), 'individual_assignments': []}
-    create_one("Assignments", new_assignment)
+    # new_assignment = {**assignment.dict(), 'individual_assignments': []}
+    for student in fetch_filtered("Users",[("type", "student")] ):
+        individual_assignment = {
+            'submitted': False,
+            'studentid': student.id,
+            'submissionLink': '',
+            'messages': []
+        }
+        assignment.individual_assignments.append(individual_assignment)
+
+    create_assignment(assignment)
+        
     return "success"
 
 @app.post("/api/assign_assignment")
@@ -411,6 +405,8 @@ async def put_submit_assignment(assignment_id: str, github_link: str, currentUse
 async def get_assignment_by_id(assignment_id: str, currentUser: UserIn = Depends(get_current_user)):
     user = fetch_user_by_email(currentUser.email)
     full_assignment = fetch_one("Assignments", "_id", ObjectId(assignment_id))
+    if user.type == 'admin':
+        return full_assignment
     user_assignment = None
     for individual_assignment in full_assignment.individual_assignments:
         if individual_assignment.studentid == user.id:

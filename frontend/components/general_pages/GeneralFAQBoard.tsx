@@ -19,6 +19,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from 'next/router';
 import Link from 'next/link'
 import Cookies from 'js-cookie'
+import IndividualQuestion from "./IndividualQuestion";
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
@@ -35,8 +36,10 @@ const modal_style = {
     p: 4,
 };
 
-export default function GeneralFAQBoard(props) {
-    const user = props.user
+export default function GeneralFAQBoard({user, question_id}) {
+    if (question_id) {
+        return <IndividualQuestion user={user} question_id={question_id} />
+    }
     // create and get questiosn from backend
     const [questions, setQuestions] = React.useState(null);
     const [users, setUsers] = React.useState(null);

@@ -19,10 +19,19 @@ import { theme } from '../../theme'
 import styles from '../../styles/Home.module.css'
 import AssignmentList from "../assignmentsList";
 import axios from "axios";
+import IndividualAssignment from "./IndividualAssignment";
+import CreateAssignmentModal from "../createAssignmentModal";
 
-export default function AdminAssignments(props) {
+export default function AdminAssignments({user, assignment_id}) {
+    if (assignment_id) {
+        return <IndividualAssignment user={user} assignment_id={assignment_id} />
+    }
     const [currentAssignments, setCurrentAssignments] = React.useState([])
     const [previousAssignments, setPreviousAssignments] = React.useState([])
+    const [open, setOpen] = React.useState(false)
+    const handleOpen = () => {setOpen(true)}
+    const handleClose = () => {setOpen(false)}
+
     const token = Cookie.get('gcode-session')
     const headers = {
         'accept': 'application/json',
@@ -46,9 +55,9 @@ export default function AdminAssignments(props) {
     }, [])
 
 
-    const user = props.user
     return (
         <Grid container spacing={2}>
+            <CreateAssignmentModal open={open} handleClose={handleClose} />
             <Grid item xs={12} lg={8}>
                 <Typography variant='h1'> Assignments </Typography>
                 <Typography variant='subtitle1'> View and edit assignments </Typography>
@@ -62,7 +71,7 @@ export default function AdminAssignments(props) {
                 {previousAssignments.length ? <AssignmentList assignmentList={previousAssignments} /> : 'No previous assignments'}
             </Grid>
             <Grid item xs={12} lg={8}>
-                <Button variant='primary'> Create New Assignment </Button>
+                <Button variant='primary' onClick={handleOpen}> Create New Assignment </Button>
             </Grid>
         </Grid>
     )

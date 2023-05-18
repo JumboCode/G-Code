@@ -53,10 +53,10 @@ class AssignmentIn(BaseModel):
     name: str = Field(...)
     description: str = Field(...)
     dueDate: datetime = Field(...)
+    individual_assignments: Optional[List[IndividualAssignment]] = []
 
 class Assignment(AssignmentIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    individual_assignments: List[IndividualAssignment] = Field(...)
 
 class StudentAssignmentView(AssignmentIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")

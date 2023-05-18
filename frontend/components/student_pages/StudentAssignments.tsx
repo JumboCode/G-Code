@@ -17,10 +17,12 @@ import { formatAMPM, dateToString } from "../../constants";
 // styles
 import assignentStyles from "../../styles/Assignments.module.css";
 import AssignmentList from "../assignmentsList";
+import IndividualAssignment from "./IndividualAssignment";
 
-export default function StudentAssignments(props) {
-  const user = props.user
-  const router = useRouter()
+export default function StudentAssignments({user, assignment_id}) {
+  if (assignment_id) {
+    return <IndividualAssignment user={user} assignment_id={assignment_id} />
+  }
 
   // make call to backend to get real data
   const [assignmentList, setAssignmentList] = useState([]);
