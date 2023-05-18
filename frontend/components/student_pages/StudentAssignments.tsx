@@ -60,7 +60,14 @@ export default function StudentAssignments({user, assignment_id}) {
         </Grid>
         <Grid item xs={12} md={9}>
           <div className={assignentStyles.leftColumn}>
-            <AssignmentList assignmentList={assignmentList} />
+            {assignmentList.length > 0 &&
+              <AssignmentList assignmentList={assignmentList} />
+            }
+            {assignmentList.length <= 0 &&
+              <Typography fontSize='30px' textAlign='center'>
+                Nothing's due! Take some time to relax :)
+              </Typography>
+            }
           </div>
         </Grid>
         <Grid item xs={12} md={3}>

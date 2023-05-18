@@ -15,8 +15,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from "react";
 import axios from "axios";
 import Cookies from 'js-cookie';
-
-
+import Avatar from '@mui/material/Avatar';
 
 const steps = [
   {
@@ -151,27 +150,24 @@ function TutoringCard({
       <Grid container spacing={2} className={dashboardStyles.tutoringSessionCard}>
         <Grid item lg={8} md={12}>
           <div className={dashboardStyles.tutoringSessionImage}>
-            <div style={{ minWidth: '75px' }}>
-              <Image
-                src="/sharkMeldon.png"
-                alt="Shark Meldon Incarnate"
-                width={75}
-                height={75}
-                style={{ borderRadius: "100pc", overflow: "hidden" }}
-              />
-            </div>
+            {/* <Image
+              src="/sharkMeldon.png"
+              alt="Shark Meldon Incarnate"
+              width={75}
+              height={75}
+              style={{ borderRadius: "100pc", overflow: "hidden" }}
+            /> */}
+            <Avatar alt={name} src="/static/images/avatar/2.jpg" sx={{ bgcolor: 'pink' }}/>
+          </div>
 
-            <div className={dashboardStyles.tutoringSessionTextDetails}>
-              <div className={dashboardStyles.tutoringSessionName}>Office Hours with {name}</div>
-
-              <div className={dashboardStyles.tutoringSessionLogistics}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left', marginBottom: '5px' }}>
-                  <CalendarToday sx={{ marginRight: '10px' }} /> {date}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
-                  <AccessTime sx={{ marginRight: '10px' }} /> {time}
-                </div>
-              </div>
+          <div className={dashboardStyles.tutoringSessionTextDetails}>
+            <div className={dashboardStyles.tutoringSessionName}>Office Hours with {name}</div>
+            <br></br>
+            <div className={dashboardStyles.tutoringSessionLogistics}>
+              <CalendarToday />
+              <div className={dashboardStyles.tutoringSessionDate}>{date}</div>
+              <AccessTime />
+              <div className={dashboardStyles.tutoringSessionTime}>{time}</div>
             </div>
           </div>
         </Grid>
