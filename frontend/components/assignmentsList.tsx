@@ -21,7 +21,7 @@ export default function AssignmentList({ assignmentList }) {
     return (
         <List className={styles.pageElement} sx={{ backgroundColor: 'white' }}>
             {assignmentList.map(assignment => (
-                <Link href={"/Assignments/" + assignment._id}>
+                <Link key={assignment} href={"/Assignments/" + assignment._id}>
                     <ListItem
                         key={assignment.name}
                         secondaryAction={

@@ -27,7 +27,8 @@ export default function Profile() {
 
         axios.put(apiUrl, formData, { headers })
             .then(response => {
-                // console.log(response)
+                console.log(response.data)
+                console.log(formData)
                 setFormData(response.data)
             })
             .catch(error => {
@@ -60,11 +61,11 @@ export default function Profile() {
             <Header user={formData} />
             <Box
                 sx={{
-                    paddingTop: '40px',
+                    paddingTop: '70px',
                     display: 'flex',
-                    minHeight: '100vh',
+                    minHeight: '60vh',
                     justifyContent: 'center',
-                    alignItems: 'center',
+                    alignItems: 'top',
                     backgroundColor: '#F9FAFB'
                 }}
             >
@@ -128,6 +129,21 @@ export default function Profile() {
                         <Grid item xs={12}>
                             <TextField
                                 id="outlined-basic"
+                                label="GitHub Link"
+                                variant="outlined"
+                                name="github"
+                                value={formData.github}
+                                onChange={handleChange}
+                                error={false}
+                                fullWidth
+                            // helperText={
+                            //     "Please enter a title"
+                            // }
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                id="outlined-basic"
                                 label="Zoom Link"
                                 variant="outlined"
                                 name="zoom"
@@ -141,6 +157,25 @@ export default function Profile() {
                             />
                         </Grid>
                         <Grid item xs={12}>
+                            <TextField
+                                id="outlined-basic"
+                                label="Bio"
+                                variant="outlined"
+                                name="bio"
+                                value={formData.bio}
+                                onChange={handleChange}
+                                error={false}
+                                fullWidth
+                                multiline
+                                minRows='3'
+                            // helperText={
+                            //     "Please enter a title"
+                            // }
+                            />
+                        </Grid>
+
+
+                        <Grid item xs={12}>
                             <Box sx={{ display: 'flex', justifyContent: 'right' }}>
                                 <Button onClick={update_user} variant="primary"> Save Changes </Button>
                             </Box>
@@ -148,6 +183,12 @@ export default function Profile() {
                     </Grid>
                 </Box>
             </Box>
+            <Box sx={{minHeight:'20px'}}/>
+            <Typography textAlign='center'>
+                  <b>Need to reset your password?</b>
+                  <br/>
+                  Log out, then go to the login page and click 'forgot password', then enter your email to recieve a code to reset your password.
+                </Typography>
         </ThemeProvider>
     )
 }
