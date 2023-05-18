@@ -13,6 +13,7 @@
 9. Remove invite users link from students
 10. Add hamburger functionality for mobile
 11. No more shark meldon or green circle
+12. Show upcoming tutoring sessions for admin on frontend and send them an email when students sign up
 
 ## Frontend Setup
 

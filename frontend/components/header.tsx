@@ -26,11 +26,6 @@ declare module '@mui/material/styles' {
   }
 }
 
-interface Props {
-  window?: () => Window;
-  user: { firstname: string }
-}
-
 const theme = createTheme({
   palette: {
     primary: {
@@ -50,28 +45,17 @@ const theme = createTheme({
 
 const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Logout']];
 
-function Header(props: Props) {
-  // console.log("props")
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+function Header({user, handleDrawerToggle}) {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
-  const firstname = props.user.firstname;
-  const lastname = props.user.lastname;
+  const firstname = user.firstname;
 
   return (
     <ThemeProvider theme={theme}>
@@ -105,7 +89,7 @@ function Header(props: Props) {
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                onClick={handleOpenNavMenu}
+                onClick={handleDrawerToggle}
                 color="inherit"
               >
                 <MenuIcon />
@@ -138,7 +122,7 @@ function Header(props: Props) {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt={firstname + " " + lastname} src="/static/images/avatar/2.jpg" />
+                  <Avatar alt={firstname} src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu

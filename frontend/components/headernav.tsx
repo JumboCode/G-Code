@@ -18,6 +18,7 @@ export default function HeaderNav(props: Props) {
   const container = window !== undefined ? () => window().document.body : undefined;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const handleDrawerToggle = () => {
+    console.log("happens")
     setMobileOpen(!mobileOpen);
   };
   return (
@@ -28,7 +29,7 @@ export default function HeaderNav(props: Props) {
           }
         `}
       </style>
-      <Header user={props.user} />
+      <Header user={props.user} handleDrawerToggle={handleDrawerToggle} />
       <Box
         component="nav"
         sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
@@ -48,7 +49,7 @@ export default function HeaderNav(props: Props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
           }}
         >
-          <Header user={props.user}/>
+          <Header user={props.user} handleDrawerToggle={handleDrawerToggle}/>
           <Sidebar availablePages={availablePages} currentPageTitle={currentPageTitle} />
         </Drawer>
         <Drawer
@@ -59,7 +60,7 @@ export default function HeaderNav(props: Props) {
           }}
           open
         >
-          <Header user={props.user} />
+          <Header user={props.user} handleDrawerToggle={handleDrawerToggle}/>
           <Sidebar availablePages={availablePages} currentPageTitle={currentPageTitle} />
         </Drawer>
       </Box>
