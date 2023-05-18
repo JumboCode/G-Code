@@ -45,26 +45,27 @@ export default function Dashboard(props) {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid className={styles.header1} item xs={12}>
-          {/* get a firstname from backend */}
-          <p> Hey, {user["firstname"]} 🤟 </p>
+        <Grid item xs={12}>
+          <Box className="headerBox">
+            <Typography variant="h1"> Hey, {user["firstname"]} 🤟 </Typography>
+          </Box>
         </Grid>
         <Grid item xs={12} md={8}>
-          <div className={styles.header2}>Coming Up Soon</div>
+          <Typography variant="h3">Coming Up Soon</Typography>
           <div className={styles.pageElement}>
             <TutoringCardDisplay />
           </div>
 
           {assignmentList.length > 0 &&
             <>
-              <div className={styles.header2}>{assignmentList.length} Assignment{assignmentList.length > 1 && "s"}</div>
+              <Typography variant="h3">{assignmentList.length} Assignment{assignmentList.length > 1 && "s"}</Typography>
               <AssignmentList assignmentList={assignmentList} />
             </>
           }
 
         </Grid>
         <Grid item xs={12} md={4}>
-          <div className={styles.header2}> Resources </div>
+          <Typography variant="h3"> Resources </Typography>
 
           <Grid container spacing={2}>
             <Grid item xs={6} md={12} lg={6}>

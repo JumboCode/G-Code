@@ -187,7 +187,7 @@ export default function GeneralPeople(props) {
     <>
       <Grid container spacing={2}>
         <Grid item md={9} xs={12}>
-          <Box sx={{ padding: "40px 0 30px 0" }}>
+          <Box className="headerBox">
             <Grid container>
               <Grid xs={12} md={8}>
                 <Typography variant="h1">

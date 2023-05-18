@@ -50,7 +50,7 @@ function TutoringCard({
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  function handleCancel(id : string) {
+  function handleCancel(id: string) {
 
     const token = Cookies.get('gcode-session');
     console.log("Cancel Appointment" + id)
@@ -61,13 +61,13 @@ function TutoringCard({
         'Authorization': 'Bearer ' + token
       }
     })
-    .then(response => {
-      console.log(response);
-    })
-    .catch(error => {
-      console.log(error);
-    });
-      handleBack();
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    handleBack();
   };
 
   const handleBack = () => {
@@ -127,7 +127,7 @@ function TutoringCard({
                           </Button>
                         }
                         <Button
-                           onClick={() => handleCancel(id)} sx={{ mt: 1, mr: 1 }}>
+                          onClick={() => handleCancel(id)} sx={{ mt: 1, mr: 1 }}>
                           No
                         </Button>
                       </div>
@@ -172,7 +172,13 @@ function TutoringCard({
           </div>
         </Grid>
         <Grid item lg={4} md={12}>
-          <div style={{ float: "right" }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'right',
+            flexDirection: 'row',
+            height: '100%'
+          }}>
             <a target="_blank" rel="noreferrer" href="https://tufts.zoom.us/j/2899137562?pwd=alJ6Q3RScWN6WkYwL1R1OS9wN1I1dz09">
               <Button variant="primary" sx={{ margin: "0 5px 0 5px" }}> Join </Button>
             </a>
@@ -190,11 +196,11 @@ export default function TutoringCardDisplay() {
   useEffect(() => {
     const token = Cookies.get('gcode-session');
     axios.get("http://localhost:8000/api/appointments3", {
-        headers: {
-          Accept: "application/json",
-          Authorization: 'Bearer ' + token
-        },
-      })
+      headers: {
+        Accept: "application/json",
+        Authorization: 'Bearer ' + token
+      },
+    })
       .then((response) => {
         setSessions(response.data);
       })
@@ -229,11 +235,11 @@ export default function TutoringCardDisplay() {
         })
       ) : (
         <>
-        <Box sx={{ height: "10%" }}>
-          <Typography>
-            No upcoming tutoring sessions
-          </Typography>
-        </Box>
+          <Box sx={{ height: "10%" }}>
+            <Typography>
+              No upcoming tutoring sessions
+            </Typography>
+          </Box>
         </>
       )}
     </div>

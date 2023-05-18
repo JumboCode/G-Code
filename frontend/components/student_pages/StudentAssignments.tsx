@@ -54,9 +54,9 @@ export default function StudentAssignments({user, assignment_id}) {
     <div>
       <Grid container>
         <Grid item xs={12}>
-          <div className={assignentStyles.header1}>
-            <p> Assignments </p>
-          </div>
+          <Box className="headerBox">
+            <Typography variant="h1"> Assignments </Typography>
+          </Box>
         </Grid>
         <Grid item xs={12} md={9}>
           <div className={assignentStyles.leftColumn}>
