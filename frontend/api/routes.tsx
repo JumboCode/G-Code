@@ -2,7 +2,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { dateToString } from '../constants'
 
-export const baseurl = 'http://3.14.245.254'
+export const baseurl = 'https://ei5nhfp45ti4l5wjnucvvk7zcm0zmial.lambda-url.us-east-2.on.aws'
 
 export async function getCurrentAssignments(setCurrentAssignments) {
     const token = Cookies.get('gcode-session')
@@ -264,31 +264,36 @@ export async function getUser(user_id, setProfile) {
 }
 
 export async function login(username, password, setloginError) {
-    
-    const postData = {
-        grant_type: '',
-        username: username,
-        password: password,
-        scope: '',
-        client_id: '',
-        client_secret: ''
-    };
 
-    axios.post(`${baseurl}/login`, postData, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'accept': 'application/json'
-        }
-    })
-        .then(function success(response) {
-            const token = response.data.access_token;
-            console.log(token)
-            Cookies.set('gcode-session', token, { expires: 7 });
-        })
-        .catch(function failure(error) {
-            console.log(error);
-            setloginError(true);
-        })
+    axios.get('https://ei5nhfp45ti4l5wjnucvvk7zcm0zmial.lambda-url.us-east-2.on.aws/api/posts').then(r => console.log(r)).catch(e => console.log(e))
+
+    // const postData = {
+    //     grant_type: '', 
+    //     username: username,
+    //     password: password,
+    //     scope: '',
+    //     client_id: '',
+    //     client_secret: ''
+    // };
+
+
+    // return new Promise(resolve => {
+    //     axios.post(`${baseurl}/login`, postData, {
+    //         headers: {
+    //             'Content-Type': 'application/x-www-form-urlencoded',
+    //             'accept': 'application/json'
+    //         }
+    //     })
+    //         .then(function success(response) {
+    //             const token = response.data.access_token;
+    //             Cookies.set('gcode-session', token, { expires: 7 });
+    //             resolve('resolved')
+    //         })
+    //         .catch(function failure(error) {
+    //             console.log(error);
+    //             setloginError(true);
+    //         })
+    // });
 }
 
 export async function updateUser(userData) {
@@ -318,19 +323,22 @@ export async function registerUser(accessCode, userData, setSubmissionError) {
             // router.push('/login')
         })
         .catch(error => {
-            setSubmissionError(error.response.data.detail)
+            console.log(error)
+            if (error.response) {
+                setSubmissionError(error.response.data.detail)
+            }
         });
 }
 
 export async function getQuestions(setQuestions) {
     axios.get(`${baseurl}/api/questions`).then((res) => {
-            setQuestions(
-                res.data.map(question => {
-                    return {
-                        ...question,
-                        date: new Date(Date.parse(question.date)),
-                    }
-                })
-            );
-        });
+        setQuestions(
+            res.data.map(question => {
+                return {
+                    ...question,
+                    date: new Date(Date.parse(question.date)),
+                }
+            })
+        );
+    });
 }

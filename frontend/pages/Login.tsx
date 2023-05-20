@@ -48,7 +48,7 @@ export default function Login() {
           />
           <Link href="./ResetPassword"><text className={loginStyles.forgotPassword}>Forgot Password?</text></Link>
           {loginError && <Alert sx={{marginTop: '30px'}} severity="error"> Invalid username or password. </Alert> }
-          <Button fullWidth variant="primary" sx={{margin: '20px 0 10px 0'}} onClick={() => {login(username, password, setloginError).then(() => router.push('/Dashboard'))}}>
+          <Button fullWidth variant="primary" sx={{margin: '20px 0 10px 0'}} onClick={() => {login(username, password, setloginError).then(() => router.push('/Dashboard')).catch(() => {setloginError(true)})}}>
             <h1 className={loginStyles.signInButton}>Login </h1>
           </Button>
         </Box>

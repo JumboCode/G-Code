@@ -4,3 +4,5 @@ node_modules
 backend/bin
 backend/lib
 frontend/node_modules
+*.zip
+lambda_function

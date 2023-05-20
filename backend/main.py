@@ -18,6 +18,7 @@ from oauth import get_current_user
 from datetime import datetime, date, time
 # from http.client import HTTPException
 from dotenv import load_dotenv
+from mangum import Mangum
 
 # Mark
 from bson import json_util, ObjectId
@@ -29,6 +30,7 @@ from email_module import *
 
 # Create app
 app = FastAPI()
+handler = Mangum(app)
 load_dotenv()
 
 # Used for encrypting session tokens
@@ -45,7 +47,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 ################################################################################
 ############################### Authentication #################################
@@ -68,10 +69,10 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
 
     if type(user) == str:
         raise HTTPException(status_code=403, detail="Invalid Username")
-
+    
     if not Hash.verify(user.password, request.password):
         raise HTTPException(status_code=404, detail="wrong username or password")
-    
+        
     access_token = create_access_token(data={"email": user.email, "type": user.type})
     return {"access_token": access_token, "token_type": "bearer"}
 
