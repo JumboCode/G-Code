@@ -326,6 +326,13 @@ def past_assignments():
 ############################## Users ##############################
 ###################################################################
 
+def get_one_invite(email: str):
+    result = fetch_one("UserInvites", "email", email)
+    return result
+
+def change_password(user_id: str, new_password: str):
+    users.update_one({'_id': ObjectId(user_id)}, {"$set": {"password": new_password}})
+
 def update_user_by_id(user_id: str, user_data: UserIn):
     users.update_one({'_id': ObjectId(user_id)}, {"$set": user_data.dict()})
 

@@ -101,7 +101,6 @@ class UserIn(BaseModel):
     zoom: Optional[str] = None
     timezone: Optional[str] = None
     maxsessions: Optional[int] = None
-    linkedin: Optional[str] = None
     pronouns: Optional[str] = None
     bio: Optional[str] = None
     github: Optional[str] = None
@@ -111,11 +110,19 @@ class UserUpdate(BaseModel):
     lastname: str = Field(...)
     email: str = Field(...)
     zoom: str = Field(...)
+    bio: Optional[str] = None
+    github: Optional[str] = None
 
 class User(UserIn):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     type: str = Field(...)
     appointment_schedule: Optional[AppointmentSchedule] = AppointmentSchedule()
+
+class ChangePassword(BaseModel):
+    currentpassword: str = Field(...)
+    newpassword: str = Field(...)
+    repeatnewpassword: str = Field(...)
+
 
 ###################################################################
 ############################## Posts ##############################

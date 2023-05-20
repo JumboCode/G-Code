@@ -6,5 +6,4 @@ class Hash():
 	def bcrypt(password:str):
 		return pwd_cxt.hash(password)
 	def verify(hashed,normal):
-		return True
 		return pwd_cxt.verify(normal,hashed)

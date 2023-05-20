@@ -2,7 +2,8 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { dateToString } from '../constants'
 
-export const baseurl = 'https://ei5nhfp45ti4l5wjnucvvk7zcm0zmial.lambda-url.us-east-2.on.aws'
+// export const baseurl = 'https://ei5nhfp45ti4l5wjnucvvk7zcm0zmial.lambda-url.us-east-2.on.aws'
+export const baseurl = 'http://localhost:8000'
 
 export async function getCurrentAssignments(setCurrentAssignments) {
     const token = Cookies.get('gcode-session')
@@ -108,6 +109,17 @@ export async function getUserMap(setUserMap) {
             users_map[user._id] = user
         }
         setUserMap(users_map)
+    })
+}
+
+export async function getUserEmailMap(setUserEmailMap) {
+    axios.get(`${baseurl}/api/users`).then((res) => {
+        let users_map = {}
+        for (const user_idx in res.data) {
+            const user = res.data[user_idx]
+            users_map[user.email] = user
+        }
+        setUserEmailMap(users_map)
     })
 }
 
@@ -264,36 +276,33 @@ export async function getUser(user_id, setProfile) {
 }
 
 export async function login(username, password, setloginError) {
-
-    axios.get('https://ei5nhfp45ti4l5wjnucvvk7zcm0zmial.lambda-url.us-east-2.on.aws/api/posts').then(r => console.log(r)).catch(e => console.log(e))
-
-    // const postData = {
-    //     grant_type: '', 
-    //     username: username,
-    //     password: password,
-    //     scope: '',
-    //     client_id: '',
-    //     client_secret: ''
-    // };
+    const postData = {
+        grant_type: '',
+        username: username,
+        password: password,
+        scope: '',
+        client_id: '',
+        client_secret: ''
+    };
 
 
-    // return new Promise(resolve => {
-    //     axios.post(`${baseurl}/login`, postData, {
-    //         headers: {
-    //             'Content-Type': 'application/x-www-form-urlencoded',
-    //             'accept': 'application/json'
-    //         }
-    //     })
-    //         .then(function success(response) {
-    //             const token = response.data.access_token;
-    //             Cookies.set('gcode-session', token, { expires: 7 });
-    //             resolve('resolved')
-    //         })
-    //         .catch(function failure(error) {
-    //             console.log(error);
-    //             setloginError(true);
-    //         })
-    // });
+    return new Promise(resolve => {
+        axios.post(`${baseurl}/login`, postData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'accept': 'application/json'
+            }
+        })
+            .then(function success(response) {
+                const token = response.data.access_token;
+                Cookies.set('gcode-session', token, { expires: 7 });
+                resolve('resolved')
+            })
+            .catch(function failure(error) {
+                console.log(error);
+                setloginError(true);
+            })
+    });
 }
 
 export async function updateUser(userData) {
@@ -312,7 +321,6 @@ export async function updateUser(userData) {
 
 export async function registerUser(accessCode, userData, setSubmissionError) {
     const apiUrl = `${baseurl}/api/join?access_code=${accessCode}`;
-
     const headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -341,4 +349,49 @@ export async function getQuestions(setQuestions) {
             })
         );
     });
+}
+
+export async function saveAssignment(assignmentName, description, assignmentDue) {
+    const apiUrl = `${baseurl}/api/assignment`;
+    const token = Cookies.get('gcode-session')
+    const headers = {
+        'accept': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+    };
+    const requestData = {
+        name: assignmentName,
+        description: description,
+        dueDate: assignmentDue,
+    };
+    return new Promise(resolve => {
+        axios.post(apiUrl, requestData, { headers })
+            .then(_ => {
+                resolve('resolved')
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    })
+}
+
+export async function changePassword(data) {
+    console.log(data)
+
+    const apiUrl = `${baseurl}/changepassword`;
+    const token = Cookies.get('gcode-session')
+    const headers = {
+        'accept': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+    };
+    return new Promise((resolve, reject) => {
+        axios.post(apiUrl, data, { headers })
+            .then(_ => {
+                resolve('resolved')
+            })
+            .catch(error => {
+                reject(error)
+            });
+    })
 }

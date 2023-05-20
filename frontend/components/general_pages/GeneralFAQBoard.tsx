@@ -23,7 +23,7 @@ import IndividualQuestion from "./IndividualQuestion";
 
 import { getQuestions, getUserMap, postQuestion } from "../../api/routes";
 
-const emptyQuestion = {title: '', body: ''}
+const emptyQuestion = { title: '', body: '' }
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
@@ -181,31 +181,33 @@ export default function GeneralFAQBoard({ user, question_id }) {
                 <Grid item md={9} xs={12}>
                     <Box className="headerBox">
                         <Grid container>
-                            <Grid item xs={12} md={8}>
-                                    <Typography variant="h1">
-                                        Community Forum
-                                    </Typography>
-                                    <Typography variant="subtitle1">
-                                        Ask a question or help out your
-                                        fellow classmates!
-                                    </Typography>
+                            <Grid item xs={8}>
+                                <Typography variant="h1">
+                                    Community Forum
+                                </Typography>
+                                <Typography variant="subtitle1">
+                                    Ask a question or help out your
+                                    fellow classmates!
+                                </Typography>
 
                             </Grid>
-                            <Grid item xs={12} md={4}>
-                                <Button
+                            <Grid item xs={4}>
+                                {/* <Button
                                     sx={{ margin: "10px" }}
                                     variant="secondary"
                                     onClick={() => setOnlyMyQuestions(!onlyMyQuestions)}
                                 >
                                     {onlyMyQuestions ? "All Questions" : "My Questions"}
 
-                                </Button>
-                                <Button
-                                    onClick={handleOpen}
-                                    variant="primary"
-                                >
-                                    Ask a Question
-                                </Button>
+                                </Button> */}
+                                <Box sx={{display: 'flex', justifyContent: 'right', alignItems: 'center'}}>
+                                    <Button
+                                        onClick={handleOpen}
+                                        variant="primary"
+                                    >
+                                        Ask a Question
+                                    </Button>
+                                </Box>
                             </Grid>
                         </Grid>
                     </Box>

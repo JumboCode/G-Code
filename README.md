@@ -1,16 +1,5 @@
 # GCODE
 
-## Pressing Tasks
-
-1. Make zoom link go to actual zoom link
-2. Add routes to API and use base URL instead of hard coded
-3. Add ability to change password and modify more profile fields
-4. Add ability for instructors to make comments on student assignments
-6. Clean up backend
-7. Remove invite users link from students
-9. Show upcoming tutoring sessions for admin on frontend and send them an email when students sign up
-10. Don't return passwords from backend
-
 ## Frontend Setup
 
 1. Install npm

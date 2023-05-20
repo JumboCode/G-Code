@@ -18,25 +18,22 @@ import CreateAssignmentModal from '../createAssignmentModal'
 export default function Dashboard(props) {
   const user = props.user;
   const router = useRouter();
-  // add assignment modal
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  // Get new assignment data
-  // make call to backend to get real data
 
   return (
     <>
       <CreateAssignmentModal open={open} handleClose={handleClose} />
       <Grid container spacing={2}>
 
-        <Grid className={styles.header1} item xs={12}>
+        <Grid item xs={12}>
           <Box className="headerBox">
             <Typography variant="h1"> Hey, {user["firstname"]} 🤟 </Typography>
           </Box>
         </Grid>
         <Grid item xs={12} md={8}>
-          <div className={styles.header2}>Coming Up Soon</div>
+          <Typography variant="h3"> Coming Up Soon </Typography>
           <div className={styles.pageElement}>
             <TutoringCardDisplay />
           </div>
@@ -57,7 +54,7 @@ export default function Dashboard(props) {
               <div className={styles.question}>
                 <PersonAddIcon
                   onClick={() => {
-                    router.push("/People");
+                    router.push("/People/invite");
                   }}
                   sx={icon_style}
                 />
@@ -86,41 +83,43 @@ export default function Dashboard(props) {
                 <br />
                 Add Assignment
               </div>
-              
+
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} md={4}>
-          <div className={styles.header2}> Resources </div>
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={12} lg={6}>
-              <div className={styles.question}>
-                <Image
-                  src={CalendarIcon}
-                  alt="Office Hours"
-                  onClick={() => {
-                    router.push("/OfficeHours");
-                  }}
-                  style={{marginTop: 19, marginBottom: 18}}
-                />
-                <br />
-                Office Hours
-              </div>
+          <Typography variant="h3"> Resources </Typography>
+          <Box sx={{ marginTop: '21px' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={6} md={12} lg={6}>
+                <div className={styles.question}>
+                  <Image
+                    src={CalendarIcon}
+                    alt="Office Hours"
+                    onClick={() => {
+                      router.push("/OfficeHours");
+                    }}
+                    style={{ marginTop: 19, marginBottom: 18 }}
+                  />
+                  <br />
+                  Office Hours
+                </div>
+              </Grid>
+              <Grid item xs={6} md={12} lg={6}>
+                <div className={styles.question}>
+                  <Image
+                    src={FAQIcon}
+                    alt="FAQ Board"
+                    onClick={() => {
+                      router.push("/FAQBoard");
+                    }}
+                  />
+                  <br />
+                  FAQ Board
+                </div>
+              </Grid>
             </Grid>
-            <Grid item xs={6} md={12} lg={6}>
-              <div className={styles.question}>
-                <Image
-                  src={FAQIcon}
-                  alt="FAQ Board"
-                  onClick={() => {
-                    router.push("/FAQBoard");
-                  }}
-                />
-                <br />
-                FAQ Board
-              </div>
-            </Grid>
-          </Grid>
+          </Box>
         </Grid>
       </Grid>
     </>

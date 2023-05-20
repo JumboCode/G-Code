@@ -38,11 +38,9 @@ session_secret = os.environ["SECRET_SESSION_KEY"]
 registration_secret = os.environ["SECRET_REGISTRATION_KEY"]
 
 # Allow access from frontend
-# origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
-origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -76,24 +74,6 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(data={"email": user.email, "type": user.type})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.post("/registration")
-def registration(request: UserIn):
-    # Check if email from request is in invites w/ the same first and last name
-    corr_invite = get_one_invite("Email", request["email"])
-    if not corr_invite:
-        raise HTTPException(status_code=403, detail="Email Not Invited")
-    if not corr_invite["firstname"] == request["firstname"]:
-        raise HTTPException(status_code=403, detail="First Name Does Not Match")
-    if not corr_invite["lastname"] == request["lastname"]:
-        raise HTTPException(status_code=403, detail="Last Name Does Not Match")
-    zoomlink = request["zoom"]
-    pattern = re.compile(r'^https?:\/\/(?:www\.)?(?:zoom\.us|zoomgov\.com)\/(?:j|my)\/([a-zA-Z0-9-_]{10,})$', re.IGNORECASE)
-    if not pattern.match(zoomlink):
-       raise HTTPException(status_code=403, detail="Invalid Zoom Link") 
-    remove_student_invite(request.accesscode)
-    create_new_user(request.dict())
-    return
-
 @app.post("/sendreset")
 def send_reset(email: str):
     user = fetch_user_by_email(email)
@@ -122,6 +102,17 @@ def reset_password(data: ResetDataIn):
     
     hashedPW = Hash.bcrypt(password)
     update_password(email, hashedPW)
+
+@app.post("/changepassword")
+def post_change_password(data: ChangePassword, current_user: UserIn = Depends(get_current_user)):
+    user = fetch_user_by_email(current_user.email)
+    try:
+        Hash.verify(user.password, data.currentpassword)
+    except:
+        raise HTTPException(status_code=403, detail="Incorrect password.")
+    if data.newpassword != data.repeatnewpassword:
+         raise HTTPException(status_code=403, detail="Passwords do not match.")
+    change_password(user.id, Hash.bcrypt(data.newpassword))
 
 
 ###################################################################

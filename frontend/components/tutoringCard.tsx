@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import { useEffect } from "react";
 import Avatar from '@mui/material/Avatar';
-import { getSessions, handleCancel } from "../api/routes";
+import { getSessions, getUserEmailMap, handleCancel } from "../api/routes";
 
 const steps = [
   {
@@ -27,17 +27,7 @@ const steps = [
   },
 ];
 
-function TutoringCard({
-  name,
-  date,
-  time,
-  id,
-}: {
-  name: string;
-  date: string;
-  time: string;
-  id: string;
-}) {
+function TutoringCard({tutor, student, date, time, id}) {
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
@@ -125,14 +115,14 @@ function TutoringCard({
           </Box>
         </div>
       )}
-      <Grid container spacing={2} className={dashboardStyles.tutoringSessionCard}>
+      <Grid container spacing={2}>
         <Grid item lg={8} md={12}>
           <div className={dashboardStyles.tutoringSessionImage}>
             <div style={{ minWidth: '75px' }}>
-              <Avatar alt={name} sx={{ width: '75px', height: '75px', bgcolor: 'green' }} />
+              <Avatar sx={{ width: '75px', height: '75px', bgcolor: 'green' }} />
             </div>
             <div className={dashboardStyles.tutoringSessionTextDetails}>
-              <div className={dashboardStyles.tutoringSessionName}>Office Hours with {name}</div>
+              <div className={dashboardStyles.tutoringSessionName}>Office Hours with {tutor.firstname} {tutor.lastname} and {student.firstname} {student.lastname}</div>
 
               <div className={dashboardStyles.tutoringSessionLogistics}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left', marginBottom: '5px' }}>
@@ -154,7 +144,7 @@ function TutoringCard({
             flexDirection: 'row',
             height: '100%'
           }}>
-            <a target="_blank" rel="noreferrer" href="https://tufts.zoom.us/j/2899137562?pwd=alJ6Q3RScWN6WkYwL1R1OS9wN1I1dz09">
+            <a target="_blank" rel="noreferrer" href={'https://' + tutor.zoom}>
               <Button variant="primary" sx={{ margin: "0 5px 0 5px" }}> Join </Button>
             </a>
             <Button onClick={() => setOpen(!open)} variant="text" sx={{ margin: "0 5px 0 5ipx" }}> Manage </Button>
@@ -167,9 +157,11 @@ function TutoringCard({
 
 export default function TutoringCardDisplay() {
   const [sessions, setSessions] = useState([]);
+  const [userEmailMap, setUserEmailMap] = useState({})
 
   useEffect(() => {
     getSessions(setSessions)
+    getUserEmailMap(setUserEmailMap)
   }, []);
 
   return (
@@ -180,15 +172,13 @@ export default function TutoringCardDisplay() {
           const endTime = new Date(session.endTime);
           const date = new Date(session.startTime);
 
-          console.log("session:")
-          console.log(session);
-
           const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
           const formattedDate = date.toLocaleDateString('en-US', options);
 
           return (
             <TutoringCard
-              name={session.tutorEmail}
+              tutor={userEmailMap[session.tutorEmail]}
+              student={userEmailMap[session.studentEmail]}
               date={formattedDate}
               time={`${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`}
               id={session._id}

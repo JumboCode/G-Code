@@ -8,8 +8,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import React from 'react'
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from 'dayjs';
-import Cookie from 'js-cookie'
-import axios from 'axios'
+import { saveAssignment } from '../api/routes'
 
 const modalStyle = {
     position: "absolute" as "absolute",
@@ -24,31 +23,13 @@ const modalStyle = {
 };
 
 export default function CreateAssignmentModal({ open, handleClose }) {
-    const token = Cookie.get('gcode-session')
-
     const [assignmentName, setAssignmentName] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [assignmentDue, setAssignmentDue] = React.useState(dayjs(new Date()));
 
-    const saveAssignment = () => {
-        const apiUrl = 'http://localhost:8000/api/assignment';
-        const headers = {
-            'accept': 'application/json',
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-        };
-        const requestData = {
-            name: assignmentName,
-            description: description,
-            dueDate: assignmentDue,
-        };
-        axios.post(apiUrl, requestData, { headers })
-            .then(_ => {
-                handleClose()
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+    const handleSaveAssignment = () => {
+        saveAssignment(assignmentName, description, assignmentDue)
+            .then(() => {handleClose()})
     }
 
     return (
@@ -105,9 +86,7 @@ export default function CreateAssignmentModal({ open, handleClose }) {
                         sx={{ marginTop: "10px" }}
                         variant="primary"
                         size="large"
-                        onClick={() => {
-                            saveAssignment();
-                        }}
+                        onClick={handleSaveAssignment}
                     >
                         Submit
                     </Button>

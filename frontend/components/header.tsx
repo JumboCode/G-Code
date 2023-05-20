@@ -43,7 +43,7 @@ const theme = createTheme({
   },
 });
 
-const settings = [['Profile', 'Profile'], ['Dashboard', 'Dashboard'], ['Logout', 'Logout']];
+const settings = [['Edit Profile', 'Profile'], ['Change Password', 'ChangePassword'], ['Dashboard', 'Dashboard'], ['Logout', 'Logout']];
 
 function Header({user, handleDrawerToggle}) {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);

@@ -47,9 +47,9 @@ export default function Profile() {
                 sx={{
                     paddingTop: '70px',
                     display: 'flex',
-                    minHeight: '60vh',
+                    minHeight: '100vh',
                     justifyContent: 'center',
-                    alignItems: 'top',
+                    alignItems: 'center',
                     backgroundColor: '#F9FAFB'
                 }}
             >
@@ -149,12 +149,6 @@ export default function Profile() {
                     </Grid>
                 </Box>
             </Box>
-            <Box sx={{minHeight:'20px'}}/>
-            <Typography textAlign='center'>
-                  <b>Need to reset your password?</b>
-                  <br/>
-                  Log out, then go to the login page and click &apos;forgot password&apos;, then enter your email to recieve a code to reset your password.
-                </Typography>
         </ThemeProvider>
     )
 }
