@@ -2,58 +2,33 @@ import React from "react";
 
 // mui imports
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import HeaderNav from '../headernav';
-import { ThemeProvider } from '@mui/material/styles';
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import Cookie from 'js-cookie'
-
-
-// constants
-import { DRAWER_WIDTH } from "../../constants";
-import { theme } from '../../theme'
 
 // styles
 import styles from '../../styles/Home.module.css'
 import AssignmentList from "../assignmentsList";
-import axios from "axios";
 import IndividualAssignment from "./IndividualAssignment";
 import CreateAssignmentModal from "../createAssignmentModal";
 
+import { getCurrentAssignments, getPreviousAssignments } from '../../api/routes'
+
 export default function AdminAssignments({ user, assignment_id }) {
-    if (assignment_id) {
-        return <IndividualAssignment user={user} assignment_id={assignment_id} />
-    }
     const [currentAssignments, setCurrentAssignments] = React.useState([])
     const [previousAssignments, setPreviousAssignments] = React.useState([])
     const [open, setOpen] = React.useState(false)
-    const handleOpen = () => { setOpen(true) }
-    const handleClose = () => { setOpen(false) }
 
-    const token = Cookie.get('gcode-session')
-    const headers = {
-        'accept': 'application/json',
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-    }
-
-    const getCurrentAssignments = () => {
-        axios.get("http://localhost:8000/api/current_assignments", { headers })
-            .then(response => setCurrentAssignments(response.data))
-            .catch(error => console.log(error))
-    }
-    const getPreviousAssignments = () => {
-        axios.get("http://localhost:8000/api/past_assignments", { headers })
-            .then(response => setPreviousAssignments(response.data))
-            .catch(error => console.log(error))
-    }
     React.useEffect(() => {
-        getCurrentAssignments()
-        getPreviousAssignments()
+        getCurrentAssignments(setCurrentAssignments)
+        getPreviousAssignments(setPreviousAssignments)
     }, [])
 
+    if (assignment_id) {
+        return <IndividualAssignment user={user} assignment_id={assignment_id} />
+    }
+    const handleOpen = () => { setOpen(true) }
+    const handleClose = () => { setOpen(false) }
 
     return (
         <Grid container spacing={2}>

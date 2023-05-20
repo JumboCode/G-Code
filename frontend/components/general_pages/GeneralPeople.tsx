@@ -27,8 +27,7 @@ import Link from 'next/link'
 import AddIcon from '@mui/icons-material/Add';
 
 // backend
-import axios from "axios";
-
+import { deleteUser, getUsers } from '../../api/routes';
 
 const modal_style = {
   backgroundColor: "#fff",
@@ -49,24 +48,11 @@ function Person({ person, updatePeople }) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const deleteUser = () => {
-    const token = Cookies.get('gcode-session')
-    axios.delete('http://localhost:8000/api/user', {
-      headers: {
-        'accept': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      params: {
-        user_id: person._id
-      }
+  const handleDelete = () => {
+    deleteUser(person._id).then(() => {
+      handleClose()
+      updatePeople()
     })
-      .then(_ => {
-        handleClose()
-        updatePeople()
-      })
-      .catch(error => {
-        console.error(error);
-      });
   }
 
   return (
@@ -88,7 +74,7 @@ function Person({ person, updatePeople }) {
               </Button>
             </Grid>
             <Grid item xs={6}>
-              <Button variant='primary' onClick={deleteUser} fullWidth>
+              <Button variant='primary' onClick={handleDelete} fullWidth>
                 Yes
               </Button>
             </Grid>
@@ -139,13 +125,7 @@ export default function GeneralPeople(props) {
 
   const [people, setPeople] = useState([]);
 
-  const updatePeople = () => {
-    axios.get('http://localhost:8000/api/users')
-      .then(response => { setPeople(response.data) })
-      .catch(error => console.log(error))
-  }
-
-  useEffect(updatePeople, []);
+  useEffect(() => {getUsers(setPeople)}, []);
 
   const studentCards = (
     <>
@@ -172,7 +152,7 @@ export default function GeneralPeople(props) {
 
               <TableCell></TableCell>
             </TableRow>
-            {people.map(person => <Person person={person} updatePeople={updatePeople} />)}
+            {people.map(person => <Person key={person._id} person={person} updatePeople={() => {getUsers(setPeople)}} />)}
           </TableBody>
         </Table>
       </TableContainer>
@@ -194,13 +174,17 @@ export default function GeneralPeople(props) {
                   Spring 2023 Cohort
                 </Typography>
               </Grid>
-              <Grid xs={12} md={4}>
+              { 
+                user.type == 'admin' &&
+                <Grid xs={12} md={4}>
                 <Link href="./People/invite">
                   <Button sx={{ float: 'right' }} variant='primary'>
                     <AddIcon /> Invite Users
                   </Button>
                 </Link>
               </Grid>
+              }
+              
             </Grid>
           </Box>
         </Grid>

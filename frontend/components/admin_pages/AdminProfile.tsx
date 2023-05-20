@@ -31,12 +31,12 @@ export default function AdminProfile(props) {
                             <EditIcon />
                         </Button>
                         <Grid direction="column" spacing={2} container>
-                            <Grid item xs="8">
+                            <Grid item xs={8}>
                                 <h1>
                                     Profile
                                 </h1>
                             </Grid>
-                            <Grid item xs="8">
+                            <Grid item xs={8}>
                                 <TextField
                                     disabled={!editOpen}
                                     id="outlined-disabled"
@@ -44,7 +44,7 @@ export default function AdminProfile(props) {
                                     defaultValue={user["firstname"]}
                                 />
                             </Grid>
-                            <Grid item xs="8">
+                            <Grid item xs={8}>
                                 <TextField
                                     disabled
                                     id="outlined-disabled"
@@ -52,7 +52,7 @@ export default function AdminProfile(props) {
                                     defaultValue={user["lastname"]}
                                 />
                             </Grid>
-                            <Grid item xs="8">
+                            <Grid item xs={8}>
                                 <TextField
                                     disabled
                                     id="outlined-disabled"
@@ -60,7 +60,7 @@ export default function AdminProfile(props) {
                                     defaultValue={user["email"]}
                                 />
                             </Grid>
-                            <Grid item xs="8">
+                            <Grid item xs={8}>
                                 <TextField
                                     disabled
                                     id="outlined-disabled"
@@ -68,7 +68,7 @@ export default function AdminProfile(props) {
                                     defaultValue={"**************"}
                                 />
                             </Grid>
-                            <Grid item xs="8">
+                            <Grid item xs={8}>
                                 <TextField
                                     disabled={!editOpen}
                                     id="outlined-disabled"
@@ -77,14 +77,14 @@ export default function AdminProfile(props) {
                                 />
                             </Grid>
                             <Grid sx={{ marginTop: "2%", marginLeft: "1%" }} container flex-direction="row" spacing={2}>
-                                <Grid item xs="2.5">
+                                <Grid item xs={8}>
                                     {editOpen &&
                                         <Button variant="contained">
                                             Save
                                         </Button>
                                     }
                                 </Grid>
-                                <Grid item xs="2.5">
+                                <Grid item xs={8}>
                                     {editOpen &&
                                         <Button onClick={handleEdit} variant="outlined">
                                             Exit

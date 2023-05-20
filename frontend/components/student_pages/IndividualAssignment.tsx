@@ -22,6 +22,8 @@ import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
 import BackButton from "../../components/backButton";
 
+import { getAssignment, submitAssignment } from "../../api/routes";
+
 const modal_style = {
     backgroundColor: "#fff",
     position: "absolute" as "absolute",
@@ -42,41 +44,10 @@ export default function IndividualAssignment({ user, assignment_id }) {
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
 
-    const getAssignment = () => {
-        const apiUrl = 'http://localhost:8000/api/assignment_by_id'
-        const token = Cookies.get('gcode-session')
-        const headers = {
-            'accept': 'application/json',
-            'Authorization': 'Bearer ' + token,
-        };
-        axios.get(`${apiUrl}?assignment_id=${assignment_id}`, { headers })
-            .then(response => {
-                setAssignment(response.data)
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    const submitAssignment = () => {
-        const apiUrl = 'http://localhost:8000/api/submit_assignment'
-        const token = Cookies.get('gcode-session')
-        const headers = {
-            'accept': 'application/json',
-            'Authorization': 'Bearer ' + token,
-        };
-        axios.get(`${apiUrl}?assignment_id=${assignment_id}&github_link=${gitHub}`, { headers })
-            .then(_ => {
-                setGitHub("")
-                handleClose()
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
+    
 
     useEffect(() => {
-        getAssignment()
+        getAssignment(assignment_id, setAssignment)
     }, [assignment_id])
 
     if (!user || !assignment) {
@@ -110,7 +81,7 @@ export default function IndividualAssignment({ user, assignment_id }) {
                             </Button>
                         </Grid>
                         <Grid item xs={6}>
-                            <Button variant='primary' onClick={submitAssignment} fullWidth>
+                            <Button variant='primary' onClick={() => submitAssignment(assignment_id, gitHub)} fullWidth>
                                 Submit
                             </Button>
                         </Grid>

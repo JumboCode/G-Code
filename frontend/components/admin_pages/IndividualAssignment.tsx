@@ -1,25 +1,12 @@
 import axios from "axios"
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid"
-import Button from "@mui/material/Button"
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css"
-const ReactQuill = dynamic(import('react-quill'), { ssr: false });
-import { useRouter } from "next/router";
-import IsUserAuthorized from "../../components/authentification";
-import Margin from "../../components/margin";
-import { student_pages, admin_pages } from '../../constants'
 import { TextField, Typography } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Link from "next/link";
 import "@fontsource/inter";
-import Cookies from 'js-cookie'
 import Box from '@mui/material/Box'
-import { Assignment } from "@mui/icons-material";
 import { dateToString, formatAMPM } from "../../constants";
-import Modal from '@mui/material/Modal'
-import Stack from '@mui/material/Stack'
-import Chip from '@mui/material/Chip'
 import BackButton from "../../components/backButton";
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -27,56 +14,18 @@ import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import Card from '@mui/material/Card'
-import CreateAssignmentModal from "../createAssignmentModal";
 
 
-const modal_style = {
-    backgroundColor: "#fff",
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 500,
-    border: "1px solid rgba(0, 0, 0, 0.23)",
-    borderRadius: "10px",
-    boxShadow: 24,
-    p: 4,
-};
-
-
+import { getAssignment, getStudents } from "../../api/routes"
 
 export default function IndividualAssignment({ user, assignment_id }) {
 
     const [assignment, setAssignment] = useState(null);
     const [students, setStudents] = useState([]);
-    const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
-
-    const getAssignment = () => {
-        const apiUrl = 'http://localhost:8000/api/assignment_by_id'
-        const token = Cookies.get('gcode-session')
-        const headers = {
-            'accept': 'application/json',
-            'Authorization': 'Bearer ' + token,
-        };
-        axios.get(`${apiUrl}?assignment_id=${assignment_id}`, { headers })
-            .then(response => {
-                setAssignment(response.data)
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    const getStudents = () => {
-        axios.get('http://localhost:8000/api/students')
-            .then(response => setStudents(response.data))
-    }
 
     useEffect(() => {
-        getAssignment()
-        getStudents()
+        getAssignment(assignment_id, setAssignment)
+        getStudents(setStudents)
     }, [assignment_id])
 
     if (!user || !assignment || !students) {
@@ -104,7 +53,7 @@ export default function IndividualAssignment({ user, assignment_id }) {
                 </TableCell>
                 <TableCell sx={{ backgroundColor: 'inherit' }}>
                     <Typography variant='h4' sx={{ fontSize: '16px' }}>
-                        <a target="_blank" href={'http://' + individual_assignment.submissionLink}> {individual_assignment.submissionLink} </a>
+                        <a target="_blank" rel="noreferrer"  href={'http://' + individual_assignment.submissionLink}> {individual_assignment.submissionLink} </a>
                     </Typography>
                 </TableCell>
             </TableRow>
@@ -159,7 +108,7 @@ export default function IndividualAssignment({ user, assignment_id }) {
                                         </TableCell>
                                     </TableRow>
                                     {assignment.individual_assignments.map(individual_assignment => 
-                                        <IndividualAssignmentRow individual_assignment={individual_assignment} />
+                                        <IndividualAssignmentRow key={individual_assignment._id} individual_assignment={individual_assignment} />
                                     )}
                                 </TableBody>
                             </Table>

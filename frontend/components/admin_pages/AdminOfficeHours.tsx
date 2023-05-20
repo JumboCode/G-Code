@@ -16,6 +16,7 @@ const options = ['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:3
 const defaultTimeSlot = { 'starttime': 9.0, 'endtime': 9.5 }
 
 import { numberToAMPM, convertTimeToNumber } from '../../constants'
+import { saveSchedule } from '../../api/routes';
 
 export default function AdminOfficeHours(props) {
   const user = props.user
@@ -25,29 +26,9 @@ export default function AdminOfficeHours(props) {
   const [open, setOpen] = React.useState(false);
   const [appointmentSchedule, setAppointmentSchedule] = React.useState(user.appointment_schedule);
 
-  const saveSchedule = () => {
-    const token = Cookie.get('gcode-session')
-
-    const apiUrl = `http://localhost:8000/api/save_schedule?maxSessions=${maxSessions}&timeZone=${timeZone}`;
-
-    const headers = {
-      'accept': 'application/json',
-      'Authorization': 'Bearer ' + token,
-      'Content-Type': 'application/json',
-    };
-
-    axios.post(apiUrl, appointmentSchedule, { headers })
-      .then(response => {
-        console.log('Response:', response.data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  };
-
   return (
     <>
-      <ConfirmZero open={open} setOpen={setOpen} saveSchedule={saveSchedule} />
+      <ConfirmZero open={open} setOpen={setOpen} saveSchedule={() => saveSchedule(appointmentSchedule)} />
 
       {/* Header */}
       <Box className="headerBox">
@@ -184,13 +165,7 @@ export default function AdminOfficeHours(props) {
             <Button
               variant="primary"
               size="large"
-              onClick={() => {
-                if (maxSessions == 0) {
-                  setOpen(true)
-                } else {
-                  saveSchedule();
-                }
-              }}
+              onClick={() => {saveSchedule(appointmentSchedule)}}
             >
               Save Schedule
             </Button>
@@ -275,6 +250,7 @@ function DayRow({ dayName, appointmentSchedule, setAppointmentSchedule }) {
       <TableCell sx={{ borderColor: 'white', padding: '2px' }} align="right">
         {times_on_day.map((time_slot, index) =>
           <TimeIntervalSelector
+            key={index}
             bottom={index === (times_on_day.length - 1)}
             timeSlot={time_slot}
             setTimeSlot={e => setAppointmentSchedule(appointmentSchedule => {

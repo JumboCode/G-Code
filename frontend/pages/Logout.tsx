@@ -10,7 +10,7 @@ const LogoutPage: React.FC = () => {
 
     // Redirect the user to the login page
     router.push("/Login");
-  }, []);
+  });
 
   return (
     <p>Logging out...</p>

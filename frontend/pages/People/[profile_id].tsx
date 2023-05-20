@@ -14,6 +14,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Link from "next/link";
 import "@fontsource/inter";
 import Cookies from 'js-cookie'
+import { getUser } from "../../api/routes";
 
 export default function ProfileDetails() {
     const router = useRouter()
@@ -30,26 +31,9 @@ export default function ProfileDetails() {
     }
     IsUserAuthorized(save_user)
 
-    const getProfile = () => {
-        // Todo: write call to get profile
-        const apiUrl = 'http://localhost:8000/api/user_by_id';
-
-        const headers = {
-            'accept': 'application/json',
-        };
-
-        axios.get(`${apiUrl}?user_id=${profile_id}`, { headers })
-            .then(response => {
-                setProfile(response.data)
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
     useEffect(() => {
-        getProfile()
-    }, [router.isReady])
+        getUser(profile_id, setProfile)
+    }, [profile_id])
 
     if (profile_id == '') {
         return <>index</>

@@ -6,10 +6,8 @@
 2. Add routes to API and use base URL instead of hard coded
 3. Add ability to change password and modify more profile fields
 4. Add ability for instructors to make comments on student assignments
-5. Add ability for instructors to upload assignment pdfs
 6. Clean up backend
 7. Remove invite users link from students
-8. No more shark meldon or green circle
 9. Show upcoming tutoring sessions for admin on frontend and send them an email when students sign up
 10. Don't return passwords from backend
 

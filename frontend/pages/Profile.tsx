@@ -8,32 +8,16 @@ import TextField from '@mui/material/TextField'
 import IsUserAuthorized from '../components/authentification'
 import Button from '@mui/material/Button'
 import { Typography } from '@mui/material'
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import { updateUser } from '../api/routes'
+import { useRouter } from 'next/router'
 
 export default function Profile() {
     const [formData, setFormData] = useState(null);
+    const router = useRouter()
 
-    const update_user = () => {
-        const token = Cookies.get("gcode-session")
-
-        const apiUrl = 'http://localhost:8000/api/user_by_id';
-
-        const headers = {
-            'accept': 'application/json',
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-        };
-
-        axios.put(apiUrl, formData, { headers })
-            .then(response => {
-                console.log(response.data)
-                console.log(formData)
-                setFormData(response.data)
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+    const handleUpdateUser = () => {
+        updateUser(formData)
+            .then(() => {router.push('/Dashboard')})
     }
 
     const save_user = curr_user => {
@@ -58,7 +42,7 @@ export default function Profile() {
     }
     return (
         <ThemeProvider theme={theme}>
-            <Header user={formData} />
+            <Header handleDrawerToggle={() => {}} user={formData} />
             <Box
                 sx={{
                     paddingTop: '70px',
@@ -90,9 +74,6 @@ export default function Profile() {
                                 onChange={handleChange}
                                 error={false}
                                 fullWidth
-                            // helperText={
-                            //     "Please enter a title"
-                            // }
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -105,9 +86,6 @@ export default function Profile() {
                                 onChange={handleChange}
                                 error={false}
                                 fullWidth
-                            // helperText={
-                            //     "Please enter a title"
-                            // }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -121,9 +99,6 @@ export default function Profile() {
                                 error={false}
                                 fullWidth
                                 disabled={true}
-                            // helperText={
-                            //     "Please enter a title"
-                            // }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -136,9 +111,6 @@ export default function Profile() {
                                 onChange={handleChange}
                                 error={false}
                                 fullWidth
-                            // helperText={
-                            //     "Please enter a title"
-                            // }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -151,9 +123,6 @@ export default function Profile() {
                                 onChange={handleChange}
                                 error={false}
                                 fullWidth
-                            // helperText={
-                            //     "Please enter a title"
-                            // }
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -168,16 +137,13 @@ export default function Profile() {
                                 fullWidth
                                 multiline
                                 minRows='3'
-                            // helperText={
-                            //     "Please enter a title"
-                            // }
                             />
                         </Grid>
 
 
                         <Grid item xs={12}>
                             <Box sx={{ display: 'flex', justifyContent: 'right' }}>
-                                <Button onClick={update_user} variant="primary"> Save Changes </Button>
+                                <Button onClick={handleUpdateUser} variant="primary"> Save Changes </Button>
                             </Box>
                         </Grid>
                     </Grid>
@@ -187,7 +153,7 @@ export default function Profile() {
             <Typography textAlign='center'>
                   <b>Need to reset your password?</b>
                   <br/>
-                  Log out, then go to the login page and click 'forgot password', then enter your email to recieve a code to reset your password.
+                  Log out, then go to the login page and click &apos;forgot password&apos;, then enter your email to recieve a code to reset your password.
                 </Typography>
         </ThemeProvider>
     )

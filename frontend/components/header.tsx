@@ -60,7 +60,7 @@ function Header({user, handleDrawerToggle}) {
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="fixed" style={{ "borderBottom": "1px #D8D8DB solid" }} elevation={0}>
-        <Container maxWidth="xl">
+        <Container maxWidth={false}>
           <Toolbar disableGutters>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, mr: 1 }}>
               <img src='/GCodeLogo.svg' />
@@ -142,8 +142,8 @@ function Header({user, handleDrawerToggle}) {
                 onClose={handleCloseUserMenu}
               >
 
-                {settings.map((setting) => (
-                  <a href={'/' + setting[1]}>
+                {settings.map((setting, idx) => (
+                  <a key={idx} href={'/' + setting[1]}>
                     <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
                       <Typography textAlign="center">{setting[0]}</Typography>
                     </MenuItem>

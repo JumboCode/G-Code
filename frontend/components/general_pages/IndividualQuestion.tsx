@@ -1,4 +1,3 @@
-import axios from "axios"
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid"
 import Button from "@mui/material/Button"
@@ -6,17 +5,13 @@ import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css"
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 import { useRouter } from "next/router";
-import IsUserAuthorized from "../../components/authentification";
-import Margin from "../../components/margin";
-import { student_pages, admin_pages } from '../../constants'
 import { Avatar, Typography } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Link from "next/link";
 import Card from '@mui/material/Card';
 import CardContent from "@mui/material/CardContent";
 import "@fontsource/inter";
 import BackButton from '../../components/backButton'
-import Cookies from 'js-cookie'
+import { getQuestion, getUserMap, submitReply } from "../../api/routes";
 
 const MessageCard = ({ author, body, type }) => {
     return (
@@ -66,65 +61,27 @@ const MessageCard = ({ author, body, type }) => {
     )
 }
 
-export default function IndividualQuestion({user, question_id}) {
+export default function IndividualQuestion({ user, question_id }) {
     const router = useRouter()
 
     const [question, setQuestion] = useState(null)
     const [users, setUsers] = useState(null)
     const [newReply, setNewReply] = React.useState("");
 
-    const updateQuestion = () => {
-        axios.get("http://localhost:8000/api/post_by_id", {
-            params: {
-                id_string: question_id
-            },
-        }).then(res => {
-            setQuestion(res.data)
-        }).catch(error => {
-            console.log(error)
-        })
-    }
 
-    const updateUsers = () => {
-        axios.get("http://localhost:8000/api/users").then((res) => {
-            let users_map = {}
-            for (const user_idx in res.data) {
-                const user = res.data[user_idx]
-                users_map[user._id] = user
-            }
-            setUsers(users_map)
-        })
-    }
 
-    const submitReply = () => {
-        const token = Cookies.get('gcode-session')
-
-        const apiUrl = `http://localhost:8000/api/reply_to_post?post_ID=${question_id}`;
-
-        const headers = {
-            'accept': 'application/json',
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-        };
-
-        const data = {
-            body: newReply,
-        };
-
-        axios.post(apiUrl, data, { headers })
-            .then(_ => {
-                updateQuestion()
-                setNewReply("")
+    const handleSubmitReply = () => {
+        submitReply(question_id, newReply)
+            .then(() => {
+                getQuestion(question_id, setQuestion)
+                getUserMap(setUsers)
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
     }
 
     useEffect(() => {
-        updateQuestion()
-        updateUsers()
-    }, [router.isReady])
+        getQuestion(question_id, setQuestion)
+        getUserMap(setUsers)
+    }, [question_id])
 
     if (!question || !user || !users) {
         return <>Loading...</>
@@ -142,7 +99,7 @@ export default function IndividualQuestion({user, question_id}) {
                 </Typography>
                 <h2>{question.title}</h2>
                 <MessageCard author={question.author_id in users ? users[question.author_id] : null} body={question.body} type='Question' />
-                {question.replies.map(reply => <MessageCard author={users[reply.author_id]} body={reply.body} type='Response' />)}
+                {question.replies.map((reply, idx) => <MessageCard key={idx} author={users[reply.author_id]} body={reply.body} type='Response' />)}
                 <div>
                     <p style={{ fontWeight: 'bold' }}>Reply</p>
                 </div>
@@ -177,9 +134,7 @@ export default function IndividualQuestion({user, question_id}) {
                     <Button
                         sx={{ marginTop: '20px' }}
                         variant="primary"
-                        onClick={() => {
-                            submitReply()
-                        }}
+                        onClick={() => {handleSubmitReply()}}
                     >
                         Post
                     </Button>

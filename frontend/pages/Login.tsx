@@ -9,45 +9,16 @@ import Sidebar from "../components/sidebar";
 import logo from './public/GCodeLogo.png'
 import { Button, ThemeProvider, Box, TextField } from "@mui/material";
 import { theme } from '../theme';
-import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
 import Link from "next/link";
 import Alert from '@mui/material/Alert'
+import { login } from "../api/routes";
+import { useRouter } from 'next/router'
 
 export default function Login() {
-  const router = useRouter();
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setloginError] = useState(false);
-
-
-  const postInfo = () => {
-    const postData = {
-      grant_type: '',
-      username: username,
-      password: password,
-      scope: '',
-      client_id: '',
-      client_secret: ''
-    };
-
-    axios.post('http://localhost:8000/login', postData, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'accept': 'application/json'
-      }
-    })
-      .then(function success(response) {
-        console.log(response)
-        const token = response.data.access_token;
-        Cookies.set('gcode-session', token, { expires: 7 });
-        router.push('/Dashboard');
-      })
-      .catch(function failure(error) {
-        console.log(error);
-        setloginError(true);
-      })
-  }
+  const router = useRouter()
 
   return (
     <ThemeProvider theme={theme}>
@@ -77,7 +48,7 @@ export default function Login() {
           />
           <Link href="./ResetPassword"><text className={loginStyles.forgotPassword}>Forgot Password?</text></Link>
           {loginError && <Alert sx={{marginTop: '30px'}} severity="error"> Invalid username or password. </Alert> }
-          <Button fullWidth variant="primary" sx={{margin: '20px 0 10px 0'}} onClick={postInfo}>
+          <Button fullWidth variant="primary" sx={{margin: '20px 0 10px 0'}} onClick={() => {login(username, password, setloginError).then(() => router.push('/Dashboard'))}}>
             <h1 className={loginStyles.signInButton}>Login </h1>
           </Button>
         </Box>

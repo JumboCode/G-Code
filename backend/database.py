@@ -80,10 +80,9 @@ def fetch_filtered(model_class: str, filters: list[tuple]):
     
     return result_list
 
-def fetch3Appointments(studentEmail):
+def fetch_appointments(user_email: str):
     result_list = []
-    print("email: " + studentEmail)
-    cursor = appointments.find({"studentEmail" : studentEmail}).sort("date", -1).limit(3)
+    cursor = appointments.find({"$or": [{'studentEmail' : user_email}, {'tutorEmail' : user_email}]}).sort("date", -1)
     for document in cursor:
         result_list.append(stringify_id(AppointmentBooking(**document)))
     return result_list

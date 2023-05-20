@@ -12,6 +12,8 @@ import GreenCircle from "../../public/green.png";
 import Cookie from 'js-cookie'
 import AssignmentList from "../assignmentsList";
 
+import { getAssignments } from "../../api/routes";
+
 export default function Dashboard(props) {
   const user = props.user
   const router = useRouter()
@@ -19,27 +21,8 @@ export default function Dashboard(props) {
   // make call to backend to get real data
   const [assignmentList, setAssignmentList] = useState([]);
 
-  const getAssignments = () => {
-    const apiUrl = 'http://localhost:8000/api/assignments';
-
-    const token = Cookie.get('gcode-session')
-
-    const headers = {
-      'accept': 'application/json',
-      'Authorization': 'Bearer ' + token,
-    };
-
-    axios.get(apiUrl, { headers })
-      .then(response => {
-        setAssignmentList(response.data)
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }
-
   useEffect(() => {
-    getAssignments()
+    getAssignments(setAssignmentList)
   }, []);
 
   return (

@@ -3,7 +3,6 @@ import { useState } from "react";
 import dashboardStyles from "../styles/Dashboard.module.css";
 import { Grid, Button } from '@mui/material'
 import { CalendarToday, AccessTime } from "@mui/icons-material";
-import Image from "next/image";
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -13,9 +12,8 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
 import { useEffect } from "react";
-import axios from "axios";
-import Cookies from 'js-cookie';
 import Avatar from '@mui/material/Avatar';
+import { getSessions, handleCancel } from "../api/routes";
 
 const steps = [
   {
@@ -48,26 +46,6 @@ function TutoringCard({
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  function handleCancel(id: string) {
-
-    const token = Cookies.get('gcode-session');
-    console.log("Cancel Appointment" + id)
-
-    axios.put('http://localhost:8000/api/cancel-appointment?id=' + id, null, {
-      headers: {
-        'accept': 'application/json',
-        'Authorization': 'Bearer ' + token
-      }
-    })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    handleBack();
   };
 
   const handleBack = () => {
@@ -127,7 +105,7 @@ function TutoringCard({
                           </Button>
                         }
                         <Button
-                          onClick={() => handleCancel(id)} sx={{ mt: 1, mr: 1 }}>
+                          onClick={() => handleCancel(id, handleBack)} sx={{ mt: 1, mr: 1 }}>
                           No
                         </Button>
                       </div>
@@ -150,26 +128,23 @@ function TutoringCard({
       <Grid container spacing={2} className={dashboardStyles.tutoringSessionCard}>
         <Grid item lg={8} md={12}>
           <div className={dashboardStyles.tutoringSessionImage}>
-            {/* <Image
-              src="/sharkMeldon.png"
-              alt="Shark Meldon Incarnate"
-              width={75}
-              height={75}
-              style={{ borderRadius: "100pc", overflow: "hidden" }}
-            /> */}
-            <Avatar alt={name} src="/static/images/avatar/2.jpg" sx={{ bgcolor: 'pink' }}/>
-          </div>
+            <div style={{ minWidth: '75px' }}>
+              <Avatar alt={name} sx={{ width: '75px', height: '75px', bgcolor: 'green' }} />
+            </div>
+            <div className={dashboardStyles.tutoringSessionTextDetails}>
+              <div className={dashboardStyles.tutoringSessionName}>Office Hours with {name}</div>
 
-          <div className={dashboardStyles.tutoringSessionTextDetails}>
-            <div className={dashboardStyles.tutoringSessionName}>Office Hours with {name}</div>
-            <br></br>
-            <div className={dashboardStyles.tutoringSessionLogistics}>
-              <CalendarToday />
-              <div className={dashboardStyles.tutoringSessionDate}>{date}</div>
-              <AccessTime />
-              <div className={dashboardStyles.tutoringSessionTime}>{time}</div>
+              <div className={dashboardStyles.tutoringSessionLogistics}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left', marginBottom: '5px' }}>
+                  <CalendarToday sx={{ marginRight: '10px' }} /> {date}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
+                  <AccessTime sx={{ marginRight: '10px' }} /> {time}
+                </div>
+              </div>
             </div>
           </div>
+
         </Grid>
         <Grid item lg={4} md={12}>
           <div style={{
@@ -194,19 +169,7 @@ export default function TutoringCardDisplay() {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    const token = Cookies.get('gcode-session');
-    axios.get("http://localhost:8000/api/appointments3", {
-      headers: {
-        Accept: "application/json",
-        Authorization: 'Bearer ' + token
-      },
-    })
-      .then((response) => {
-        setSessions(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    getSessions(setSessions)
   }, []);
 
   return (
@@ -220,7 +183,7 @@ export default function TutoringCardDisplay() {
           console.log("session:")
           console.log(session);
 
-          const options = { year: 'numeric', month: 'long', day: 'numeric' };
+          const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
           const formattedDate = date.toLocaleDateString('en-US', options);
 
           return (

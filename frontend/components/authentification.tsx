@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { useEffect,  Component, ComponentType, FC  } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import { baseurl } from '../api/routes';
 
 export default function IsUserAuthorized(save_user) {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function IsUserAuthorized(save_user) {
             'Authorization': 'Bearer ' + token
           }
         };
-        let result = await axios.get('http://localhost:8000/', config)     
+        let result = await axios.get(baseurl, config)     
         save_user(result.data)
       } catch (error) {
         router.push('/Login');

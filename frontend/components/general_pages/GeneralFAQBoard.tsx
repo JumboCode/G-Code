@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Grid, Box, Select, List, ListItem, Avatar, ListItemAvatar, ListItemText, Divider, Typography, Card, Paper, IconButton, InputBase, Button, Modal, TextField, InputLabel, MenuItem, FormControl } from "@mui/material"
 
 // components
@@ -21,6 +21,10 @@ import Link from 'next/link'
 import Cookies from 'js-cookie'
 import IndividualQuestion from "./IndividualQuestion";
 
+import { getQuestions, getUserMap, postQuestion } from "../../api/routes";
+
+const emptyQuestion = {title: '', body: ''}
+
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const modal_style = {
@@ -37,87 +41,57 @@ const modal_style = {
 };
 
 export default function GeneralFAQBoard({ user, question_id }) {
-    if (question_id) {
-        return <IndividualQuestion user={user} question_id={question_id} />
-    }
-    // create and get questiosn from backend
+    const router = useRouter();
     const [questions, setQuestions] = React.useState(null);
     const [users, setUsers] = React.useState(null);
-
-    const updateQuestions = () => {
-        axios.get("http://localhost:8000/api/questions").then((res) => {
-            setQuestions(
-                res.data.map(question => {
-                    return {
-                        ...question,
-                        date: new Date(Date.parse(question.date)),
-                    }
-                })
-            );
-        });
-    }
-
-    const updateUsers = () => {
-        axios.get("http://localhost:8000/api/users").then((res) => {
-            let users_map = {}
-            for (const user_idx in res.data) {
-                const user = res.data[user_idx]
-                users_map[user._id] = user
-            }
-            setUsers(users_map)
-        })
-    }
+    const [onlyMyQuestions, setOnlyMyQuestions] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [question, setQuestion] = React.useState(emptyQuestion)
+    const [formValid, setFormValid] = React.useState(true);
 
     React.useEffect(() => {
         updateQuestions()
         updateUsers()
     }, []);
 
+    if (question_id) {
+        return <IndividualQuestion user={user} question_id={question_id} />
+    }
 
-    const [onlyMyQuestions, setOnlyMyQuestions] = React.useState(false);
+    const updateQuestions = () => {
+        getQuestions(setQuestions)
+    }
+
+    const updateUsers = () => {
+        getUserMap(setUsers)
+    }
 
     // ask question modal
-    const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [modalTitle, setModalTitle] = React.useState("");
-    const [modalTopic, setModalTopic] = React.useState("General");
-    const [rteValue, setRteValue] = React.useState("");
 
     // add question
     const submitQuestion = () => {
-        const valid = validateTitle(modalTitle) && validateQuestion(rteValue);
+        const valid = validateTitle(question.title) && validateQuestion(question.body);
         setFormValid(valid);
 
         if (valid) {
-            const token = Cookies.get('gcode-session');
-            const data = {
-                title: modalTitle,
-                body: rteValue,
-            };
-            const config = {
-                headers: {
-                    'accept': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                }
-            };
-            axios.post('http://localhost:8000/api/create_post', data, config).then(() => { updateQuestions() })
-
-            setModalTitle("");
-            setModalTopic("General");
-            setRteValue("");
+            postQuestion(question)
+            setQuestion(emptyQuestion)
             handleClose();
         }
     };
 
     // validation
-    const [formValid, setFormValid] = React.useState(true);
     const validateTitle = (title: string) => { return title != ""; };
     const validateQuestion = (question: string) => { return question != ""; };
 
-    // validation
-    const router = useRouter();
+    const handleChange = (e) => {
+        setQuestion({
+            ...question,
+            [e.target.name]: e.target.value
+        })
+    }
 
     if (!questions || !users) {
         return <></>
@@ -133,56 +107,29 @@ export default function GeneralFAQBoard({ user, question_id }) {
             >
                 <Box sx={modal_style}>
                     <Grid container spacing={2}>
-                        <Grid item xs={8}>
+                        <Grid item xs={12}>
                             <FormControl fullWidth>
                                 <TextField
                                     id="outlined-basic"
                                     label="Title"
                                     variant="outlined"
-                                    value={modalTitle}
-                                    onChange={(event) =>
-                                        setModalTitle(event.target.value)
-                                    }
-                                    error={
-                                        !formValid && !validateTitle(modalTitle)
-                                    }
+                                    name="title"
+                                    value={question.title}
+                                    onChange={handleChange}
+                                    error={!formValid && !validateTitle(question.title)}
                                     helperText={
                                         !formValid &&
-                                        !validateTitle(modalTitle) &&
+                                        !validateTitle(question.title) &&
                                         "Please enter a title"
                                     }
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item xs={4}>
-                            <FormControl fullWidth>
-                                <InputLabel id="modal-topic-select-label">
-                                    Topic
-                                </InputLabel>
-                                <Select
-                                    labelId="modal-topic-select-label"
-                                    id="modal-topic-select"
-                                    label="Topic"
-                                    value={modalTopic}
-                                    onChange={(event) =>
-                                        setModalTopic(event.target.value)
-                                    }
-                                >
-                                    <MenuItem value={"General"}>
-                                        General
-                                    </MenuItem>
-                                    <MenuItem value={"Joe"}>Joe</MenuItem>
-                                    <MenuItem value={"Theseus"}>
-                                        Theseus
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
                         <Grid item xs={12}>
                             <ReactQuill
                                 theme="snow"
-                                value={rteValue}
-                                onChange={setRteValue}
+                                value={question.title}
+                                onChange={handleChange}
                                 modules={{
                                     toolbar: [
                                         ["bold", "italic", "underline"],
@@ -262,65 +209,6 @@ export default function GeneralFAQBoard({ user, question_id }) {
                             </Grid>
                         </Grid>
                     </Box>
-                    {/* <Box sx={{ paddingBottom: "20px" }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={5}>
-                                <Paper
-                                    component="form"
-                                    sx={{
-                                        p: "2px 4px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        width: "100%",
-                                        borderRadius: "10px",
-                                        border: "1px solid rgba(0, 0, 0, 0.23)",
-                                        boxShadow: "0",
-                                    }}
-                                >
-                                    <IconButton
-                                        sx={{
-                                            p: "10px",
-                                            color: "#6A5DF9",
-                                        }}
-                                        aria-label="menu"
-                                    >
-                                        <SearchIcon />
-                                    </IconButton>
-                                    <InputBase
-                                        sx={{ ml: 1, flex: 1 }}
-                                        placeholder="Search"
-                                        inputProps={{
-                                            "aria-label": "search",
-                                        }}
-                                        value={searchQuery}
-                                        onChange={(event) =>
-                                            setSearchQuery(
-                                                event.target.value
-                                            )
-                                        }
-                                    />
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={6} md={3}>
-                                <CustomSelect
-                                    value={week}
-                                    handleChange={(event) => {
-                                        setWeek(event.target.value);
-                                    }}
-                                    choices={weeks}
-                                />
-                            </Grid>
-                            <Grid item xs={6} md={4}>
-                                <CustomSelect
-                                    value={topic}
-                                    handleChange={(event) => {
-                                        setTopic(event.target.value);
-                                    }}
-                                    choices={topics}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Box> */}
                 </Grid>
                 <Grid item md={3} xs={0}>
                 </Grid>

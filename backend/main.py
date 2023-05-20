@@ -46,6 +46,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+################################################################################
+############################### Authentication #################################
+################################################################################
+
 @app.get("/")
 async def read_root(current_user: UserIn = Depends(get_current_user)):
     '''
@@ -56,26 +61,6 @@ async def read_root(current_user: UserIn = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="User Not Found")
     del user.password
     return user
-
-@app.post("/register_student")
-def register_student(postData: dict):
-    email = postData.get('email')
-
-    new_user = UserIn(
-        firstname = postData.get('firstName'),
-        lastname = postData.get('lastName'),
-        email = email,
-        password = Hash.bcrypt(postData.get('password')),
-        type = "student"
-    )
-
-    user = fetch_user_by_email(email)
-
-    if user: 
-        raise HTTPException(status_code=403, detail="User Already Exists")
-    else:
-        create_new_user(dict(new_user))
-        return 'ok'
 
 @app.post("/login")
 def login(request: OAuth2PasswordRequestForm = Depends()):   
@@ -89,8 +74,6 @@ def login(request: OAuth2PasswordRequestForm = Depends()):
     
     access_token = create_access_token(data={"email": user.email, "type": user.type})
     return {"access_token": access_token, "token_type": "bearer"}
-
-
 
 @app.post("/registration")
 def registration(request: UserIn):
@@ -129,7 +112,8 @@ def reset_password(data: ResetDataIn):
 
     reset_obj: ResetData = get_one_reset_code(email)
     if not reset_obj:
-        raise HTTPException(status_code=403, detail="No password reset requested for this account.")
+        raise HTTPException(status_code=403, \
+                            detail="No password reset requested for this account.")
 
     true_code = reset_obj["code"]
     if (code != true_code):
@@ -139,199 +123,19 @@ def reset_password(data: ResetDataIn):
     update_password(email, hashedPW)
 
 
-
-############################################################################
-# Routes to Get All Of a DB Collection
-# TODO: For students/admins, filter out passwords / other sensitive info
-# TODO: Add HTTP Error checking
-
-@app.get("/api/admins")
-async def get_admins():
-    response = fetch_all("Admins")
-    return response
-
-@app.get("/api/questions")
-async def get_questions():
-    response = fetch_all_posts_sorted()
-    return response
-
-# @app.get("/api/questions_two")
-# async def get_question_two():
-#     response = fetch_all("Questions")
-#     return response
-
-@app.get("/api/studentinvites")
-async def get_studentinvites():
-    response = fetch_filtered("UserInvites", [("acctype", "Student")])
-    return response
-
-@app.get("/api/admininvites")
-async def get_admininvites():
-    response = fetch_all("AdminInvites")
-    return response
-###########################################################################
-
-
-
-###########################################################################
-# Routes to Get One Item From a DB Collection
-# TODO: For certain requests, check if user is allowed to make the get request, and return "Access Denied" if not
-# TODO: Handle "No Result Found" or "Multiple Instances Found"
-
-@app.get("/api/one_student")
-async def get_one_student(field_name: str, field_value: Any):
-    response = fetch_one("Students", field_name, field_value)
-    return response
-
-def create_one(model_class: str, to_add):
-    db = db_dic[model_class]
-    if isinstance(to_add, model_dic[model_class]):
-        return db.insert_one(to_add.dict())
-    else:
-        raise Exception("The given object was not an instance of the given model_class")
-
-@app.post("/api/assign_assignment")
-async def assign_assignment (assignment_id: str, student_emails: list[str]):
-    for email in student_emails:
-        print("IN STUDENT EMAILS LOOP")
-        user = fetch_user_by_email(email)
-        if user is None:
-            error_message = ("A user with the email \"" + email + "\" does not exist")
-            raise HTTPException(status_code=500, detail=error_message)
-        individual_assignment = {
-            'submitted': False,
-            'submissionLink': "",
-            'student_email': email,
-            'messages': []
-        }
-        create_individual_assignment(assignment_id, individual_assignment)
-    return "success"
-
-@app.get("/api/get_student_assignments")
-async def get_student_assignments(student_email : str):
-   return get_all_student_assignments(student_email)
-
-@app.get("/api/one_admin")
-async def get_one_admin(field_name: str, field_value: Any):
-    response = fetch_one("Admins", field_name, field_value)
-    return response
+###################################################################
+########################### Appointment ###########################
+###################################################################
 
 @app.get("/api/one_appointment")
 async def get_one_appointment(field_name: str, field_value: Any):
     response = fetch_one("Appointments", field_name, field_value)
     return response
-
-@app.get("/api/one_question")
-async def get_one_question(field_name: str, field_value: Any):
-    response = fetch_one("Questions", field_name, field_value).dict()
-    # Prevents TypeError("'ObjectId' object is not iterable")
-    response['id'] = str(response['id'])
-    return response
-
-@app.get("/api/one_invite")
-async def get_one_invite(field_name: str, field_value: Any):
-    response = fetch_one("Invites", field_name, field_value)
-    return response
-##########################################################################
-
-
-##########################################################################
-
-
-
-
-@app.post("/api/respond_to_question")
-async def respond_to_question (question_reply: Reply):
-# async def respond_to_question (question_title : str, reply: Reply):
-    '''
-    Purpose: Add a question to the database
-
-    Input: A question object
-    '''
-
-    question_title = question_reply.question_name
-    reply = question_reply.reply
-    response = add_reply_to_question(question_title, reply.dict())
-    return "success"
-
-# Routes to Get All Items From a DB Collection With Multiple Filters
-@app.get("/api/filter_students")
-async def get_filtered_students(filters: list[tuple]):
-    response = fetch_filtered("Students", filters)
-    return response
-
-# Get appointments (TODO: should this be a get not a put?)
-@app.put("/api/filtered_appointments")
-async def get_filtered_appointments(filter: list[tuple]):
-    '''
-    Purpose: Filters all available appointments based on the filters the student
-            wants
-
-    Input:  List of tuples which contains the category and the preference
-    '''
-    response = fetch_filtered("Appointments", filter)
-    return response
-    
-@app.put("/api/remove_student_from_appoint/")
-async def remove_student_from_appointment(appointmentID: str, user: dict = Depends(get_current_user)):
-    if user.type != 'admin':
-        raise HTTPException(status_code=403, detail="must be an admin to remove student")
-    response = cancel_appointment(appointmentID)
-    return response
-
-@app.post("/api/edit_user_profile")
-async def edit_user_profile (username: str, new_profile_values: dict, 
-                             admin_user: dict = Depends(get_current_user)):
-    user = fetch_user_by_email(username)
-    if user == None: 
-        raise HTTPException(status_code=403, detail="Invalid Username")
-    elif user.type == "admin":
-        user["permission_level"] = "Admin"
-        editable_fields = ["firstname", "lastname", "email", "password", "timzone", "linkedin", "pronouns", "bio", "github", "zoom", "maxsessions"]
-    else:
-        user["permission_level"] = "Student"
-        editable_fields = ["firstname", "lastname", "email", "password", "timzone", "linkedin", "pronouns", "bio", "github"]
-
-    for field in new_profile_values:
-        if field not in editable_fields:
-            raise HTTPException(status_code=500, detail =  ("The field " + field + " cannot be edited"))
-        else:
-            update_profile_field(user.email, field, new_profile_values[field])
-
-
-@app.post("/api/edit_own_profile")
-async def student_profile_self_view (new_profile_values: dict, 
-                                     user: dict = Depends(get_current_user)):
-    uneditable_fields = ["emailverified", "mentorid", "accepted_registration"]
-    username = user["username"]
-    for field in new_profile_values:
-        if field in uneditable_fields:
-            raise HTTPException(status_code=500, 
-                            detail =  ("The " + field 
-                                       + " cannot be edited by students"))
-        update_profile_field(username, user["permission_level"], 
-                             field, new_profile_values[field])
-
-
-# Appointment routes
 
 @app.get("/api/appointments")
-async def get_appointments():
-    response = fetch_all("Appointments")
+async def get_appointments(currentUser: UserIn = Depends(get_current_user)):
+    response = fetch_appointments(currentUser.email)
     return response
-
-@app.get("/api/one_appointment")
-async def get_one_appointment(field_name: str, field_value: Any):
-    response = fetch_one("Appointments", field_name, field_value)
-    return response
-
-# TODO: don't limit to 3
-@app.get("/api/appointments3")
-async def get_3_appointments(currentUser: UserIn = Depends(get_current_user)):
-    response = fetch3Appointments(currentUser.email)
-    return response
-
-# done
 
 @app.put("/api/put_appointment/")
 async def put_appointment(appointment_data: Appointment):
@@ -343,9 +147,18 @@ async def assign_student_to_appointment(appointmentID: str , studentID : str):
     response = reserve_appointment(appointmentID, studentID)   
     return response 
 
-###################################################################
-########################### Assignments ###########################
-###################################################################
+@app.put("/api/remove_student_from_appoint/")
+async def remove_student_from_appointment(appointmentID: str, 
+                                          user: dict = Depends(get_current_user)):
+    if user.type != 'admin':
+        raise HTTPException(status_code=403, detail="must be an admin to remove student")
+    response = cancel_appointment(appointmentID)
+    return response
+
+
+################################################################################
+################################## Assignments #################################
+################################################################################
 
 @app.get("/api/all_assignments")
 async def get_assignments(currentUser: UserIn = Depends(get_current_user)):
@@ -355,7 +168,8 @@ async def get_assignments(currentUser: UserIn = Depends(get_current_user)):
     return result
 
 @app.post("/api/assignment")
-async def post_assignment(assignment: AssignmentIn, currentUser: UserIn = Depends(get_current_user)):
+async def post_assignment(assignment: AssignmentIn, 
+                          currentUser: UserIn = Depends(get_current_user)):
     if currentUser.type != 'admin':
         raise HTTPException(status_code=403, detail='Must be admin to create assignments')
     # new_assignment = {**assignment.dict(), 'individual_assignments': []}
@@ -397,12 +211,15 @@ async def get_assignments(currentUser: UserIn = Depends(get_current_user)):
     return result
 
 @app.get("/api/submit_assignment")
-async def put_submit_assignment(assignment_id: str, github_link: str, currentUser: UserIn = Depends(get_current_user)):
+async def put_submit_assignment(assignment_id: str, 
+                                github_link: str, 
+                                currentUser: UserIn = Depends(get_current_user)):
     user = fetch_user_by_email(currentUser.email)
     submit_assignment(assignment_id, github_link, user.id)
 
 @app.get("/api/assignment_by_id")
-async def get_assignment_by_id(assignment_id: str, currentUser: UserIn = Depends(get_current_user)):
+async def get_assignment_by_id(assignment_id: str, 
+                               currentUser: UserIn = Depends(get_current_user)):
     user = fetch_user_by_email(currentUser.email)
     full_assignment = fetch_one("Assignments", "_id", ObjectId(assignment_id))
     if user.type == 'admin':
@@ -427,12 +244,16 @@ async def get_past_assignments(currentUser: UserIn = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail='Must be admin to access all assignments')
     return past_assignments()    
 
-###################################################################
-########################## Appointments ###########################
-###################################################################
+
+################################################################################
+################################# Appointments #################################
+################################################################################
 
 @app.post("/api/save_schedule")
-def save_schedule(data: AppointmentSchedule, maxSessions: int, timeZone: str, currentUser: UserIn = Depends(get_current_user)):
+def save_schedule(data: AppointmentSchedule, 
+                  maxSessions: int, 
+                  timeZone: str, 
+                  currentUser: UserIn = Depends(get_current_user)):
     user = fetch_user_by_email(currentUser.email)
     if user.type != 'admin':
         raise HTTPException(status_code=403, detail='Must be admin to set appointment schedule')
@@ -505,7 +326,10 @@ async def get_available_appointments(date: date):
         return False
 
     for admin in appointments_by_admin:
-        appointments_by_admin[admin] = list(filter(lambda app : not does_appointment_exist(appointment=app, tutorEmail=admin), appointments_by_admin[admin]))
+        appointments_by_admin[admin] = list(filter(lambda app : not \
+                                                   does_appointment_exist(appointment=app, 
+                                                                          tutorEmail=admin), 
+                                                                          appointments_by_admin[admin]))
 
     return appointments_by_admin
 
@@ -515,9 +339,10 @@ async def cancel_appointment_by_id(id: str, current_user: UserIn =
     cancel_appointment(id)
     return "ok"
 
-###################################################################
-############################## Users ##############################
-###################################################################
+
+################################################################################
+################################## Users #######################################
+################################################################################
 
 @app.get("/api/students")
 async def get_students():
@@ -547,7 +372,8 @@ async def get_user_by_id(user_id: str):
     return result
 
 @app.post("/api/user_invites")
-async def post_user_invites(invite_requests: list[UserInviteRequest], currentUser: UserIn = Depends(get_current_user)):
+async def post_user_invites(invite_requests: list[UserInviteRequest], 
+                            currentUser: UserIn = Depends(get_current_user)):
     if currentUser.type != 'admin':
         return "you must be an admin to invite users"
     validations = []
@@ -561,21 +387,27 @@ async def post_user_invites(invite_requests: list[UserInviteRequest], currentUse
         for invite_request in invite_requests:
             accessKey = ''.join(random.choices(string.ascii_uppercase, k = 6))
             date = datetime.datetime.now()
-            invite = create_student_invite(accessKey, invite_request.email, invite_request.acctype.lower(), date)
+            invite = create_student_invite(accessKey, 
+                                           invite_request.email, 
+                                           invite_request.acctype.lower(), 
+                                           date)
             send_email(format_invite(invite), "{G}Code User Invite", invite_request.email)
-    return validations
-    
+    return validations  
 
 @app.post("/api/join")
 async def post_user_invite(user_data: UserIn, access_code: str):
     invite = fetch_one("UserInvites", "accesscode", access_code)
     if type(invite) == str:
-        raise HTTPException(status_code=403, detail="Invite code not valid. Please enter a valid invite code.")
+        raise HTTPException(status_code=403, 
+                            detail="Invite code not valid. Please enter a valid invite code.")
     user = fetch_one("Users", "email", user_data.email)
     if type(user) != str:
-        raise HTTPException(status_code=403, detail="Email already exists. Please enter a valid email.")
+        raise HTTPException(status_code=403, 
+                            detail="Email already exists. Please enter a valid email.")
     user_data.password = Hash.bcrypt(user_data.password)
-    create_new_user({**user_data.dict(), 'type':invite.acctype, 'appointment_schedule': AppointmentSchedule().dict()})
+    create_new_user({**user_data.dict(), 
+                     'type':invite.acctype, 
+                     'appointment_schedule': AppointmentSchedule().dict()})
     delete_invite_by_code(access_code)
     return "success"
 
@@ -586,9 +418,49 @@ async def delete_user(user_id: str, currentUser: UserIn = Depends(get_current_us
     delete_user_by_id(user_id)
     return "success"
 
-###################################################################
-############################## Posts ##############################
-###################################################################
+@app.get("/api/studentinvites")
+async def get_studentinvites():
+    response = fetch_filtered("UserInvites", [("acctype", "Student")])
+    return response
+
+@app.post("/api/edit_user_profile")
+async def edit_user_profile (username: str, new_profile_values: dict, 
+                             admin_user: dict = Depends(get_current_user)):
+    user = fetch_user_by_email(username)
+    if user == None: 
+        raise HTTPException(status_code=403, detail="Invalid Username")
+    elif user.type == "admin":
+        user["permission_level"] = "Admin"
+        editable_fields = ["firstname", "lastname", "email", "password", \
+                           "timzone", "linkedin", "pronouns", "bio", "github", "zoom", "maxsessions"]
+    else:
+        user["permission_level"] = "Student"
+        editable_fields = ["firstname", "lastname", "email", "password", \
+                            "timzone", "linkedin", "pronouns", "bio", "github"]
+
+    for field in new_profile_values:
+        if field not in editable_fields:
+            raise HTTPException(status_code=500, detail =  ("The field " + field + " cannot be edited"))
+        else:
+            update_profile_field(user.email, field, new_profile_values[field])
+
+@app.post("/api/edit_own_profile")
+async def student_profile_self_view (new_profile_values: dict, 
+                                     user: dict = Depends(get_current_user)):
+    uneditable_fields = ["emailverified", "mentorid", "accepted_registration"]
+    username = user["username"]
+    for field in new_profile_values:
+        if field in uneditable_fields:
+            raise HTTPException(status_code=500, 
+                            detail =  ("The " + field 
+                                       + " cannot be edited by students"))
+        update_profile_field(username, user["permission_level"], 
+                             field, new_profile_values[field])
+
+
+################################################################################
+#################################### Posts #####################################
+################################################################################
 
 @app.get("/api/posts")
 async def get_posts():
@@ -612,4 +484,9 @@ async def post_reply_to_post(post_ID: str, reply_data: ReplyIn, currentUser: Use
 async def get_post_by_id (id_string: str):
     response = fetch_one("Posts", "_id", ObjectId(id_string)).dict()
     response['id'] = str(response['id'])
+    return response
+
+@app.get("/api/questions")
+async def get_questions():
+    response = fetch_all_posts_sorted()
     return response

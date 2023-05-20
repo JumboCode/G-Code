@@ -1,12 +1,5 @@
-import axios from "axios";
 import React, { useState } from "react";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
-import dashboardStyles from "../styles/Dashboard.module.css";
 import loginStyles from "../styles/Login.module.css";
-import Sidebar from "../components/sidebar";
-import logo from "./public/GCodeLogo.png";
 import { Button, ThemeProvider, TextField, Box } from "@mui/material";
 import { theme } from "../theme";
 import { useRouter } from "next/router";
@@ -15,11 +8,7 @@ import Alert from '@mui/material/Alert'
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { validate_string, validate_email } from "../constants";
-
-// TODO:
-// 1. The background gradient
-// 2. Backend functionality.
-//    firstName, lastName, email, password, and code have all been set
+import { registerUser } from "../api/routes";
 
 export default function Registration() {
   const router = useRouter()
@@ -59,22 +48,8 @@ export default function Registration() {
   }
 
   const postRegInfo = () => {
-    const apiUrl = `http://localhost:8000/api/join?access_code=${accessCode}`;
-
-    const headers = {
-      'accept': 'application/json',
-      'Content-Type': 'application/json',
-    };
-
-    axios.post(apiUrl, formData, { headers })
-      .then(response => {
-        router.push('/login')
-      })
-      .catch(error => {
-        setSubmissionError(error.response.data.detail)
-      });
+    registerUser(accessCode, formData, setSubmissionError)
   }
-
 
   return (
     <ThemeProvider theme={theme}>

@@ -26,42 +26,17 @@ import Cookies from 'js-cookie';
 // constants
 import { numberToAMPM, weekDays, months, dateToString, numberToMilitary } from '../../constants'
 
+import { setCurrentDayTutors } from '../../api/routes';
+
 export default function StudentOfficeHours(props) {
     const user = props.user
     const [tutorProfiles, setTutorProfiles] = useState([])
     const [currentWeekStart, setCurrentWeekStart] = useState(new Date())
     const [currentDay, setCurrentDay] = useState(new Date())
 
-    const setCurrentDayTutors = (date: Date) => {
-        setCurrentDay(date)
-        const dateString = dateToString(date)
-        axios.get("http://localhost:8000/api/get_available_appointments?date=" + dateString).then(
-            (res) => {
-                let tutor_list = []
-                for (let tutor_name in res.data) {
-                    if (res.data[tutor_name].length > 0) {
-                        tutor_list.push({
-                            name: tutor_name,
-                            email: tutor_name,
-                            date: date,
-                            times: res.data[tutor_name]
-                        })
-                    }
-                }
-                setTutorProfiles(tutor_list)
-            }
-        )
-    }
-
     useEffect(() => {
-        setCurrentDayTutors(currentDay)
+        setCurrentDayTutors(currentDay, setCurrentDay, setTutorProfiles)
     }, [currentDay])
-
-    // handle opening filter modal
-    const [filterModalOpen, setFilterModalOpen] = useState(false);
-
-    const openFilterModal = () => setFilterModalOpen(true);
-    const closeFilterModal = () => setFilterModalOpen(false);
 
     const names = [
         'Michelle Minns',
@@ -93,84 +68,6 @@ export default function StudentOfficeHours(props) {
 
     return (
         <div>
-            <Modal
-                open={filterModalOpen}
-                onClose={closeFilterModal}
-            >
-                <Box sx={{
-                    position: 'absolute' as 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    // width: ,
-                    height: 'auto',
-                    bgcolor: 'background.paper',
-                    border: '2px solid #000',
-                    boxShadow: 24,
-                    p: 4,
-                }}>
-                    <form onSubmit={handleFiltersFormSubmit}>
-                        <h3>Days</h3>
-                        <FilterDayButton text='All' />
-                        <FilterDayButton text='Mon' />
-                        <FilterDayButton text='Tues' />
-                        <FilterDayButton text='Wed' />
-                        <FilterDayButton text='Thurs' />
-                        <FilterDayButton text='Fri' />
-                        <FilterDayButton text='Sat' />
-                        <FilterDayButton text='Sun' />
-                        <h3>Time</h3>
-                        <TimeIntervalFilters />
-                        <h3>Instructors</h3>
-                        <Select
-                            multiple
-                            value={personName}
-                            onChange={handleChange}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                        <Chip
-                                            key={value}
-                                            label={value}
-                                            variant='outlined'
-                                            onDelete={(e) => handleDelete(e, value)}
-                                            onMouseDown={(event) => {
-                                                event.stopPropagation();
-                                            }}
-                                        />
-                                    ))}
-                                </Box>
-                            )}
-                        >
-                            {names.map((name) => (
-                                <MenuItem
-                                    key={name}
-                                    value={name}
-                                >
-                                    {name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        <br />
-                        <Button sx={{
-                            marginLeft: '60%',
-                            color: '#595959',
-                            border: '1px solid #D9D9D9',
-                            padding: '10px 15px'
-                        }}>
-                            Reset
-                        </Button>
-                        <Button sx={{
-                            color: 'white',
-                            backgroundColor: '#6A5DF9',
-                            marginLeft: '5%',
-                            padding: '10px 15px'
-                        }}>
-                            Show 3 Results
-                        </Button>
-                    </form>
-                </Box>
-            </Modal>
             <Grid container spacing={2}>
                 <Grid item xs={12} >
                     <Grid container spacing={2}>
@@ -178,14 +75,6 @@ export default function StudentOfficeHours(props) {
                             <StudentHeading />
                         </Grid>
                         <Grid item xs={12} md={3}>
-                            {/* <Button variant="secondary" sx={{
-                                marginTop: '20px',
-                            }}
-                                onClick={openFilterModal}
-                            >
-                                <TuneRoundedIcon />
-                                Filters
-                            </Button> */}
                         </Grid>
                     </Grid>
 
@@ -207,7 +96,7 @@ export default function StudentOfficeHours(props) {
                         gap: '10px',
                         width: '90%'
                     }}>
-                        {tutorProfiles.map((tutorProfile) => <TutorProfile {...tutorProfile} />)}
+                        {tutorProfiles.map((tutorProfile, idx) => <TutorProfile key={idx}  {...tutorProfile} />)}
                     </Box>
                     {/* <Button sx={{
                         backgroundColor: '#61646D',
@@ -375,9 +264,9 @@ function TutorProfile({ name, email, date, times }) {
                     </Button>
                 </Box>
             </Grid>
-            {times.map(time => {
+            {times.map((time, idx) => {
                 return (
-                    <Grid item xs={12} md={3.33}>
+                    <Grid key={idx} item xs={12} md={3.33}>
                         <TimeBox
                             starttime={time.starttime}
                             endtime={time.endtime}

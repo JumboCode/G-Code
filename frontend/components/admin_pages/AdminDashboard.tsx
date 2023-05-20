@@ -24,21 +24,6 @@ export default function Dashboard(props) {
   const handleClose = () => setOpen(false);
   // Get new assignment data
   // make call to backend to get real data
-  const [assignmentList, setAssignmentList] = useState([]);
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/assignments", {
-        headers: {
-          Accept: "application/json",
-        },
-      })
-      .then((response) => {
-        setAssignmentList(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
 
   return (
     <>
@@ -104,45 +89,6 @@ export default function Dashboard(props) {
               
             </Grid>
           </Grid>
-          {assignmentList.length > 0 && (
-            <>
-              <div className={styles.header2}>
-                {assignmentList.length} Assignment
-                {assignmentList.length > 1 && "s"}
-              </div>
-              <List
-                className={styles.pageElement}
-                sx={{ marginTop: '15px', backgroundColor: "white" }}
-              >
-                {assignmentList.map((assignment) => (
-                  <ListItem
-                    key={assignment.name}
-                    secondaryAction={
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        onClick={() => {
-                          router.push("/Assignments");
-                        }}
-                      >
-                        <ArrowForwardIosIcon />
-                      </IconButton>
-                    }
-                  >
-                    <ListItemAvatar>
-                      <Avatar sx={{ backgroundColor: "#F5F7F9" }}>
-                        <Image src={GreenCircle} alt="Assignment" />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={assignment.name}
-                      secondary={assignment.dueDate}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
         </Grid>
         <Grid item xs={12} md={4}>
           <div className={styles.header2}> Resources </div>

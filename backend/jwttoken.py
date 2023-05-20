@@ -1,5 +1,3 @@
-
-
 from datetime import datetime, timedelta
 from jose import jwt
 from model import TokenData

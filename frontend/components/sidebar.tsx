@@ -2,7 +2,6 @@ import React from 'react';
 import { useState } from 'react';
 import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
 import EventRoundedIcon from '@mui/icons-material/EventRounded';
-import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
 import PeopleIcon from '@mui/icons-material/People';
 import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -70,7 +69,7 @@ let styles = {
   Sidebar: {
     background: "white",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "column" as "column",
     gap: "3vh",
     alignItems: "center",
     fontFamily: "Poppins",
@@ -79,7 +78,6 @@ let styles = {
   SidebarElement: {
     borderRadius: "5px",
     display: "flex",
-    flexDirection: "row",
     width: "90%",
     justifyContent: "flex-start",
     alignItems: "center",

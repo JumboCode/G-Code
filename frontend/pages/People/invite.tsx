@@ -1,24 +1,16 @@
-import axios from "axios"
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Grid from "@mui/material/Grid"
 import Button from "@mui/material/Button"
-import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css"
-const ReactQuill = dynamic(import('react-quill'), { ssr: false });
-import { useRouter } from "next/router";
 import IsUserAuthorized from "../../components/authentification";
 import Margin from "../../components/margin";
 import { student_pages, admin_pages, validate_email } from '../../constants'
 import { Typography } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Link from "next/link";
 import "@fontsource/inter";
-import Cookies from 'js-cookie'
-
 import Box from '@mui/material/Box'
 import Select from '@mui/material/Select'
 import TextField from "@mui/material/TextField"
 import MenuItem from '@mui/material/MenuItem'
+import { inviteUsers } from "../../api/routes";
 
 export default function ProfileDetails() {
     const save_user = curr_user => {
@@ -47,27 +39,11 @@ export default function ProfileDetails() {
             }
         }
         if (valid) {
-            const apiUrl = 'http://localhost:8000/api/user_invites';
-            const token = Cookies.get("gcode-session")
-
-            const headers = {
-                'accept': 'application/json',
-                'Authorization': 'Bearer ' + token,
-                'Content-Type': 'application/json',
-            };
-
-            axios.post(apiUrl, peopleToAdd, { headers })
-                .then(response => {
-                    console.log('Response:', response.data);
+            inviteUsers(peopleToAdd)
+                .then(() => {
                     setPeopleToAdd([{ ...defaultRow }])
                     setPeopleToAddValid(true)
                 })
-                .catch(error => {
-                    alert("error")
-                    console.error('Error:', error);
-                });
-
-            
         } else {
             setPeopleToAddValid(false)
         }

@@ -19,36 +19,18 @@ import assignentStyles from "../../styles/Assignments.module.css";
 import AssignmentList from "../assignmentsList";
 import IndividualAssignment from "./IndividualAssignment";
 
+import { getAssignments } from "../../api/routes";
+
 export default function StudentAssignments({user, assignment_id}) {
+  const [assignmentList, setAssignmentList] = useState([]);
+
+  useEffect(() => {
+    getAssignments(setAssignmentList)
+  }, []);
+  
   if (assignment_id) {
     return <IndividualAssignment user={user} assignment_id={assignment_id} />
   }
-
-  // make call to backend to get real data
-  const [assignmentList, setAssignmentList] = useState([]);
-
-  const getAssignments = () => {
-    const apiUrl = 'http://localhost:8000/api/assignments';
-
-    const token = Cookie.get('gcode-session')
-
-    const headers = {
-      'accept': 'application/json',
-      'Authorization': 'Bearer ' + token,
-    };
-
-    axios.get(apiUrl, { headers })
-      .then(response => {
-        setAssignmentList(response.data)
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }
-
-  useEffect(() => {
-    getAssignments()
-  }, []);
 
   return (
     <div>
@@ -65,7 +47,7 @@ export default function StudentAssignments({user, assignment_id}) {
             }
             {assignmentList.length <= 0 &&
               <Typography fontSize='30px' textAlign='center'>
-                Nothing's due! Take some time to relax :)
+                Nothing&apos;s due! Take some time to relax :)
               </Typography>
             }
           </div>
