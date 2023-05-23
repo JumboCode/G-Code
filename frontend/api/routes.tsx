@@ -2,8 +2,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { dateToString } from '../constants'
 
-// export const baseurl = 'https://ei5nhfp45ti4l5wjnucvvk7zcm0zmial.lambda-url.us-east-2.on.aws'
-export const baseurl = 'http://localhost:8000'
+export const baseurl = 'https://i4qsmrx2gqpnpi3pa5bplhpsmu0ykwel.lambda-url.us-east-2.on.aws/'
 
 export async function getCurrentAssignments(setCurrentAssignments) {
     const token = Cookies.get('gcode-session')
